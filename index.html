@@ -224,7 +224,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 /* lights in the scene (D-035) */
 .lg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .lg-head h3 { margin: 0; }
-.group-switch { min-height: 44px; min-width: 96px; font-size: 14px; font-weight: 700; }
+.group-switch { min-height: 44px; min-width: 112px; font-size: 14px; font-weight: 700; }
 .group-switch.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 .chip { min-height: 44px; min-width: 52px; padding: 0 8px; font-size: 14px; color: var(--muted); }
@@ -319,7 +319,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   <main id="content">
     <!-- Lights in the scene (D-035; shown only when the server offers it) -->
     <section id="tab-lights" class="tab" hidden>
-      <p class="intro">Choose which lights are part of your looks. A light that is off here is never changed by Colors or Effects. Tap a light in the picture, or use the switches below.</p>
+      <p class="intro">Choose which lights are part of the scene you're building. A light that's left out isn't turned off: it keeps doing whatever it is doing, and Colors and Effects don't touch it. Tap a light in the picture, or use the switches below.</p>
       <div id="lights-list"></div>
     </section>
 
@@ -1571,7 +1571,7 @@ function renderLights() {
     if (!g.lights.length) continue;
     const onCount = g.lights.filter((l) => l.on).length, allOn = onCount === g.lights.length;
     const sw = el("button", { type: "button", class: "group-switch change" + (onCount ? " on" : ""), "aria-pressed": String(onCount > 0),
-      text: onCount === 0 ? "Off" : allOn ? "On" : onCount + " of " + g.lights.length + " on" });
+      text: onCount === 0 ? "Left out" : allOn ? "In the scene" : onCount + " of " + g.lights.length + " in" });
     sw.addEventListener("click", () => setLights(g.lights.map((l) => l.channel), onCount === 0));
     const chips = el("div", { class: "chips" });
     for (const l of g.lights) {
