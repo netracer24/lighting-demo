@@ -1,0 +1,2300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101218">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lighting">
+<title>Lighting Control demo</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADh0lEQVR42u3dMY7UQBCG0T4CQgR7GALOwSm5IZsjgrXdtqv+etKXM+56qtZIy3h9+/4hnW45AgEkgASQAJIAEkACSABJAAkgASSAJIAEkAASQBJAAkgACSABJAEkgASQAJIA+nK/f/44kXMbCugcF6RGA7oPzXBMixuSAKroZoikhQ5GADVwkyppoYPRXEDd9QQYWuhgNAtQHp3WjBY9/+3vn1//xFBvQI9BOdpwRmugnutonsEEUCE696G5GxNAL+t5ns52RgC9oOddN9slAfScnmp0djEC6HY9lelsYQQQPWmGVoCeXnSuMwJom56+dC4yAoieEEOLHoZ6A0LnCqPpgOjpbmjRw9AIQHP0nDA0ERA9GYYWPQwlA5qs56ihKYDoSTK06GEIIIBmAKInz1BFQKxcNJQJiJ5IQ8vl5SLLAcRHuyW0rB9LKAQQGR2XUBVATNxhKAGQ9ZO9hJb1YwnVBWT9xC+hZf1YQgABlAjI/TXhFlvWjyUEEEBxgOgZYggggAACCCABRM9EQwABBJAAEkAHAJn3K4YA0gBA7q9RtxhAAAEkgAQQQAABBFB9QCad9E0eIIAAEkACCCCAAALI13h6ABJAAAEEEEAAAQSQRgHyTd6ftAIEkP/WQw9AAggggAACyM+70OP3gQQQQAABBJCf+aUHIAHE0DN6ugKyhOLXD0AAeeEcPcGALKHs9eOlu9aP134D5L3xDDVdP7UAMbRXTw4gSyh1/ZQDxFCv9fMcIEsocv08CoihPD1FATHU4vJ6ARBDYXoAAqgbIIaS9LwDiKEYPQ0ADTd06KAGAWIoQ8+bgBgK0NMJ0ChDR09mKCCGuut5HxBDrfWUAHTCUCSjE4dQYXYlADHUVE8hQJMN9dVTC9A5Q60ZnXveUiOrBei0oXaMTj9mtXmVAzTBUIyeooCuGCrO6Mpz1ZxUUUAXDRVkdPFxyo6pLqDrhipI2vIIlWdUGtAuQ68w2vXJiw+oOqC9jO7GtPdzthhND0DbDW3EdNMH6zKXNoBuZfQVWI/9070m0gzQk4Zeqd04+gFKZdR0EF0BJTFqPYLegAIMdT//9oD6Mso4+RBAjSSFHXgaoMqMIo86E1ApSdknHA7oRUlDDnYKoGcwDTzMiYB2kXJuAAkgASSABJAEkAASQAJIAkgACSABJAEkgASQAJIAEkACSAAJIAkgASSABJAEkJ7pE7KFBN+qFkrMAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADTklEQVR42u3dwQ3UMBCGUZeAEAeK4UAdVEmH0AASG8eJ5x8/6SsgGT9NDqtNxpev36V/NoxAcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIDsEhwSE4BIfgWNuvH9/+GxwcXAsOIE6HMpigpD+OXSYaKxlMUNIQR2UWPYgMLBBpgiORRS6RQQYf2Th6sIgjMo5l8ef3zw87lsg4RMbnFF7mAsc2GWtNPKQEjldZPG3iCSVwPCvjfRNrlcDxiIwKLJYQgWOljGos7hOBo7+MBj5GqIz6LG4SgWNGRhaLO0ROx3GOjEQfgww+yuE4kMU0kbNwHC4jxUd1HF1lXPVxCg4yUnwMMvgogYOMLB8VcZwm45KPnjjIiPMBBxy7cZCR6GOQwUd1HExc9dEBh7WRuzyGtWF57MFhbUQvj2FtWB4bcJCR7gMOOEricPZLfOThsDYaLI9hbVgecMBRA4dnSo8ny7A2LA844CiAwzOlzZNlWBuWBxxwwAFHWRxkdPIBBxxwwAEHHHDAAYfOweF0n/ZRF4e10Wx5wAEHHHDAAQcccMAhOAQHHHDAAQcccMABBxxw+OHND29+src24IADDsEhOAQHHHDw4e+QcMABBxxe3uLlLV77ZG3AAYdXTZKRj8PyaLA24IDDi/E9U3xSw9rwMR4y4FBjHHxEy/Dp0GwZ2Tgsj9y14XPl1sZWHJZH6NoohIOPamvjJRx8JMp4DwcfcTLggKMGDj6yZBTFcaCPzyfTFgcfQTI24OAjRcYeHHxEyAjA0djHpSEchIOP+jJ24rjqow2Rq3e98YB24jjQR5CM/TiO8pElowSOCR9xRCZusMK5lMAx5yOCyNx9FTmUKjha+oiWUQvHtI+CRKZvpNRx1MJxx0cRIneuv9pZlMNx08cuJfevueBBVMSxisgLSpZcZNkjqItjlY8nlCy8sMrzL41jrY9pLs9dQ/HhV8fxNJFdRYw9A0cnIkEDT8LRwEfWtMNw5BJJnHMkjiwiuRMOxlGfSPps43EUVNJmpH1wbFfSb5INcbyspPEAO+N4DsohQzsFx7SYk+dzNA7BITgEh+AQHIJDcAgOwSE4TEFwCA7BITgEh+AQHIJDcAgOCQ7BITgEh97vL7O7wnn9DAlqAAAAAElFTkSuQmCC">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<style>
+:root {
+  --bg: #101218; --panel: #1a1d26; --panel2: #232733; --line: #2f3442;
+  --text: #e9ebf0; --muted: #9aa1b2; --accent: #ffb040; --accent-text: #1a1204;
+  --ok: #4cc38a; --bad: #ff6b6b; --warn: #ffb040; --lockred: #d94b4b;
+  --tap: 56px;
+}
+* { box-sizing: border-box; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+h1 { font-size: 26px; margin: 0 0 6px; }
+h2 { font-size: 18px; margin: 22px 0 10px; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.msg { min-height: 1.4em; color: var(--bad); margin: 8px 0 0; }
+
+button, select, input { font: inherit; color: inherit; }
+button {
+  min-height: var(--tap); border-radius: 14px; border: 1px solid var(--line);
+  background: var(--panel2); padding: 0 16px; cursor: pointer; touch-action: manipulation;
+}
+button:active { filter: brightness(1.25); }
+button:disabled, input:disabled, select:disabled { opacity: 0.4; cursor: not-allowed; }
+button.big { width: 100%; font-weight: 600; margin-top: 14px; }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.small-btn { min-height: 44px; font-size: 15px; }
+input, select {
+  width: 100%; min-height: var(--tap); border-radius: 12px; border: 1px solid var(--line);
+  background: var(--panel); padding: 0 14px;
+}
+label { display: block; color: var(--muted); font-size: 14px; margin: 12px 0 4px; }
+.row { display: flex; gap: 12px; align-items: center; margin: 10px 0; }
+.row > label { margin: 0; flex: 0 0 auto; }
+.row > select { flex: 1; }
+input[type=range] { padding: 0; min-height: 44px; accent-color: var(--accent); }
+
+/* sign in */
+.login { max-width: 420px; margin: 0 auto; padding: 48px 16px 24px; }
+.assistant-label { font-size: 13px; color: var(--muted); margin-top: 18px; }
+
+/* top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding: calc(8px + env(safe-area-inset-top)) 14px 8px;
+}
+.topbar .assistant-label { margin-top: 4px; }
+.topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.church { font-weight: 700; font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--muted); flex: 0 0 auto; }
+.dot.up { background: var(--ok); } .dot.down { background: var(--bad); }
+
+.lock-switch {
+  display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px 0 8px;
+  border-radius: 28px; font-weight: 700; background: var(--panel2); flex: 0 0 auto;
+}
+.lock-switch .knob { width: 40px; height: 40px; border-radius: 50%; background: var(--ok); }
+.lock-switch.on { background: #3a1d1d; border-color: var(--lockred); }
+.lock-switch.on .knob { background: var(--lockred); }
+.lock-switch.fixed { cursor: default; }
+
+.banner {
+  background: var(--lockred); color: #fff; font-weight: 700; text-align: center; padding: 12px 14px;
+}
+.banner.info { background: var(--panel2); color: var(--text); font-weight: 400; }
+
+/* content */
+#content { padding: 4px 14px 150px; max-width: 720px; margin: 0 auto; }
+.intro { margin: 12px 0 0; color: var(--text); }
+h2 + .muted.small { margin: -4px 0 10px; }
+
+/* suggested sets */
+.sets { display: grid; gap: 10px; }
+.set {
+  display: flex; align-items: center; gap: 14px; text-align: left; min-height: 76px; padding: 10px 12px;
+  background: var(--panel);
+}
+.strip { display: flex; flex: 0 0 auto; width: 84px; height: 48px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.strip i { flex: 1; }
+.set-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.set-name { font-weight: 600; }
+.set-mood { color: var(--muted); font-size: 14px; line-height: 1.25; }
+
+/* pick your own */
+.tray { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 12px; }
+.slot {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px; min-height: 108px;
+  border-radius: 14px; border: 1px dashed var(--line); background: var(--panel); text-align: left; font: inherit; color: inherit;
+}
+.slot i { display: block; height: 44px; border-radius: 8px; background: var(--panel2); }
+.slot span { font-size: 14px; font-weight: 600; }
+.slot small { color: var(--muted); font-size: 12px; }
+button.slot.full { border-style: solid; }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.sw { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-height: 84px; padding: 8px; background: var(--panel); }
+.sw i { display: block; height: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,.18); }
+.sw span { font-size: 13px; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }
+.mix { margin: 14px 0 0; }
+.mix summary { min-height: 48px; display: flex; align-items: center; cursor: pointer; color: var(--accent); }
+.mixer { display: flex; gap: 12px; align-items: stretch; }
+.mix-preview { flex: 0 0 84px; border-radius: 14px; border: 1px solid var(--line); }
+.mix-sliders { flex: 1; min-width: 0; }
+.mix-sliders label { margin: 0 0 4px; }
+input.hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); height: 18px; min-height: 44px; border-radius: 12px; }
+#pick-clear { margin-top: 10px; width: 100%; }
+.placement { white-space: pre-wrap; color: var(--muted); font-size: 13px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin: 12px 0 0; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: 12px 0; }
+.card h3 { margin: 0 0 6px; font-size: 19px; }
+.card .k { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.card .size-row { display: flex; align-items: center; gap: 10px; }
+.card .size-row output { min-width: 3ch; text-align: right; }
+
+.tap {
+  width: 100%; min-height: 190px; margin: 12px 0; font-size: 44px; font-weight: 800; letter-spacing: 2px;
+  border-radius: 24px; background: #2a3042; border: 2px solid var(--accent);
+}
+.tap:active { background: #3a4260; }
+.bpm-row { display: flex; align-items: center; gap: 10px; }
+/* tempo wheel: ridges like the edge of a scroll wheel, shaded darker at the ends so it reads as round */
+.bpm-wheel {
+  flex: 1; position: relative; border-radius: 16px; border: 1px solid var(--line); padding: 8px 0 6px;
+  cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.75)),
+    repeating-linear-gradient(90deg, #2b3040 0 6px, #3b4256 6px 8px, #1d212c 8px 12px);
+}
+.bpm-wheel.turning, .bpm-wheel:focus-visible { border-color: var(--accent); outline: none; }
+.bpm-box { text-align: center; position: relative; }
+.bpm-box input { text-align: center; font-size: 34px; font-weight: 800; min-height: 60px; width: 130px; margin: 0 auto; display: block;
+  background: rgba(16,18,24,.82); border-color: transparent; }
+.bpm-box span { display: block; color: var(--text); text-shadow: 0 1px 2px #000; }
+.wheel-hint { margin: 6px 0 0; text-align: center; }
+.note-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.note-btn { flex: 1 1 22%; min-width: 72px; min-height: 60px; font-size: 20px; font-weight: 700; }
+.note-btn[aria-pressed="true"] { background: var(--accent); color: #1a1405; border-color: var(--accent); }
+.beat { flex: 0 0 34px; height: 34px; border-radius: 50%; background: #3a3320; }
+.beat.flash { background: var(--accent); box-shadow: 0 0 22px var(--accent); }
+
+.history { list-style: none; padding: 0; margin: 0; }
+.history li { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.history .t { color: var(--muted); }
+.history .no { color: var(--bad); }
+
+/* result bar and tabs */
+.result {
+  position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 6;
+  padding: 14px 16px; border-radius: 14px; background: var(--panel2); border: 1px solid var(--line);
+  font-weight: 600; box-shadow: 0 6px 24px rgba(0,0,0,.5);
+}
+.result.ok { border-color: var(--ok); } .result.bad { border-color: var(--bad); } .result.warn { border-color: var(--warn); }
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; background: var(--panel);
+  border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar button {
+  flex: 1; border: 0; border-radius: 0; min-height: 68px; background: transparent; font-size: 15px; color: var(--muted);
+}
+.tabbar button.active { color: var(--accent); font-weight: 700; box-shadow: inset 0 3px 0 var(--accent); }
+
+dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; width: min(92vw, 380px); }
+dialog::backdrop { background: rgba(0,0,0,.7); }
+dialog .row .big { margin-top: 0; }
+.topline .help-btn { margin-left: auto; }
+.help-btn { flex: 0 0 auto; min-height: 44px; padding: 0 14px; }
+.help-btn.wide { width: 100%; margin-top: 18px; }
+.logo { display: block; width: 140px; height: auto; margin: 0 0 18px; }
+.logo.small-logo { width: 96px; }
+.brand { margin: 32px 0 0; text-align: center; }
+.brand .logo { margin: 0 auto 8px; }
+.help-email { font-size: 20px; font-weight: 700; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+
+/* demo mode */
+.demo-ribbon {
+  position: sticky; top: 0; z-index: 8; background: #5b3fb0; color: #fff; text-align: center;
+  font-size: 13px; line-height: 1.3; padding: 6px 10px;
+}
+.demo-ribbon strong { background: #fff; color: #5b3fb0; border-radius: 6px; padding: 1px 7px; margin-right: 6px; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
+body.demo .topbar { top: var(--ribbon-h, 30px); }
+.demo-tag { display: inline-block; font-size: 12px; color: #cdbdff; border: 1px solid #5b3fb0; border-radius: 8px; padding: 1px 8px; margin-bottom: 6px; }
+.stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 8px 8px 4px; margin: 10px 0 6px; }
+.stage svg { display: block; width: 100%; height: auto; }
+.stage-edge { fill: var(--panel2); stroke: var(--line); }
+.stage-lbl { fill: var(--muted); font-size: 9.5px; }
+.stage-lbl.side { text-anchor: middle; }
+.stage-lbl.mid { text-anchor: middle; font-size: 8.5px; }
+.stage-fx { fill: var(--accent); font-size: 8.5px; }
+.stage-fix { stroke: #3a4054; stroke-width: 0.8; }
+@media (max-width: 400px) {
+  .lock-switch { font-size: 15px; padding-right: 12px; gap: 8px; }
+  .lock-switch .knob { width: 34px; height: 34px; }
+}
+
+.notice { position: fixed; inset: 0; z-index: 50; overflow-y: auto; background: var(--bg); color: var(--text);
+  padding: 48px 20px 32px; max-width: 520px; margin: 0 auto; }
+.notice[hidden] { display: none; }
+.notice ul { padding-left: 20px; line-height: 1.5; }
+.notice li { margin-bottom: 10px; }
+
+/* 3D venue view (demo, D-029) */
+.venue canvas { display: block; border-radius: 10px; touch-action: pan-y; cursor: grab; }
+.venue-cap { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); padding: 6px 2px 2px; }
+.venue-reset { min-height: 36px; font-size: 13px; padding: 0 10px; flex: 0 0 auto; }
+
+/* effects: sections, directions, running (D-035) */
+.fx-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fx-head h2 { margin-bottom: 6px; }
+.stop-btn { flex: 0 0 auto; min-height: 40px; font-size: 14px; padding: 0 12px; }
+.dir-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+.dir-btn { min-height: 44px; font-size: 14px; padding: 0 12px; flex: 1 1 auto; }
+.dir-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.card.running { border-color: var(--accent); }
+.run-tag { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--accent-text); background: var(--accent); border-radius: 8px; padding: 1px 8px; vertical-align: middle; }
+/* lights in the scene (D-035) */
+.lg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lg-head h3 { margin: 0; }
+.group-switch { min-height: 44px; min-width: 112px; font-size: 14px; font-weight: 700; }
+.group-switch.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { min-height: 44px; min-width: 52px; padding: 0 8px; font-size: 14px; color: var(--muted); }
+.chip.on { color: var(--text); border-color: var(--accent); }
+.stage.tappable { outline: 2px dashed var(--line); outline-offset: 2px; }
+.stage.tappable .stage-fix { cursor: pointer; }
+/* six tabs fit a 320-375 px phone (D-035) */
+.tabbar button { flex: 1 1 0; min-width: 0; padding: 0 2px; font-size: 14px; }
+@media (max-width: 360px) { .tabbar button { font-size: 13px; } }
+/* Effects: Color / Movement switch and card label (D-035) */
+.seg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 12px 0 4px; }
+.seg-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 64px; font-weight: 700; }
+.seg-btn small { font-weight: 400; font-size: 12px; color: var(--muted); }
+.seg-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.seg-btn[aria-pressed="true"] small { color: var(--accent-text); }
+.fx-kind { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 1px 8px; margin: 0 6px 6px 0; border: 1px solid var(--line); }
+.fx-kind.color { color: #ffd08a; border-color: #7a5a20; }
+.fx-kind.movement { color: #9fd0ff; border-color: #2f5a86; }
+.fx-kind.intensity { color: #f2f2f2; border-color: #5a5f6e; }
+/* colors for the color effect */
+.fx-colours { padding: 10px 12px; }
+.fx-tray { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 8px 0; }
+.fx-slot { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-height: 64px; padding: 6px; background: var(--panel2); }
+.fx-slot i { display: block; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,.18); }
+.fx-slot small { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
+.fx-quick { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+.fx-sw { min-height: 44px; padding: 5px; background: var(--panel2); }
+.fx-sw i { display: block; height: 100%; min-height: 32px; border-radius: 6px; border: 1px solid rgba(255,255,255,.18); }
+/* groups for the next effect (D-038) */
+.fx-groups { padding: 10px 12px; }
+.area-lbl { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 0; }
+.chip.grp { min-width: 0; padding: 0 12px; }
+.chip.grp.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.area-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.area-head .area-lbl { margin: 0; }
+.area-all { min-height: 36px; font-size: 13px; padding: 0 10px; }
+.area-btns { display: flex; gap: 6px; }
+.lights-area h2 { margin: 18px 0 6px; }
+
+</style>
+</head>
+<body>
+
+<div id="demo-ribbon" class="demo-ribbon demo-only" hidden><strong>Demo</strong> Simulated console. Nothing here controls real lights.</div>
+
+<!-- Sign in -->
+<main id="login-view" class="login" hidden>
+  <img src="data:image/png;base64,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" class="logo" width="140" height="121" alt="S+S Productions logo">
+  <h1>Lighting Control</h1>
+  <p class="muted">Sign in to change the looks on your console.</p>
+  <div class="demo-only" hidden>
+    <button type="button" id="demo-start" class="big primary">Try the demo</button>
+    <p class="muted">No password needed. The Service Lock PIN for the demo is <strong>1234</strong>.</p>
+    <p id="demo-login-msg" class="msg" role="alert"></p>
+  </div>
+  <form id="login-form" class="live-only" autocomplete="on">
+    <label for="login-user">Name</label>
+    <input id="login-user" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+    <label for="login-pass">Password</label>
+    <input id="login-pass" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="big primary" id="login-btn">Sign in</button>
+    <p id="login-msg" class="msg" role="alert"></p>
+  </form>
+  <p class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</p>
+  <button type="button" class="small-btn help-btn wide">Help</button>
+</main>
+
+<!-- First sign-in notice (D-022): shown until the user taps "I understand" -->
+<main id="notice-view" class="notice" hidden>
+  <img src="data:image/png;base64,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" class="logo small-logo" width="96" height="83" alt="S+S Productions logo">
+  <h1 id="notice-heading">About your lighting assistant</h1>
+  <p>Your lighting assistant is an AI system run by S&amp;S Production Services, LLC. It turns what you ask for into cues and looks on your console.</p>
+  <ul>
+    <li>It can misunderstand a request or get a look wrong. Check every change before it's used in a service.</li>
+    <li>Use Service Lock during services; the assistant can't change the console while it's on.</li>
+    <li id="notice-help">The S&amp;S team set it up and support it. Tap Help any time to reach a person.</li>
+  </ul>
+  <button type="button" id="notice-ok" class="big primary">I understand</button>
+  <p id="notice-msg" class="msg" role="alert"></p>
+  <button type="button" class="small-btn help-btn wide">Help</button>
+</main>
+
+<!-- The app -->
+<div id="app-view" hidden>
+  <header class="topbar">
+    <div class="topline">
+      <div class="who">
+        <span id="dot" class="dot" title="Console status"></span>
+        <span id="church-name" class="church"></span>
+      </div>
+      <button type="button" class="small-btn help-btn">Help</button>
+      <button id="lock-switch" class="lock-switch" type="button" aria-pressed="false">
+        <span class="knob"></span><span id="lock-text">Service Lock</span>
+      </button>
+    </div>
+    <div class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</div>
+    <div id="dot-text" class="muted small"></div>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main id="content">
+    <!-- Lights in the scene (D-035; shown only when the server offers it) -->
+    <section id="tab-lights" class="tab" hidden>
+      <p class="intro">Choose which lights are part of the scene you're building. A light that's left out isn't turned off: it keeps doing whatever it is doing, and Colors and Effects don't touch it. Tap a light in the picture, or use the switches below. Hold Default to save the current choice as your default.</p>
+      <div id="lights-list"></div>
+    </section>
+
+    <!-- Colors -->
+    <section id="tab-colours" class="tab" hidden>
+      <p class="intro">Pick a set or choose 2 or 3 colors. We place them on the stage for you. Front light isn't changed.</p>
+
+      <h2>Suggested color sets</h2>
+      <p id="sets-hint" class="muted small">Suggestions from S&amp;S that work well together. Tap one to send it.</p>
+      <div id="set-list" class="sets"></div>
+
+      <h2>Pick your own</h2>
+      <p class="muted small">Choose 2 or 3 colors. The first one is the main color.</p>
+      <div id="pick-tray" class="tray" aria-label="Your colors"></div>
+      <div id="swatch-grid" class="swatches" aria-label="Stage colors"></div>
+      <details class="mix">
+        <summary>Mix any color</summary>
+        <div class="mixer">
+          <div id="mix-preview" class="mix-preview"></div>
+          <div class="mix-sliders">
+            <label>Color <input id="mix-h" type="range" min="0" max="360" value="30" class="hue"></label>
+            <label>Strength <input id="mix-s" type="range" min="0" max="100" value="100"></label>
+            <label>Brightness <input id="mix-l" type="range" min="5" max="100" value="55"></label>
+          </div>
+        </div>
+        <button id="mix-add" type="button" class="big">Add this color</button>
+      </details>
+      <button id="pick-send" type="button" class="big primary change">Send these colors</button>
+      <button id="pick-clear" type="button" class="small-btn">Clear</button>
+      <pre id="placement" class="placement" hidden></pre>
+    </section>
+
+    <!-- Effects -->
+    <section id="tab-effects" class="tab" hidden>
+      <p class="intro">Pick an effect. We choose which lights run it.</p>
+      <div id="effects-top"></div>
+      <div id="effects-list"></div>
+    </section>
+
+    <!-- Tempo -->
+    <section id="tab-tempo" class="tab" hidden>
+      <div class="row">
+        <label for="tempo-effect">Effect that follows the tempo</label>
+        <select id="tempo-effect"></select>
+      </div>
+      <p id="tempo-note" class="muted"></p>
+      <button id="tap" type="button" class="tap">TAP</button>
+      <div class="bpm-row">
+        <!-- Drag the wheel left or right to change the tempo; arrow keys step by 1 -->
+        <div id="bpm-wheel" class="bpm-wheel" role="slider" tabindex="0" aria-label="Tempo wheel: drag left or right"
+             aria-valuemin="40" aria-valuemax="200" aria-valuenow="120">
+          <div class="bpm-box">
+            <input id="bpm" type="number" inputmode="numeric" min="40" max="200" value="120" aria-label="Tempo in beats per minute">
+            <span class="small">beats per minute</span>
+          </div>
+        </div>
+        <div id="beat" class="beat" aria-hidden="true"></div>
+      </div>
+      <p class="muted small wheel-hint">Drag the wheel left or right to change the tempo.</p>
+      <div id="note-row" class="note-row" role="group" aria-label="Note value"></div>
+      <p id="note-line" class="muted small"></p>
+      <p id="tempo-live" class="muted small" role="status"></p>
+    </section>
+
+    <!-- Chat (placeholder) -->
+    <section id="tab-chat" class="tab" hidden>
+      <h2>Chat</h2>
+      <div class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</div>
+      <p>Chat is coming. For now, use the Colors, Effects and Tempo tabs to change a look.</p>
+    </section>
+
+    <!-- More -->
+    <section id="tab-more" class="tab" hidden>
+      <h2>Usage</h2>
+      <p id="usage-text"></p>
+      <div id="unlock-note" class="muted"></div>
+      <div id="schedule-box" hidden>
+        <h2>Lock schedule</h2>
+        <p id="schedule-text" class="muted"></p>
+      </div>
+      <div id="history-box" hidden>
+        <h2>History</h2>
+        <ul id="history-list" class="history"></ul>
+      </div>
+      <h2>Account</h2>
+      <p id="me-text" class="muted"></p>
+      <button id="signout" type="button" class="big">Sign out</button>
+      <div class="brand"><img src="data:image/png;base64,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" class="logo small-logo" width="96" height="83" alt="S+S Productions logo">
+        <p class="muted small">Set up and supported by S&amp;S Production Services, LLC</p></div>
+    </section>
+  </main>
+
+  <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+
+  <nav class="tabbar" aria-label="Sections">
+    <button type="button" data-tab="lights" hidden>Lights</button>
+    <button type="button" data-tab="colours">Colors</button>
+    <button type="button" data-tab="effects">Effects</button>
+    <button type="button" data-tab="tempo">Tempo</button>
+    <button type="button" data-tab="chat">Chat</button>
+    <button type="button" data-tab="more">More</button>
+  </nav>
+</div>
+
+<!-- Help: how to reach a person at S&S. The address is in this one place (D-030). -->
+<dialog id="help-dialog">
+  <form method="dialog">
+    <h2 id="help-title">Help</h2>
+    <p id="help-lead">To reach a person at S&amp;S Production Services, LLC, email:</p>
+    <p class="help-email"><span id="help-email">events@sspro.co</span></p>
+    <p id="help-tail" class="muted small">Say which church you're with and what you need.</p>
+    <p id="help-msg" class="muted small" role="status"></p>
+    <div class="row">
+      <button type="button" id="help-copy" class="big">Copy address</button>
+      <button type="submit" class="big primary">Close</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Unlock PIN -->
+<dialog id="pin-dialog">
+  <form method="dialog" id="pin-form">
+    <h2>Unlock for changes</h2>
+    <p class="muted">Enter the Service Lock PIN.</p>
+    <p class="muted demo-only" hidden>Demo PIN: <strong>1234</strong></p>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN">
+    <p id="pin-msg" class="msg" role="alert"></p>
+    <div class="row">
+      <button type="button" id="pin-cancel" class="big">Cancel</button>
+      <button type="submit" id="pin-ok" class="big primary">Unlock</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+window.TIER1_DEMO = true;
+window.DEMO_EFFECTS = [{"name": "Fan in", "what_you_see": "Lights come on one after another from the outside of the rig toward the center (outside-in).", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Fan out", "what_you_see": "Lights come on one after another from the center toward the outside of the rig (inside-out).", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Wave", "what_you_see": "One movement or color change rolls across the movers in order: outside-in, inside-out, left to right, right to left", "when_to_use_it": "Builds, choruses, transitions"}, {"name": "No-fade chase", "what_you_see": "Lights snap on and off one at a time, in sequence or random order, with no fades: a flash that is not a strobe", "when_to_use_it": "Hits and accents a listener clearly hears"}, {"name": "Bump", "what_you_see": "One instant full-intensity hit on a subset, then back", "when_to_use_it": "A single drum hit or stop"}, {"name": "Evolving full rig", "what_you_see": "Every light on, but the look keeps changing at least every 1-2 bars (positions, color, subsets, fans)", "when_to_use_it": "Only the top 2-3 moments and the last chorus"}, {"name": "Silhouette intro", "what_you_see": "Performers seen only as shapes against back and background light; no front light", "when_to_use_it": "Intros before the singer sings"}, {"name": "Reset look", "what_you_see": "A plain, still, simple look that rests the eyes", "when_to_use_it": "After a big section, before a build"}];
+window.DEMO_COLOUR_SETS = [{"name": "Blue + Amber", "colours": ["#2f6bff", "#ffb000"], "mood": "Everyday worship: warm and cool in balance"}, {"name": "Deep Blue + Lavender", "colours": ["#1f3fbf", "#a58cff"], "mood": "Reflective moments and prayer"}, {"name": "Soft Blue + Teal", "colours": ["#4d8dff", "#1fb5b0"], "mood": "Calm: communion and slower songs"}, {"name": "Lavender + Pink", "colours": ["#b79cff", "#ff8fc8"], "mood": "Gentle worship"}, {"name": "Amber + Gold", "colours": ["#ff9a1f", "#ffd060"], "mood": "Celebration and thanksgiving"}, {"name": "Amber + Magenta", "colours": ["#ffa020", "#e0208c"], "mood": "High-energy praise"}, {"name": "Amber + Red", "colours": ["#ffa020", "#e02020"], "mood": "Pentecost and passion"}, {"name": "Warm White + Deep Blue", "colours": ["#ffe2b0", "#2040c0"], "mood": "Christmas Eve and Advent"}, {"name": "Violet + Amber", "colours": ["#7a3fd0", "#ffb040"], "mood": "Lent and Advent"}, {"name": "Gold + White", "colours": ["#ffc840", "#ffffff"], "mood": "Easter"}, {"name": "Blue + Cyan + White", "colours": ["#3060ff", "#20c8e8", "#ffffff"], "mood": "Baptism"}, {"name": "Blue + Magenta + UV", "colours": ["#3050ff", "#e0208c", "#8a2be2"], "mood": "Youth and big moments"}];
+window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one bar of 4/4", "multiplier": 0.25}, {"name": "1/2", "label": "1/2", "spoken": "half note", "multiplier": 0.5}, {"name": "1/4", "label": "1/4", "spoken": "quarter note, the beat", "multiplier": 1.0}, {"name": "1/8.", "label": "Dotted 1/8", "spoken": "dotted eighth", "multiplier": 1.3333333333333333}, {"name": "1/8", "label": "1/8", "spoken": "eighth note", "multiplier": 2.0}, {"name": "1/8T", "label": "1/8T", "spoken": "eighth note triplet", "multiplier": 3.0}, {"name": "1/16", "label": "1/16", "spoken": "sixteenth note", "multiplier": 4.0}];
+window.DEMO_CHURCH = {"name":"Wave Norfolk","groups":[{"number":"1","label":"Stage Movers","role":"air","takes_colour":true,"moves":true,"area":"stage","channels":[[301,302]]},{"number":"2","label":"Moving Bars","role":"accent","takes_colour":true,"moves":true,"area":"stage","channels":[[201,209]]},{"number":"3","label":"Wall Pixel Bars","role":"accent","takes_colour":true,"moves":false,"area":"stage","channels":[[401,424]]},{"number":"4","label":"Front Movers","role":"air","takes_colour":true,"moves":true,"area":"front","channels":[[303,304]]},{"number":"5","label":"Side Wash","role":"side","takes_colour":true,"moves":false,"area":"front","channels":[[21,24]]},{"number":"6","label":"Front Light","role":"front","takes_colour":false,"moves":false,"area":"front","channels":[[1,8]]},{"number":"7","label":"House Lights","role":"other","takes_colour":false,"moves":false,"area":"house","channels":[[101,115]]}],"off":[[1,8]]};
+window.DEMO_RIG = {"schema":1,"church":"Wave Norfolk","source":{"file":"Wave Norfolk_2026-10-22_pantilt.mvr","sha256":"f03391f9907a18a2d5c00494e93d8830d533648c88eee95a56394393678ec72f","mvr_version":"1.6","provider":"Vectorworks 32.0.0.882075"},"units":"metres, Z up, MVR axes","room":[{"name":"Floor","class":"Shell-Floor","kind":"floor","min":[-0.305,-0.305,-0.152],"max":[15.215,22.784,0.0]},{"name":"Wall-North","class":"Shell-Walls","kind":"wall","min":[-0.305,22.479,0.0],"max":[15.215,22.784,4.14]},{"name":"Wall-South","class":"Shell-Walls","kind":"wall","min":[-0.305,-0.305,0.0],"max":[15.215,0.0,4.14]},{"name":"Wall-East","class":"Shell-Walls","kind":"wall","min":[14.91,0.0,0.0],"max":[15.215,22.479,4.14]},{"name":"Wall-West","class":"Shell-Walls","kind":"wall","min":[-0.305,0.0,0.0],"max":[0.0,22.479,4.14]},{"name":"Ceiling","class":"Shell-Ceiling","kind":"ceiling","min":[0.0,0.0,4.089],"max":[14.91,22.479,4.14]},{"name":"Platform","class":"Stage-Platform","kind":"stage","min":[11.252,6.477,0.0],"max":[14.91,16.535,0.483]},{"name":"Platform Stair Step 1","class":"Stage-Platform","kind":"stage","min":[13.691,16.942,0.0],"max":[14.91,17.145,0.161]},{"name":"Platform Stair Step 2","class":"Stage-Platform","kind":"stage","min":[13.691,16.739,0.0],"max":[14.91,16.942,0.322]},{"name":"Platform Stair Step 3","class":"Stage-Platform","kind":"stage","min":[13.691,16.535,0.0],"max":[14.91,16.739,0.483]},{"name":"FOH Booth","class":"FOH-Booth","kind":"booth","min":[0.279,9.881,0.0],"max":[1.803,13.64,0.457]},{"name":"FOH Booth Knee Wall East","class":"FOH-Booth","kind":"booth","min":[1.702,9.881,0.457],"max":[1.803,13.64,1.524]},{"name":"FOH Booth Knee Wall North","class":"FOH-Booth","kind":"booth","min":[0.279,13.538,0.457],"max":[1.803,13.64,1.524]},{"name":"FOH Booth Knee Wall South","class":"FOH-Booth","kind":"booth","min":[0.279,9.881,0.457],"max":[1.803,9.982,1.524]},{"name":"Platform Nosing","class":"Stage-Platform-Trim","kind":"stage","min":[11.252,7.239,0.444],"max":[11.29,15.773,0.485]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.0,4.051],"max":[0.019,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.591,0.0,4.051],"max":[0.629,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[1.2,0.0,4.051],"max":[1.238,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[1.81,0.0,4.051],"max":[1.848,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[2.419,0.0,4.051],"max":[2.457,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[3.029,0.0,4.051],"max":[3.067,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[3.639,0.0,4.051],"max":[3.677,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[4.248,0.0,4.051],"max":[4.286,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[4.858,0.0,4.051],"max":[4.896,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[5.467,0.0,4.051],"max":[5.505,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[6.077,0.0,4.051],"max":[6.115,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[6.687,0.0,4.051],"max":[6.725,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[7.296,0.0,4.051],"max":[7.334,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[7.906,0.0,4.051],"max":[7.944,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[8.515,0.0,4.051],"max":[8.553,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[9.125,0.0,4.051],"max":[9.163,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[9.735,0.0,4.051],"max":[9.773,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[10.344,0.0,4.051],"max":[10.382,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[10.954,0.0,4.051],"max":[10.992,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[11.563,0.0,4.051],"max":[11.601,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[12.173,0.0,4.051],"max":[12.211,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[12.783,0.0,4.051],"max":[12.821,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[13.392,0.0,4.051],"max":[13.43,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[14.002,0.0,4.051],"max":[14.04,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[14.611,0.0,4.051],"max":[14.649,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.0,4.051],"max":[14.91,0.019,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.591,4.051],"max":[14.91,0.629,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,1.2,4.051],"max":[14.91,1.238,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,1.81,4.051],"max":[14.91,1.848,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,2.419,4.051],"max":[14.91,2.457,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,3.029,4.051],"max":[14.91,3.067,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,3.639,4.051],"max":[14.91,3.677,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,4.248,4.051],"max":[14.91,4.286,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,4.858,4.051],"max":[14.91,4.896,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,5.467,4.051],"max":[14.91,5.505,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,6.077,4.051],"max":[14.91,6.115,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,6.687,4.051],"max":[14.91,6.725,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,7.296,4.051],"max":[14.91,7.334,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,7.906,4.051],"max":[14.91,7.944,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,8.515,4.051],"max":[14.91,8.553,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,9.125,4.051],"max":[14.91,9.163,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,9.735,4.051],"max":[14.91,9.773,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,10.344,4.051],"max":[14.91,10.382,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,10.954,4.051],"max":[14.91,10.992,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,11.563,4.051],"max":[14.91,11.601,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,12.173,4.051],"max":[14.91,12.211,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,12.783,4.051],"max":[14.91,12.821,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,13.392,4.051],"max":[14.91,13.43,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,14.002,4.051],"max":[14.91,14.04,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,14.611,4.051],"max":[14.91,14.649,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,15.221,4.051],"max":[14.91,15.259,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,15.831,4.051],"max":[14.91,15.869,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,16.44,4.051],"max":[14.91,16.478,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,17.05,4.051],"max":[14.91,17.088,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,17.659,4.051],"max":[14.91,17.697,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,18.269,4.051],"max":[14.91,18.307,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,18.879,4.051],"max":[14.91,18.917,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,19.488,4.051],"max":[14.91,19.526,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,20.098,4.051],"max":[14.91,20.136,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,20.707,4.051],"max":[14.91,20.745,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,21.317,4.051],"max":[14.91,21.355,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,21.927,4.051],"max":[14.91,21.965,4.089]},{"name":"Screen Frame South","class":"Video-Screen","kind":"screen","min":[14.808,9.22,1.092],"max":[14.91,9.271,3.658]},{"name":"Screen Frame North","class":"Video-Screen","kind":"screen","min":[14.808,13.741,1.092],"max":[14.91,13.792,3.658]},{"name":"Screen Frame Top","class":"Video-Screen","kind":"screen","min":[14.808,9.271,3.607],"max":[14.91,13.741,3.658]},{"name":"Screen Frame Bottom","class":"Video-Screen","kind":"screen","min":[14.808,9.271,1.092],"max":[14.91,13.741,1.143]},{"name":"Screen","class":"Video-Screen","kind":"screen","min":[14.808,9.271,1.143],"max":[14.91,13.741,3.607]},{"name":"Monitor North Frame W","class":"Video-Monitors","kind":"screen","min":[14.834,17.729,1.664],"max":[14.91,17.755,2.299]},{"name":"Monitor North Frame E","class":"Video-Monitors","kind":"screen","min":[14.834,18.821,1.664],"max":[14.91,18.847,2.299]},{"name":"Monitor North Frame Top","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,2.273],"max":[14.91,18.821,2.299]},{"name":"Monitor North Frame Bottom","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,1.664],"max":[14.91,18.821,1.689]},{"name":"Monitor North","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,1.689],"max":[14.91,18.821,2.273]},{"name":"Monitor South Frame W","class":"Video-Monitors","kind":"screen","min":[14.834,4.166,1.664],"max":[14.91,4.191,2.299]},{"name":"Monitor South Frame E","class":"Video-Monitors","kind":"screen","min":[14.834,5.258,1.664],"max":[14.91,5.283,2.299]},{"name":"Monitor South Frame Top","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,2.273],"max":[14.91,5.258,2.299]},{"name":"Monitor South Frame Bottom","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,1.664],"max":[14.91,5.258,1.689]},{"name":"Monitor South","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,1.689],"max":[14.91,5.258,2.273]},{"name":"Column 1 (north)","class":"Structure-Columns","kind":"column","min":[7.417,15.875,0.0],"max":[7.569,16.027,4.089]},{"name":"Column 2","class":"Structure-Columns","kind":"column","min":[7.417,10.795,0.0],"max":[7.569,10.947,4.089]},{"name":"Column 3 (south)","class":"Structure-Columns","kind":"column","min":[7.417,5.385,0.0],"max":[7.569,5.537,4.089]},{"name":"Mid-House Pipe","class":"Lighting-Positions","kind":"pipe","min":[7.469,3.81,3.71],"max":[7.517,18.669,3.758]},{"name":"Speaker North (model unknown)","class":"Audio-Speakers","kind":"speaker","min":[13.826,16.891,2.94],"max":[14.368,17.247,3.811]},{"name":"Speaker South (model unknown)","class":"Audio-Speakers","kind":"speaker","min":[13.826,5.766,2.94],"max":[14.368,6.121,3.811]}],"fixtures":[{"channel":1,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,16.764,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":2,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,14.554,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":3,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,12.344,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":4,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,10.135,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":5,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,7.925,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":6,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,5.715,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":7,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"House Side Pipe","class":"Lighting-Devices","xyz":[4.572,13.208,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":8,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"House Side Pipe","class":"Lighting-Devices","xyz":[4.572,9.271,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":11,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,7.112,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":12,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,8.636,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":13,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,10.16,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":14,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,11.684,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":15,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,13.208,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":16,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,14.732,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":17,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,16.256,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":18,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,17.78,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":21,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[8.413,19.208,3.708],"aim":[0.6566,-0.7209,-0.2217],"axis":[-0.7393,-0.6734,0.0],"unlocated":false,"role":"side"},{"channel":22,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[7.335,18.13,3.708],"aim":[0.7292,-0.6384,-0.2463],"axis":[-0.6587,-0.7524,0.0],"unlocated":false,"role":"side"},{"channel":23,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[7.335,4.349,3.708],"aim":[0.7292,0.6384,-0.2463],"axis":[0.6587,-0.7524,0.0],"unlocated":false,"role":"side"},{"channel":24,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[8.413,3.271,3.708],"aim":[0.6566,0.7209,-0.2217],"axis":[0.7393,-0.6734,0.0],"unlocated":false,"role":"side"},{"channel":31,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,1.016,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":32,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,2.54,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":33,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,4.064,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":34,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,5.588,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":43,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[19.05,8.636,0.253],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":true,"role":"other"},{"channel":101,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,19.304,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":102,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,17.0,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":103,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,14.696,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":104,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,12.392,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":105,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,10.087,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":106,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,7.783,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":107,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,5.479,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":108,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,3.175,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":109,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,17.78,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":110,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,15.727,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":111,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,13.674,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":112,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,11.62,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":113,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,9.567,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":114,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,7.514,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":115,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,5.461,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":201,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,15.977,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":202,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,14.859,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":203,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,13.741,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":204,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,12.624,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":205,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,11.506,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":206,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,10.389,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":207,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,9.271,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":208,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,8.153,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":209,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,7.036,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":301,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"Upstage Corner SR (house-left)","class":"Lighting-Devices","xyz":[14.605,17.78,4.013],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":302,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"Upstage Corner SL (house-right)","class":"Lighting-Devices","xyz":[14.605,5.207,4.013],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":303,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[7.874,18.669,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[-1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":304,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[7.874,3.81,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[-1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":401,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":402,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":403,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":404,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":405,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":406,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":407,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":408,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":409,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":410,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":411,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":412,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":413,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":414,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":415,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":416,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":417,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":418,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":419,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":420,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":421,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":422,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":423,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":424,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"}]};
+window.DEMO_VISUALISER = "venue";
+
+</script>
+<script>
+"use strict";
+// Demo mode: a simulated church and console that run entirely in this page. app.js sends every
+// /api/ call here instead of to the hub when demo mode is on (?demo=1, or the built demo page).
+// Nothing here talks to a network or to a real console. State resets when the page reloads.
+//
+// The mock keeps the hub's rules: Service Lock (manual, PIN, five wrong PINs lock unlocking for
+// five minutes), every change refused while locked, taps are free (usage stays 0), and a history
+// list. It also drives the stage preview (DemoStage at the bottom of this file).
+//
+// The demo also tries out what the hub does not do yet (D-035): lights left out of the scene, color
+// sets that change on each tap, separate color and movement effects with a direction, and Clear
+// effects. /api/me "features" tells app.js to show those controls; the hub sends no features, so the
+// real app does not show them until each one is built and checked on offline Eos.
+(function () {
+  const DEMO_PIN = "1234";
+  const LIMIT = 100;
+  const WRONG_PIN_MAX = 5, WRONG_PIN_LOCKOUT_MS = 5 * 60 * 1000;
+
+  // The endpoints that change the console. The tests check this list against the hub's own POST
+  // routes and against the paths app.js uses, so a new change endpoint cannot be forgotten here.
+  // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
+  const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
+    "/api/effect-size", "/api/tempo"];
+  // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
+  // /api/me lists the matching feature. Service Lock refuses them like any other change.
+  const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
+  const FEATURES = { lights: true, color_variants: true, fx_directions: true, movement_fx: true, clear_fx: true, tempo_all: true };
+
+  // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
+  // take color; the others do. A built demo for another church (tools/build_demo.py --church) replaces
+  // these with window.DEMO_CHURCH: {name, groups: [{number, label, role, takes_colour, moves, channels}], off}.
+  // area: where the group is, for the group picker (stage, front, house).
+  const DEFAULT_GROUPS = [
+    { number: "1", label: "Front Wash", role: "front", area: "front", takes_colour: false, channels: [[1, 8]] },
+    { number: "2", label: "Back Light", role: "back", area: "stage", takes_colour: true, channels: [[11, 18]] },
+    { number: "3", label: "Movers", role: "air", area: "stage", takes_colour: true, moves: true, channels: [[301, 306]] },
+    { number: "4", label: "Stage Pars", role: "accent", area: "stage", takes_colour: true, channels: [[21, 28]] },
+    { number: "5", label: "Side Light", role: "side", area: "front", takes_colour: true, channels: [[31, 36]] },
+  ];
+  const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS, off: [] };
+  const GROUPS = CHURCH.groups;
+  const WARM_WHITE = "#ffe2b0";
+  // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
+  // page (tools/build_demo.py) replaces this with the real list.
+  const FALLBACK_COLOUR_SETS = [
+    { name: "Blue + Amber", colours: ["#2F6BFF", "#FFB000"], mood: "Everyday worship: warm and cool in balance" },
+    { name: "Blue + Cyan + White", colours: ["#3060FF", "#20C8E8", "#FFFFFF"], mood: "Baptism" },
+  ];
+  const PALETTES = [
+    ["Red", "#e0262d"], ["Blue", "#2447e0"], ["Amber", "#ffa21a"], ["Lavender", "#a58cf0"],
+    ["Teal", "#14b8a6"], ["Warm White", "#ffd9a3"], ["Cool White", "#d6e8ff"], ["Magenta", "#e0239f"],
+    ["Congo Blue", "#2a1a8f"], ["Green", "#1fb34a"], ["Pink", "#ff8fb8"], ["Orange", "#ff6a13"],
+  ].map(([label, colour], i) => ({ number: String(i + 1), label, colour }));
+
+  // Used only when the page was not built with the glossary (a dev preview served by the hub).
+  // The built demo page (tools/build_demo.py) replaces this with the real Effects Glossary rows.
+  const FALLBACK_EFFECTS = [
+    { name: "Fan in", what_you_see: "Lights come on one after another from the outside in.", when_to_use_it: "Any intensity change" },
+    { name: "Fan out", what_you_see: "Lights come on one after another from the inside out.", when_to_use_it: "Any intensity change" },
+    { name: "Wave", what_you_see: "One movement or color change rolls across the movers in order.", when_to_use_it: "Builds, choruses, transitions" },
+    { name: "No-fade chase", what_you_see: "Lights snap on and off one at a time, in sequence, with no fades.", when_to_use_it: "Hits and accents a listener clearly hears" },
+  ];
+
+  // Directions an effect can run in, as the house sees the stage.
+  const DIRECTIONS = [["ltr", "Left to right"], ["rtl", "Right to left"], ["out-in", "Outside in"],
+    ["in-out", "Inside out"], ["random", "Random"]];
+  const ALL_DIRS = DIRECTIONS.map((d) => d[0]);
+  // What each glossary name does in the demo, and its type (three types, color, intensity
+  // and movement, each applied on its own). Color and intensity effects run on the lights that take color;
+  // movement effects only on lights that move. Fan in and Fan out are fixed directions (fan in = outside in,
+  // fan out = inside out). A glossary name not listed is an intensity pulse.
+  // Fan in and Fan out are in two types: an intensity fan, and a color fan where the next color rolls
+  // across the lights in the same order.
+  const GLOSSARY_FX = {
+    "fan in": [{ category: "intensity", kind: "fan", fixed: "out-in" },
+      { category: "color", kind: "cfan", fixed: "out-in", what_you_see: "The next color rolls across the lights from the outside in." }],
+    "fan out": [{ category: "intensity", kind: "fan", fixed: "in-out" },
+      { category: "color", kind: "cfan", fixed: "in-out", what_you_see: "The next color rolls across the lights from the inside out." }],
+    "no-fade chase": { category: "intensity", kind: "chase", dirs: ALL_DIRS },
+    "bump": { category: "intensity", kind: "bump" },
+    "silhouette intro": { category: "intensity", kind: "dim" },
+    "reset look": { category: "intensity", kind: "still" },
+    "wave": { category: "color", kind: "cwave", dirs: ALL_DIRS },
+    "evolving full rig": { category: "color", kind: "evolve" },
+  };
+  const CATEGORIES = ["color", "intensity", "movement"];
+  // Movement effects. "Wave" is the glossary's Wave in its movement form; "Circle" is a name proposed in
+  // the demo for the console's stock circle (Eos effect 901), not yet in the glossary.
+  const MOVEMENT_FX = [
+    { name: "Wave", kind: "mwave", dirs: ALL_DIRS, what_you_see: "The movers swing one after another, so the movement rolls across the rig", when_to_use_it: "Builds, choruses, transitions" },
+    { name: "Circle", kind: "circle", dirs: ALL_DIRS, proposed: true, what_you_see: "The movers trace circles; with a direction they follow one another", when_to_use_it: "Choruses and anything above a verse" },
+  ];
+  // Eos BPM per musical tempo, as in the hub's effects.json. Only these have been "measured"; every
+  // other effect says "not measured yet", like the real app.
+  const TEMPO_FACTOR = { "movement:wave": 1.0, "movement:circle": 1.0, "color:wave": 1.0 };   // verified for effect 901
+  // Note values (D-028). This is a copy of hub/tempo.py NOTES; the build replaces it with the hub's table
+  // (window.DEMO_NOTES), and tests/test_demo.py checks that the two are identical so they cannot drift.
+  const FALLBACK_NOTES = [
+    { name: "1/1", label: "1/1", spoken: "whole note, one bar of 4/4", multiplier: 0.25 },
+    { name: "1/2", label: "1/2", spoken: "half note", multiplier: 0.5 },
+    { name: "1/4", label: "1/4", spoken: "quarter note, the beat", multiplier: 1 },
+    { name: "1/8.", label: "Dotted 1/8", spoken: "dotted eighth", multiplier: 4 / 3 },
+    { name: "1/8", label: "1/8", spoken: "eighth note", multiplier: 2 },
+    { name: "1/8T", label: "1/8T", spoken: "eighth note triplet", multiplier: 3 },
+    { name: "1/16", label: "1/16", spoken: "sixteenth note", multiplier: 4 },
+  ];
+  const NOTES = (typeof window !== "undefined" && window.DEMO_NOTES) || FALLBACK_NOTES;
+  const DEFAULT_NOTE = "1/4";
+  const roundEven = (x) => { const f = Math.floor(x), d = x - f; return d < 0.5 ? f : d > 0.5 ? f + 1 : (f % 2 === 0 ? f : f + 1); };   // as Python's round()
+  const TEMPO_MIN = 40, TEMPO_MAX = 200, EOS_BPM_MIN = 1, EOS_BPM_MAX = 300;
+
+  const norm = (s) => String(s).split(/\s+/).filter(Boolean).join(" ").toLowerCase();
+  const hexToPct = (hex) => [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 1000 / 255) / 10);
+  const isHex = (v) => typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+  const chanList = (g) => (g.channels || []).flatMap(([a, b]) => Array.from({ length: b - a + 1 }, (_, k) => a + k));
+  const inRanges = (ch, ranges) => (ranges || []).some(([a, b]) => ch >= a && ch <= b);
+
+  // Left to right as the house sees it: by rig position when the page has a rig (the house looks
+  // toward +x, so its left is +y), else by channel number.
+  const RIG = (typeof window !== "undefined" && window.DEMO_RIG) || null;
+  const POS = {};
+  if (RIG) for (const f of RIG.fixtures) POS[f.channel] = f.xyz;
+  const acrossOrder = (chs) => chs.slice().sort((a, b) => (POS[a] && POS[b] ? (POS[b][1] - POS[a][1]) || (POS[b][2] - POS[a][2]) : 0) || a - b);
+
+  // A repeatable 0..1 number for (seed, i).
+  function rand(seed, i) {
+    let h = (seed * 374761393 + i * 668265263) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  }
+  // Where fixture i of n sits in the effect's order, 0 (first) to 1 (last).
+  function orderPos(i, n, dir, seed) {
+    const x = n > 1 ? i / (n - 1) : 0;
+    switch (dir) {
+      case "rtl": return 1 - x;
+      case "out-in": return 1 - Math.abs(2 * x - 1);
+      case "in-out": return Math.abs(2 * x - 1);
+      case "random": return rand(seed, i);
+      default: return x;
+    }
+  }
+
+  // The placement rule v1, the same as hub/colours.py: 1st color to back and air, 2nd to side and
+  // accent, a 3rd to accent (the 2nd stays on side). Roles with no group are skipped. A group that
+  // does not take color is never placed. Returns [[group, "#hex"], ...] in group order.
+  function place(colours, groups) {
+    const slot = { back: 0, air: 0, side: 1, accent: colours.length >= 3 ? 2 : 1 };
+    return groups.filter((g) => g.takes_colour && slot[g.role] !== undefined)
+      .map((g) => [g, colours[slot[g.role]].toLowerCase()]);
+  }
+  // Tapping the same set again changes the mix (D-035): the rule, the colors moved round the groups,
+  // the colors alternating light by light in each group, then a random mix; then back to the rule.
+  function variantsFor(n) {
+    const v = [{ kind: "rule", label: "Main color on the back light and movers" }];
+    for (let r = 1; r < n; r++) v.push({ kind: "rotate", by: r, label: "Colors moved to different groups" });
+    v.push({ kind: "split", label: "Colors alternate light by light" });
+    v.push({ kind: "random", label: "Random mix" });
+    return v;
+  }
+
+  function create(opts) {
+    const now = (opts && opts.now) || (() => Date.now());
+    const fromGlossary = ((typeof window !== "undefined" && window.DEMO_EFFECTS) || FALLBACK_EFFECTS);
+    const mk = (category, e, info) => {
+      const id = category + ":" + norm(e.name);
+      return { id, name: e.name, category, what_you_see: e.what_you_see, when_to_use_it: e.when_to_use_it,
+        status: "Demo", demo: true, kind: info.kind, fixed: info.fixed || null, proposed: !!info.proposed,
+        directions: info.dirs ? DIRECTIONS.filter((d) => info.dirs.indexOf(d[0]) >= 0) : null,
+        tempo_measured: TEMPO_FACTOR[id] !== undefined,
+        eos_bpm_per_tempo: TEMPO_FACTOR[id] === undefined ? null : TEMPO_FACTOR[id] };
+    };
+    const effects = [].concat(...fromGlossary.map((e) => {
+      const infos = [].concat(GLOSSARY_FX[norm(e.name)] || { category: "intensity", kind: "pulse", dirs: ALL_DIRS });
+      return infos.map((info) => mk(info.category, info.what_you_see ? Object.assign({}, e, { what_you_see: info.what_you_see }) : e, info));
+    }))
+      .concat(MOVEMENT_FX.map((m) => {
+        const g = fromGlossary.find((e) => norm(e.name) === norm(m.name));      // the glossary's words when it has the name
+        return mk("movement", Object.assign({}, m, g ? { when_to_use_it: g.when_to_use_it } : {}), m);
+      }));
+    const st = {
+      signedIn: false, noticeAck: false, locked: true, changedBy: null, changedAt: null,
+      wrong: 0, lockedOutUntil: 0, history: [],
+      groups: {}, chan: {}, fx: { color: [], intensity: [], movement: [] }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
+      lastColours: [WARM_WHITE],
+    };
+    const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
+      .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
+    for (const g of GROUPS) {
+      st.groups[g.number] = { rgb: hexToPct(WARM_WHITE), fx: null };
+      for (const ch of chanList(g)) st.chan[ch] = { rgb: hexToPct(WARM_WHITE), on: !inRanges(ch, CHURCH.off), group: g.number };
+    }
+    const listeners = [];
+    const changed = () => listeners.forEach((f) => f(st));
+
+    const iso = () => new Date(now()).toISOString();
+    const lockInfo = () => ({
+      locked: st.locked, reason: st.locked ? "manual" : null, override_until: null,
+      changed_by: st.changedBy, changed_at: st.changedAt,
+    });
+    function log(op, args, allowed, reason) {
+      st.history.push({ ts: iso(), user: "demo", source: "tap", op, args, allowed,
+        reason, outcome: allowed ? "done" : "refused" });
+    }
+    const ok = (data) => ({ status: 200, ok: true, data });
+    const fail = (status, detail) => ({ status, ok: false, data: { detail } });
+    const refused = (reason) => ok({ allowed: false, reason, outcome: "refused" });
+    const confirmed = (detail, extra) => ok(Object.assign({ allowed: true, reason: "", outcome: "confirmed", detail }, extra || {}));
+
+    const notForColour = (g) => (g.takes_colour ? null : g.label + " is not changed by color looks");
+    const lit = (g) => chanList(g).filter((ch) => st.chan[ch].on);          // the group's lights in the scene
+
+    function findEffect(body) {
+      return effects.find((e) => e.id === body.category + ":" + norm(body.effect_name)) ||
+        (body.category ? null : effects.find((e) => norm(e.name) === norm(body.effect_name)));
+    }
+
+    function applyColours(colours, key) {
+      const vs = variantsFor(colours.length), n = st.taps[key] || 0, v = vs[n % vs.length];
+      st.taps[key] = n + 1;
+      const seed = ++st.seed;
+      const shown = [];
+      const setGroup = (g, chs) => {
+        for (const ch of chs) {
+          const hex = chs.hexFor(ch);
+          st.chan[ch].rgb = hexToPct(hex);
+        }
+        if (chs.length) st.groups[g.number].rgb = st.chan[chs[0]].rgb.slice();
+        shown.push(g);
+      };
+      if (v.kind === "rule" || v.kind === "rotate") {
+        const rot = v.kind === "rotate" ? colours.slice(v.by).concat(colours.slice(0, v.by)) : colours;
+        for (const [g, hex] of place(rot, GROUPS)) { const chs = lit(g); chs.hexFor = () => hex; setGroup(g, chs); }
+      } else {
+        for (const [g] of place(colours, GROUPS)) {
+          const chs = acrossOrder(lit(g));
+          chs.hexFor = v.kind === "split" ? (ch) => colours[chs.indexOf(ch) % colours.length]
+            : (ch) => colours[Math.floor(rand(seed, ch) * colours.length)];
+          setGroup(g, chs);
+        }
+      }
+      st.lastColours = colours.slice();
+      return { variant: v.kind, detail: v.label + ".", groups: shown };
+    }
+
+    // Which groups can run an effect of this type: movement only on lights that move, color only on groups
+    // that take color, intensity on any group.
+    const canRun = (cat, g) => cat === "movement" ? g.moves === true : cat === "color" ? g.takes_colour : true;
+    const DEFAULT_RUN = (cat, g) => cat === "intensity" ? g.takes_colour : canRun(cat, g);    // when no group is picked
+    function instFor(cat, ch) {                          // the running effect of this type on this light
+      for (const f of st.fx[cat]) if (f.pos[ch] !== undefined && f.chans.indexOf(ch) >= 0) return f;
+      return null;
+    }
+    const current = (cat) => st.fx[cat].length ? st.fx[cat][st.fx[cat].length - 1] : null;
+
+    function applyEffect(eff, body) {
+      const cat = eff.category;
+      const picked = Array.isArray(body.groups) ? body.groups.map(String) : null;
+      const groups = GROUPS.filter((g) => picked ? picked.indexOf(g.number) >= 0 && canRun(cat, g) : DEFAULT_RUN(cat, g));
+      const chans = acrossOrder([].concat(...groups.map(lit)));
+      if (!chans.length) return null;
+      const dir = eff.fixed || (eff.directions && eff.directions.some((d) => d[0] === body.direction) ? body.direction : "ltr");
+      const seed = ++st.seed;
+      const pos = {};
+      chans.forEach((ch, i) => { pos[ch] = orderPos(i, chans.length, dir, seed); });
+      // a color effect steps between its own colors (body.colours, 2-4) or, without them, the last color set
+      const colours = cat === "color" && Array.isArray(body.colours) && body.colours.length >= 2 ? body.colours.map((h) => h.toLowerCase()) : null;
+      // the new effect takes over these lights; effects of the same type on other lights keep running
+      for (const f of st.fx[cat]) f.chans = f.chans.filter((ch) => chans.indexOf(ch) < 0);
+      st.fx[cat] = st.fx[cat].filter((f) => f.chans.length);
+      st.fx[cat].push({ id: eff.id, name: eff.name, kind: eff.kind, dir, chans, pos, n: chans.length, started: now(), colours,
+        groups: groups.filter((g) => lit(g).length).map((g) => g.number) });
+      for (const g of groups) if (lit(g).length) st.groups[g.number].fx = { name: eff.name, kind: eff.kind, category: cat };
+      return { dir, groups: groups.filter((g) => lit(g).length) };
+    }
+
+    function change(path, op, args, body) {
+      if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
+      if (path === "/api/colour-set") {
+        if (!place(body.colours, GROUPS).some(([g]) => lit(g).length)) return refused("No lights in this church are set up to take color");
+        const r = applyColours(body.colours.map((h) => h.toLowerCase()), body.colours.join(",").toLowerCase());
+        log(op, args, true, "");
+        changed();
+        return confirmed(r.detail, { variant: r.variant,
+          groups: r.groups.map((g) => ({ group: Number(g.number), label: g.label, allowed: true, outcome: "confirmed", reason: "" })) });
+      }
+      if (path === "/api/clear-effects") {
+        const cats = CATEGORIES.indexOf(body.category) >= 0 ? [body.category] : CATEGORIES.slice();
+        for (const c of cats) st.fx[c] = [];
+        for (const g of GROUPS) if (st.groups[g.number].fx && cats.indexOf(st.groups[g.number].fx.category) >= 0) st.groups[g.number].fx = null;
+        log(op, args, true, "");
+        changed();
+        return confirmed(cats.length > 1 ? "Effects cleared." : { color: "Color effect stopped.", intensity: "Intensity effect stopped.", movement: "Movement stopped." }[cats[0]]);
+      }
+      if (path === "/api/lights") {
+        const chans = (body.channels || []).filter((ch) => st.chan[ch]);
+        if (!chans.length) return refused("Those lights are not in this church");
+        for (const ch of chans) st.chan[ch].on = !!body.on;
+        for (const c of CATEGORIES) {                       // a light taken out stops running effects
+          if (!body.on) for (const fx of st.fx[c]) fx.chans = fx.chans.filter((ch) => chans.indexOf(ch) < 0);
+        }
+        log(op, args, true, "");
+        changed();
+        return confirmed(body.on ? "Back in the scene." : "Left out of the scene. Colors and effects won't change it.");
+      }
+      const group = st.groups[String(body.group)];
+      const needGroup = path === "/api/apply-palette" || path === "/api/colour";
+      if (needGroup && !group) return refused("Group " + body.group + " is not in this church");
+      if (needGroup) {
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        const why = notForColour(g);
+        if (why) { log(op, args, false, why); return refused(why); }
+      }
+      let eff = null, extra = {};
+      if (path === "/api/tempo" && body.all === true) {        // one tempo for every effect, running now or started later
+        const note = NOTES.find((n) => n.name === (body.note === undefined ? DEFAULT_NOTE : body.note));
+        const bpm = roundEven(body.tempo * note.multiplier);
+        if (bpm < EOS_BPM_MIN || bpm > EOS_BPM_MAX) return refused("A tempo of " + body.tempo + " with note " + note.label + " is outside what the console accepts. Try a slower note.");
+        st.tempoAll = bpm;
+        for (const k in st.fxBpm) delete st.fxBpm[k];
+        log(op, args, true, "");
+        changed();
+        return confirmed("Tempo " + body.tempo + " for all effects.", { eos_bpm: bpm, note: note.name });
+      }
+      if (path === "/api/apply-effect" || path === "/api/effect-size" || path === "/api/tempo") {
+        eff = findEffect(body);
+        if (!eff) return refused("'" + body.effect_name + "' is not an agreed effect set up for this church");
+      }
+      if (path === "/api/apply-palette") {
+        const p = PALETTES.find((x) => x.number === String(body.cp));
+        if (!p) return refused("Palette " + body.cp + " is not in this church");
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        for (const ch of lit(g)) st.chan[ch].rgb = hexToPct(p.colour);
+        group.rgb = hexToPct(p.colour);
+      } else if (path === "/api/colour") {
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        for (const ch of lit(g)) st.chan[ch].rgb = [body.r, body.g, body.b];
+        group.rgb = [body.r, body.g, body.b];
+      } else if (path === "/api/apply-effect") {
+        const r = applyEffect(eff, body);
+        if (!r) return refused(Array.isArray(body.groups) ? "None of those groups can run this effect, or their lights are left out"
+          : eff.category === "movement" ? "No lights in this scene can move" : "No lights in this church are set up for this effect");
+        log(op, args, true, "");
+        changed();
+        const dirLabel = (DIRECTIONS.find((d) => d[0] === r.dir) || [0, ""])[1];
+        return confirmed("Sent to the stage" + (eff.kind === "bump" || eff.kind === "dim" || eff.kind === "still" || eff.kind === "evolve" ? "." : ", " + dirLabel.toLowerCase() + "."),
+          { direction: r.dir, groups: r.groups.map((g) => ({ group: Number(g.number), label: g.label, allowed: true, outcome: "confirmed", reason: "" })) });
+      } else if (path === "/api/effect-size") {
+        st.fxSize[eff.id] = body.size;
+      } else if (path === "/api/tempo") {
+        const f = TEMPO_FACTOR[eff.id];
+        if (f === undefined) return refused("tempo not measured for this effect yet");
+        const note = NOTES.find((n) => n.name === (body.note === undefined ? DEFAULT_NOTE : body.note));
+        const bpm = roundEven(body.tempo * note.multiplier * f);
+        if (bpm < EOS_BPM_MIN || bpm > EOS_BPM_MAX) {
+          const bpmFor = (n) => roundEven(body.tempo * n.multiplier * f);
+          const fits = NOTES.filter((n) => bpmFor(n) >= EOS_BPM_MIN && bpmFor(n) <= EOS_BPM_MAX);
+          const fast = bpm > EOS_BPM_MAX;
+          const cand = fits.filter((n) => fast ? n.multiplier < note.multiplier : n.multiplier > note.multiplier);
+          cand.sort((x, y) => fast ? y.multiplier - x.multiplier : x.multiplier - y.multiplier);
+          let hint = "";
+          if (cand.length) hint = " Try a " + (fast ? "slower" : "faster") + " note, " + cand[0].label + ", which gives Eos BPM " + bpmFor(cand[0]) + ".";
+          else {
+            const e2 = f * note.multiplier, lo = Math.max(TEMPO_MIN, Math.ceil(EOS_BPM_MIN / e2)), hi = Math.min(TEMPO_MAX, Math.floor(EOS_BPM_MAX / e2));
+            if (lo <= hi) hint = " Try a tempo between " + lo + " and " + hi + ".";
+          }
+          return refused("A tempo of " + body.tempo + " with note " + note.label + " needs Eos BPM " + bpm + ", but Eos accepts " +
+            EOS_BPM_MIN + " to " + EOS_BPM_MAX + "." + hint);
+        }
+        log("set_effect_rate", { rate: 100 }, true, "");     // the hub resets Rate to 100 before every BPM
+        st.fxBpm[eff.id] = bpm;
+        extra = { eos_bpm: bpm, note: note.name };
+      }
+      log(op, args, true, "");
+      changed();
+      return ok(Object.assign({ allowed: true, reason: "", outcome: "confirmed" }, extra));
+    }
+
+    // locked: like the hub, a color set stops at the first refusal and sends nothing
+    function refuseLocked(path, body) {
+      const r = { allowed: false, reason: "Service Lock is on", outcome: "refused" };
+      if (path === "/api/colour-set") {
+        r.groups = place(body.colours, GROUPS).map(([g], i) => ({ group: Number(g.number), label: g.label,
+          allowed: false, outcome: "refused", reason: i === 0 ? "Service Lock is on" : "not sent" }));
+      }
+      return ok(r);
+    }
+
+    const num = (v, lo, hi) => typeof v === "number" && isFinite(v) && v >= lo && v <= hi;
+    const cat = (b) => b.category === undefined || CATEGORIES.indexOf(b.category) >= 0;
+    const CHANGES = {
+      "/api/colour-set": { op: "set_colour_rgb", valid: (b) => Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 3 && b.colours.every(isHex) },
+      "/api/apply-palette": { op: "apply_colour_palette", valid: (b) => num(b.group, 1, 9999) && num(b.cp, 1, 9999) },
+      "/api/colour": { op: "set_colour_rgb", valid: (b) => num(b.group, 1, 9999) && num(b.r, 0, 100) && num(b.g, 0, 100) && num(b.b, 0, 100) },
+      "/api/apply-effect": { op: "apply_effect", valid: (b) => typeof b.effect_name === "string" && cat(b) && (b.direction === undefined || ALL_DIRS.indexOf(b.direction) >= 0)
+        && (b.groups === undefined || (Array.isArray(b.groups) && b.groups.length > 0 && b.groups.every((n) => GROUPS.some((g) => g.number === String(n)))))
+        && (b.colours === undefined || (Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 4 && b.colours.every(isHex))) },
+      "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
+      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) && (b.all === undefined || b.all === true) },
+      "/api/clear-effects": { op: "clear_effects", valid: cat },
+      "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
+    };
+
+    function unlock(body) {
+      const t = now();
+      if (t < st.lockedOutUntil) {
+        const mins = Math.max(1, Math.ceil((st.lockedOutUntil - t) / 60000));
+        log("service_lock_off", {}, false, "too many wrong PINs");
+        return fail(400, "too many wrong PINs; unlock refused for about " + mins + " more minute(s)");
+      }
+      if (String(body.pin) !== DEMO_PIN) {
+        st.wrong += 1;
+        if (st.wrong >= WRONG_PIN_MAX) { st.lockedOutUntil = t + WRONG_PIN_LOCKOUT_MS; st.wrong = 0; }
+        log("service_lock_off", {}, false, "wrong PIN");
+        return fail(400, "wrong PIN");
+      }
+      st.wrong = 0; st.locked = false; st.changedBy = "demo"; st.changedAt = iso();
+      log("service_lock_off", {}, true, "unlocked");
+      changed();
+      return ok({ ok: true, reason: "unlocked", lock: lockInfo() });
+    }
+
+    const running = () => ({ last_colours: st.lastColours.slice(),
+      list: [].concat(...CATEGORIES.map((c) => st.fx[c].map((f) => ({ id: f.id, category: c, groups: f.groups.slice() })))) });
+
+    async function call(method, path, body) {
+      const url = String(path).split("?")[0];
+      body = body || {};
+      if (method === "POST" && url === "/api/login") {
+        if (norm(body.username || "") !== "demo") return fail(401, "That name or password is not right");
+        st.signedIn = true;
+        return ok({ username: "demo", role: "Programmer", church: CHURCH.name });
+      }
+      if (!st.signedIn) return fail(401, "Please sign in");
+      if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
+      if (method === "GET" && url === "/api/me") {
+        return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, features: Object.assign({}, FEATURES),
+          can: { change: true, unlock: true, history: true, schedule: false } });
+      }
+      if (method === "GET" && url === "/api/status") {
+        return ok({ church: CHURCH.name, lock: lockInfo(), effects: running(),
+          allowance: { used: 0, left: LIMIT, limit: LIMIT, month: new Date(now()).toISOString().slice(0, 7) },
+          console: { reachable: true, ping_ms: 2.4 } });
+      }
+      if (method === "POST" && url === "/api/acknowledge-notice") {
+        st.noticeAck = true;
+        return ok({ ok: true, notice_ack_needed: false });
+      }
+      // Service Lock ON and OFF stay open before the notice is accepted: they are safety controls.
+      if (method === "POST" && url === "/api/lock") {
+        st.locked = true; st.changedBy = "demo"; st.changedAt = iso();
+        log("service_lock_on", {}, true, "Service Lock turned on");
+        changed();
+        return ok({ ok: true, lock: lockInfo() });
+      }
+      if (method === "POST" && url === "/api/unlock") return unlock(body);
+      if (method === "GET" && url === "/api/schedule") return fail(403, "Your role cannot do that");
+      if (method === "GET" && url === "/api/groups") return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label })) });
+      if (method === "GET" && url === "/api/lights") {
+        return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label, role: g.role, area: g.area || "stage",
+          takes_colour: g.takes_colour, moves: g.moves === true,
+          lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on, default_on: !inRanges(ch, CHURCH.off) })) })) });
+      }
+      if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
+      if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
+      if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
+      if (method === "GET" && url === "/api/history") {
+        const m = /limit=(\d+)/.exec(String(path));
+        const n = Math.max(1, Math.min(m ? parseInt(m[1], 10) : 50, 500));
+        return ok({ history: st.history.slice(-n).reverse() });
+      }
+      if (method === "POST" && CHANGES[url]) {
+        const c = CHANGES[url];
+        if (!st.noticeAck) return fail(403, "Please read and accept the notice first");   // as the hub does
+        if (!c.valid(body)) return { status: 422, ok: false, data: { detail: [{ msg: "not allowed" }] } };
+        const args = Object.assign({}, body);
+        return change(url, c.op, args, body);
+      }
+      return fail(404, "Not found");
+    }
+
+    // ---- what a visualiser draws for one fixture right now
+    function period(id) {
+      const bpm = st.fxBpm[id] || st.tempoAll;
+      return bpm ? Math.max(0.25, Math.min(8, 60 / bpm)) : 2;
+    }
+    // the cycle position carries on smoothly when the tempo changes
+    function phaseOf(fx, t) {
+      const per = period(fx.id);
+      if (fx.per === undefined) { fx.per = per; fx.p0 = 0; fx.t0 = fx.started; }
+      if (per !== fx.per) { fx.p0 += (t - fx.t0) / 1000 / fx.per; fx.t0 = t; fx.per = per; }
+      return fx.p0 + (t - fx.t0) / 1000 / per;
+    }
+    const frac = (x) => x - Math.floor(x);
+    // intensity 0..1 for a color/intensity effect at order position d and cycle position p
+    function level(kind, d, p, n) {
+      const f = frac(p), TAU = Math.PI * 2, clamp = (x) => Math.max(0, Math.min(1, x));
+      switch (kind) {
+        case "fan": return f < 0.5 ? clamp((f * 2 - d * 0.85) / 0.15) : 1 - clamp(((f - 0.5) * 2 - d * 0.85) / 0.15);
+        case "cwave": return 1;
+        case "chase": { const steps = Math.max(1, n); return Math.floor(f * steps) === Math.round(d * (steps - 1)) ? 1 : 0.06; }
+        case "bump": return f < 0.12 ? 1 : 0.15;
+        case "evolve": return 0.5 + 0.5 * Math.sin(TAU * (p * 0.5 + d * 2.3) + Math.sin(d * 9.1));
+        case "pulse": return 0.5 + 0.5 * Math.sin(TAU * (p - d));
+        case "dim": return 0.1;
+        case "still": return 0.5;
+        default: return 1;
+      }
+    }
+    // the fixture's look: on, rgb 0-255, intensity 0..1, and movement offsets (pan, tilt in degrees)
+    function look(ch, t, still) {
+      const c = st.chan[ch];
+      if (!c) return null;
+      t = t === undefined ? now() : t;
+      const out = { on: c.on, rgb: c.rgb.map((v) => v * 2.55), I: c.on ? 0.85 : 0, pan: 0, tilt: 0, color: null, intensity: null, movement: null };
+      if (!c.on) return out;
+      for (const c of ["color", "intensity"]) {
+        const cf = instFor(c, ch);
+        if (!cf) continue;
+        const p = still ? 0 : phaseOf(cf, t), amp = Math.min(1, (st.fxSize[cf.id] === undefined ? 100 : st.fxSize[cf.id]) / 100);
+        out[c] = cf.name;
+        if (cf.kind === "cfan") {                              // the next color arrives in the effect's order
+          const fxCols = cf.colours || st.lastColours;
+          if (fxCols.length > 1) {
+            const cols = fxCols.map(hexToPct), step = Math.floor(p), f = p - step;
+            const u = Math.max(0, Math.min(1, (f - cf.pos[ch] * 0.85) / 0.15));
+            const a = cols[step % cols.length], b = cols[(step + 1) % cols.length];
+            out.rgb = a.map((v, i) => (v + (b[i] - v) * u) * 2.55);
+          }
+        } else if (cf.kind === "cwave") {
+          const fxCols = cf.colours || st.lastColours;
+          if (fxCols.length > 1) {
+            const cols = fxCols.map(hexToPct), x = frac(p - cf.pos[ch]) * cols.length, k = Math.floor(x), u = x - k;
+            const a = cols[k % cols.length], b = cols[(k + 1) % cols.length];
+            out.rgb = a.map((v, i) => (v + (b[i] - v) * u) * 2.55);
+          }
+        } else {
+          out.I *= 1 - 0.92 * amp * (1 - level(cf.kind, cf.pos[ch], p, cf.n));
+        }
+      }
+      const mf = instFor("movement", ch);
+      if (mf) {
+        const p = still ? 0 : phaseOf(mf, t), d = mf.pos[ch], TAU = Math.PI * 2;
+        const amp = Math.min(2, (st.fxSize[mf.id] === undefined ? 100 : st.fxSize[mf.id]) / 100);
+        out.movement = mf.name;
+        if (mf.kind === "mwave") { out.pan = Math.sin(TAU * (p - d)) * 28 * amp; out.tilt = Math.cos(TAU * (p - d)) * 6 * amp; }
+        else { out.pan = Math.sin(TAU * (p - d * 0.5)) * 18 * amp; out.tilt = Math.cos(TAU * (p - d * 0.5)) * 12 * amp; }
+      }
+      return out;
+    }
+
+    return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS, church: CHURCH,
+      CHANGE_ENDPOINTS, DEMO_ONLY_CHANGES, DEMO_PIN, NOTES, DIRECTIONS, fxBpm: st.fxBpm, fxSize: st.fxSize,
+      look, level, orderPos, acrossOrder, chanList, variantsFor, current };
+  }
+
+  const api = create();
+  api.place = place;
+  api.create = create;
+  if (typeof window !== "undefined") window.DemoApi = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+
+  // ---------------------------------------------------------------- stage preview
+  // A simple SVG stage: a row of fixtures per group. Each fixture is a circle showing its color and
+  // brightness. On the Lights tab, tap a light to leave it out of the scene or put it back.
+  if (typeof document === "undefined") return;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  // One row per group, from the back of the stage to the front; side light as two short columns.
+  // A group shows up to 8 of its lights (side light up to 6).
+  const ROW_ORDER = ["back", "air", "accent", "other", "front", "side"];
+  const shownChans = (g) => api.acrossOrder(api.chanList(g)).slice(0, g.role === "side" ? 6 : 8);
+  const ROWS = GROUPS.slice().sort((a, b) => ROW_ORDER.indexOf(a.role) - ROW_ORDER.indexOf(b.role));
+  const ROW_Y = {};
+  const rowGroups = ROWS.filter((g) => g.role !== "side");
+  rowGroups.forEach((g, i) => { ROW_Y[g.number] = rowGroups.length > 1 ? 30 + i * 114 / (rowGroups.length - 1) : 90; });
+  const X0 = 108, X1 = 252;
+  // Side light: two short columns at the stage sides, up to three fixtures each.
+  const SIDE_X = [82, 278], SIDE_Y = [64, 92, 120];
+  const BASE = [26, 29, 38];
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let host = null, dots = [], labels = {}, running = false, tab = "";
+
+  function svg(tag, attrs, text) {
+    const n = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function build() {
+    host = document.createElement("div");
+    host.className = "stage";
+    host.setAttribute("role", "img");
+    host.setAttribute("aria-label", "Stage preview. Rows and columns of lights show the color and effect of each group.");
+    const s = svg("svg", { viewBox: "0 0 300 200", width: "100%", focusable: "false" });
+    s.append(svg("path", { d: "M8 164 L292 164 L300 180 L0 180 Z", class: "stage-edge" }));
+    s.append(svg("text", { x: 150, y: 195, class: "stage-lbl mid" }, "Front of stage"));
+    for (const g of ROWS) {
+      const side = g.role === "side", chans = shownChans(g), n = chans.length;
+      if (side) {
+        s.append(svg("text", { x: SIDE_X[0], y: 50, class: "stage-lbl side" }, g.label));
+        s.append(svg("text", { x: 298, y: 50, class: "stage-lbl", "text-anchor": "end" }, g.label));
+      } else {
+        s.append(svg("text", { x: 2, y: ROW_Y[g.number] - 1, class: "stage-lbl" }, g.label));
+        labels[g.number] = svg("text", { x: 2, y: ROW_Y[g.number] + 10, class: "stage-fx" }, "");
+        s.append(labels[g.number]);
+      }
+      chans.forEach((ch, i) => {
+        const half = Math.ceil(n / 2);                                  // side: half each side, up to 3
+        const cx = side ? SIDE_X[i < half ? 0 : 1] : X0 + (n === 1 ? 0 : i * (X1 - X0) / (n - 1));
+        const cy = side ? SIDE_Y[i % half] : ROW_Y[g.number];
+        const glow = svg("circle", { cx, cy, r: 15, fill: "#000", opacity: 0 });
+        const dot = svg("circle", { cx, cy, r: 9, fill: "#1a1d26", class: "stage-fix" });
+        dot.addEventListener("click", () => { if (tab === "lights") window.dispatchEvent(new CustomEvent("demo-fixture-tap", { detail: { channel: ch } })); });
+        s.append(glow, dot);
+        dots.push({ ch, glow, dot });
+      });
+    }
+    host.append(s);
+  }
+
+  function paint(t) {
+    for (const g of rowGroups) {
+      const fx = api.state.groups[g.number].fx;
+      if (labels[g.number]) labels[g.number].textContent = fx ? fx.name : "";
+    }
+    for (const d of dots) {
+      const L = api.look(d.ch, t, reduced);
+      const off = !L.on;
+      const c = L.rgb.map((v, k) => Math.round(BASE[k] + (v - BASE[k]) * L.I));
+      d.dot.setAttribute("fill", off ? "#14161c" : "rgb(" + c.join(",") + ")");
+      d.dot.setAttribute("stroke-dasharray", off ? "2 2" : "");
+      d.glow.setAttribute("fill", "rgb(" + L.rgb.map(Math.round).join(",") + ")");
+      d.glow.setAttribute("opacity", (L.I * 0.28).toFixed(3));
+    }
+  }
+
+  function frame() {
+    if (!running) return;
+    if (host && host.isConnected && !document.hidden) paint(Date.now());
+    requestAnimationFrame(frame);
+  }
+
+  // Put the stage at the top of the Lights, Colors, Effects or Tempo tab; take it out of the others.
+  function placeStage(name) {
+    tab = name;
+    if (!host) build();
+    const sec = document.getElementById("tab-" + name);
+    if (name === "lights" || name === "colours" || name === "effects" || name === "tempo") {
+      sec.insertBefore(host, sec.firstChild);
+      host.classList.toggle("tappable", name === "lights");
+      if (!running) { running = true; requestAnimationFrame(frame); }
+      paint(Date.now());
+    } else if (host.parentNode) {
+      host.parentNode.removeChild(host);
+    }
+  }
+
+  api.onChange(() => { if (host) paint(Date.now()); });
+  window.DemoStage = { place: placeStage, norm };
+})();
+
+</script>
+<script>
+"use strict";
+// 3D venue view for the demo (D-029): the church's room and rig from its rig.json (hub/rig.py, made from
+// the Vectorworks MVR), drawn on a canvas with a small perspective camera. Beams take the colour and
+// effect the demo mock holds for each fixture's group. Loaded after demo-api.js; it replaces
+// window.DemoStage when the page was built with --visualiser venue (window.DEMO_VISUALISER, DEMO_RIG).
+//
+// Simplifications, said on the page where they matter: front light and movers that the model hangs
+// straight down are focused on the stage (the MVR carries no focus point); pixel bars show as glowing
+// strips, not beams; no shadows.
+(function () {
+  if (typeof document === "undefined" || window.DEMO_VISUALISER !== "venue" || !window.DEMO_RIG) return;
+  const api = window.DemoApi, norm = window.DemoStage.norm;
+  const RIG = window.DEMO_RIG;
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const TAU = Math.PI * 2, DEG = Math.PI / 180;
+
+  // ---------------------------------------------------------------- vectors
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const mul = (a, s) => [a[0] * s, a[1] * s, a[2] * s];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const unit = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  const rotZ = (v, a) => [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a), v[2]];
+
+  // ---------------------------------------------------------------- the room
+  const boxes = RIG.room.filter((b) => b.kind !== "grid" && b.kind !== "ceiling");
+  const shell = RIG.room.filter((b) => b.kind === "floor" || b.kind === "wall" || b.kind === "ceiling");
+  const ROOM = {
+    lo: [0, 1, 2].map((k) => Math.min(...shell.map((b) => b.min[k]))),
+    hi: [0, 1, 2].map((k) => Math.max(...shell.map((b) => b.max[k]))),
+  };
+  const stages = RIG.room.filter((b) => b.kind === "stage" && b.max[2] - b.min[2] > 0.1);
+  const mainStage = stages.slice().sort((a, b) => (b.max[0] - b.min[0]) * (b.max[1] - b.min[1]) - (a.max[0] - a.min[0]) * (a.max[1] - a.min[1]))[0];
+  const STAGE = mainStage || { min: [ROOM.hi[0] - 4, ROOM.lo[1] + 4, 0], max: [ROOM.hi[0], ROOM.hi[1] - 4, 0.4] };
+  const stageMid = [(STAGE.min[0] + STAGE.max[0]) / 2, (STAGE.min[1] + STAGE.max[1]) / 2, STAGE.max[2]];
+  const COLOURS = {
+    floor: [24, 27, 36], wall: [22, 25, 33], stage: [44, 48, 60], screen: [10, 12, 18], column: [40, 44, 56],
+    booth: [34, 38, 48], speaker: [16, 17, 22], pipe: [70, 74, 86], other: [36, 40, 50],
+  };
+  const ALPHA = { wall: 0.55, floor: 1, stage: 1, screen: 1, column: 0.9, booth: 0.9, speaker: 1, pipe: 1, other: 0.8 };
+
+  function faces(b) {
+    const [x0, y0, z0] = b.min, [x1, y1, z1] = b.max;
+    const P = (x, y, z) => [x, y, z];
+    return [
+      { pts: [P(x0, y0, z1), P(x1, y0, z1), P(x1, y1, z1), P(x0, y1, z1)], shade: 1.0 },    // top
+      { pts: [P(x0, y0, z0), P(x1, y0, z0), P(x1, y0, z1), P(x0, y0, z1)], shade: 0.7 },
+      { pts: [P(x0, y1, z0), P(x1, y1, z0), P(x1, y1, z1), P(x0, y1, z1)], shade: 0.7 },
+      { pts: [P(x0, y0, z0), P(x0, y1, z0), P(x0, y1, z1), P(x0, y0, z1)], shade: 0.8 },
+      { pts: [P(x1, y0, z0), P(x1, y1, z0), P(x1, y1, z1), P(x1, y0, z1)], shade: 0.8 },
+    ];
+  }
+  const polys = [];
+  for (const b of boxes) for (const f of faces(b)) polys.push({ pts: f.pts, kind: b.kind, shade: f.shade });
+
+  // ---------------------------------------------------------------- the rig
+  const groupOf = (ch) => api.groups.find((g) => (g.channels || []).some(([a, b]) => ch >= a && ch <= b));
+  const isBar = (f) => /pixel bar|colorband/i.test(f.name + " " + f.type);
+  // How strongly each role's beams draw, so moving light reads over the front wash (display only)
+  const BEAM = { air: 2.4, side: 1.5, back: 1.5, accent: 1.2, front: 0.55, other: 0.8 };
+  const SPREAD = (f) => /rush/i.test(f.name) ? 16 : /pup/i.test(f.name) ? 22 : 26;     // beam half-angle, degrees (display only)
+  const fixtures = RIG.fixtures.filter((f) => !f.unlocated).map((f) => {
+    const g = groupOf(f.channel);
+    let aim = unit(f.aim), assumed = false;
+    const down = aim[2] < -0.98;
+    if (down && !isBar(f) && (f.role === "front" || f.role === "air")) {
+      // the MVR hangs these straight down with no focus: point them at the stage
+      const tgt = [stageMid[0] - (f.role === "front" ? 1.2 : 0.5), Math.max(STAGE.min[1] + 0.5, Math.min(STAGE.max[1] - 0.5, f.xyz[1])),
+        STAGE.max[2] + (f.role === "front" ? 1.6 : 0)];
+      aim = unit(sub(tgt, f.xyz)); assumed = true;
+    }
+    // a bar runs along its local X axis from the MVR (rig "axis"); older rig files without it fall back to y
+    const axis = f.axis ? unit(f.axis) : [0, 1, 0];
+    // House bars hang straight down in the model; their light falls on the audience, tilted toward the stage
+    // (+x, about 25 degrees), so they get a wash from the strip as well as the glow.
+    const wash = isBar(f) && f.role === "other" && down ? unit([Math.tan(25 * DEG), 0, -1]) : null;
+    if (wash) assumed = true;
+    return { ch: f.channel, name: f.name, role: f.role, pos: f.xyz, aim, assumed, bar: isBar(f), wash, axis, spread: SPREAD(f) * DEG,
+      moves: !!(g && g.moves),
+      group: g ? g.number : null };
+  });
+  const anyAssumed = fixtures.some((f) => f.assumed);
+
+  // where a beam stops: the stage top if it lands on the stage, else the floor or a wall
+  function beamEnd(p, d) {
+    let t = Infinity;
+    for (let k = 0; k < 3; k++) {
+      if (d[k] > 1e-6) t = Math.min(t, (ROOM.hi[k] - p[k]) / d[k]);
+      else if (d[k] < -1e-6) t = Math.min(t, (ROOM.lo[k] - p[k]) / d[k]);
+    }
+    if (d[2] < -1e-6) {
+      const ts = (STAGE.max[2] - p[2]) / d[2], q = add(p, mul(d, ts));
+      if (ts > 0 && ts < t && q[0] >= STAGE.min[0] && q[0] <= STAGE.max[0] && q[1] >= STAGE.min[1] && q[1] <= STAGE.max[1]) t = ts;
+    }
+    return Math.max(0.3, Math.min(t, 30));
+  }
+
+  // ---------------------------------------------------------------- camera
+  const VIEW = { yaw: 0, pitch: 14 * DEG, dist: 0 };
+  const TARGET = [stageMid[0] - 1.5, stageMid[1], 1.4];
+  function resetView() {
+    const back = [ROOM.lo[0] + 1.0, stageMid[1], 2.7];        // the back of the house, looking at the stage
+    const d = sub(back, TARGET);
+    VIEW.yaw = Math.atan2(d[1], d[0]);
+    VIEW.dist = Math.hypot(d[0], d[1]);
+    VIEW.pitch = Math.atan2(d[2], VIEW.dist);
+    VIEW.dist = Math.hypot(d[0], d[1], d[2]);
+  }
+  resetView();
+  let W = 300, H = 190, F = 300, cam, R, U, Fw;
+  function setCamera() {
+    cam = add(TARGET, [Math.cos(VIEW.yaw) * Math.cos(VIEW.pitch) * VIEW.dist,
+      Math.sin(VIEW.yaw) * Math.cos(VIEW.pitch) * VIEW.dist, Math.sin(VIEW.pitch) * VIEW.dist]);
+    Fw = unit(sub(TARGET, cam));
+    R = unit(cross(Fw, [0, 0, 1]));
+    U = cross(R, Fw);
+  }
+  const NEAR = 0.15;
+  const toCam = (p) => { const d = sub(p, cam); return [dot(d, R), dot(d, U), dot(d, Fw)]; };
+  const proj = (c) => [W / 2 + F * c[0] / c[2], H / 2 - F * c[1] / c[2]];
+  function clipNear(cs) {                                     // Sutherland-Hodgman against z = NEAR
+    const out = [];
+    for (let i = 0; i < cs.length; i++) {
+      const a = cs[i], b = cs[(i + 1) % cs.length], ain = a[2] >= NEAR, bin = b[2] >= NEAR;
+      if (ain) out.push(a);
+      if (ain !== bin) { const t = (NEAR - a[2]) / (b[2] - a[2]); out.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, NEAR]); }
+    }
+    return out;
+  }
+
+  // ---------------------------------------------------------------- drawing
+  let host = null, canvas = null, ctx = null, running = false, tab = "", tapHint = null;
+  const rgbStr = (c, a) => "rgba(" + c.map((v) => Math.round(v)).join(",") + "," + a.toFixed(3) + ")";
+
+  function lookFor(f, t) {
+    const L = f.group ? api.look(f.ch, t, reduced) : null;
+    if (L) return L;
+    return { on: f.role === "other", rgb: [255, 226, 176], I: f.role === "other" ? 0.25 : 0, pan: 0, tilt: 0 };
+  }
+  function aimFor(f, look) {
+    if (!look.pan && !look.tilt) return f.aim;
+    const a = rotZ(f.aim, look.pan * DEG);
+    return unit([a[0], a[1], a[2] + Math.sin(look.tilt * DEG)]);
+  }
+  function draw() {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const s = canvas.width / W;
+    ctx.setTransform(s, 0, 0, s, 0, 0);
+    ctx.fillStyle = "#0b0c10"; ctx.fillRect(0, 0, W, H);
+    setCamera();
+
+    // room, far to near
+    const drawn = [];
+    for (const p of polys) {
+      const cs = clipNear(p.pts.map(toCam));
+      if (cs.length < 3) continue;
+      drawn.push({ cs, depth: cs.reduce((m, c) => m + c[2], 0) / cs.length, p });
+    }
+    drawn.sort((a, b) => b.depth - a.depth);
+    ctx.globalCompositeOperation = "source-over";
+    for (const d of drawn) {
+      const base = COLOURS[d.p.kind] || COLOURS.other, sh = d.p.shade;
+      ctx.beginPath();
+      d.cs.forEach((c, i) => { const q = proj(c); if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); });
+      ctx.closePath();
+      ctx.fillStyle = rgbStr(base.map((v) => v * sh), ALPHA[d.p.kind] || 0.8);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(70,76,92,0.35)"; ctx.lineWidth = 0.5; ctx.stroke();
+    }
+
+    // light, added on top
+    ctx.globalCompositeOperation = "lighter";
+    const t = Date.now();
+    for (const f of fixtures) {
+      const look = lookFor(f, t);
+      const head = toCam(f.pos);
+      if (head[2] < NEAR) continue;
+      const hp = proj(head);
+      f.screen = [hp[0], hp[1]];
+      if (!look.on) {                                      // left out of the scene: a faint outline
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = "rgba(150,156,172,0.55)"; ctx.lineWidth = 1; ctx.setLineDash([2, 2]);
+        ctx.beginPath(); ctx.arc(hp[0], hp[1], Math.max(2.5, F * 0.09 / head[2]), 0, TAU); ctx.stroke();
+        ctx.setLineDash([]); ctx.globalCompositeOperation = "lighter";
+        continue;
+      }
+      if (look.I <= 0.01) continue;
+      if (f.bar) {                                         // a glowing strip about a metre long, across its row
+        const along = mul(f.axis, 0.5);
+        const a = toCam(sub(f.pos, along)), b = toCam(add(f.pos, along));
+        if (a[2] < NEAR || b[2] < NEAR) continue;
+        const pa = proj(a), pb = proj(b), wpx = Math.max(1.2, F * 0.09 / head[2]);
+        if (f.wash) {                                      // only where the light lands, no beam in the air
+          const ends = [sub(f.pos, along), add(f.pos, along)].map((q) => add(q, mul(f.wash, beamEnd(q, f.wash))));
+          const spread = mul(f.axis, 0.6), across = unit(cross(f.axis, f.wash));
+          const pts = [add(add(ends[0], mul(spread, -1)), mul(across, -0.7)), add(add(ends[1], spread), mul(across, -0.7)),
+            add(add(ends[1], spread), mul(across, 0.7)), add(add(ends[0], mul(spread, -1)), mul(across, 0.7))].map(toCam);
+          if (pts.every((c2) => c2[2] >= NEAR)) {
+            const fp = pts.map(proj), mid = [(fp[0][0] + fp[2][0]) / 2, (fp[0][1] + fp[2][1]) / 2];
+            const rad = Math.max(3, Math.hypot(fp[1][0] - fp[0][0], fp[1][1] - fp[0][1]) * 0.6);
+            const pool = ctx.createRadialGradient(mid[0], mid[1], 0, mid[0], mid[1], rad);
+            pool.addColorStop(0, rgbStr(look.rgb, 0.2 * look.I)); pool.addColorStop(1, rgbStr(look.rgb, 0));
+            ctx.fillStyle = pool;
+            ctx.beginPath(); fp.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.closePath(); ctx.fill();
+          }
+        }
+        if (f.moves && look.movement) {                   // a moving bar: a flat sheet of light that tilts with the effect
+          const base = f.aim[2] < -0.98 ? unit([-0.55, 0, -0.84]) : f.aim;          // hung straight down: aimed at the house
+          const ang = (look.pan * 1.6 + look.tilt) * DEG, k2 = f.axis, cs = Math.cos(ang), sn = Math.sin(ang);
+          const kxv = cross(k2, base), kd = dot(k2, base);                          // Rodrigues: turn base about the bar
+          const dir = unit(add(add(mul(base, cs), mul(kxv, sn)), mul(k2, kd * (1 - cs))));
+          const ends = [sub(f.pos, along), add(f.pos, along)].map((q) => add(q, mul(dir, Math.min(9, beamEnd(q, dir)))));
+          const ec = ends.map(toCam);
+          if (ec.every((c2) => c2[2] >= NEAR)) {
+            const e0 = proj(ec[0]), e1 = proj(ec[1]);
+            const g2 = ctx.createLinearGradient((pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2, (e0[0] + e1[0]) / 2, (e0[1] + e1[1]) / 2);
+            g2.addColorStop(0, rgbStr(look.rgb, 0.3 * look.I)); g2.addColorStop(1, rgbStr(look.rgb, 0.02 * look.I));
+            ctx.fillStyle = g2;
+            ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.lineTo(e1[0], e1[1]); ctx.lineTo(e0[0], e0[1]); ctx.closePath(); ctx.fill();
+          }
+        }
+        ctx.lineCap = "round";
+        const glow = f.wash ? 0.18 : 1;                    // house bars: a faint strip, the floor shows their color
+        ctx.strokeStyle = rgbStr(look.rgb, 0.25 * look.I * glow); ctx.lineWidth = wpx * (f.wash ? 2 : 4);
+        ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+        ctx.strokeStyle = rgbStr(look.rgb, 0.9 * look.I * glow); ctx.lineWidth = wpx;
+        ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+        continue;
+      }
+      const d = aimFor(f, look), L = beamEnd(f.pos, d), end = add(f.pos, mul(d, L)), k = BEAM[f.role] || 1;
+      const ec = toCam(end);
+      if (ec[2] >= NEAR) {
+        const ep = proj(ec), r = F * Math.tan(f.spread) * L / ec[2];
+        let px = -(ep[1] - hp[1]), py = ep[0] - hp[0];
+        const pl = Math.hypot(px, py) || 1; px /= pl; py /= pl;
+        const g = ctx.createLinearGradient(hp[0], hp[1], ep[0], ep[1]);
+        g.addColorStop(0, rgbStr(look.rgb, Math.min(0.6, 0.16 * k * look.I)));
+        g.addColorStop(1, rgbStr(look.rgb, 0.015 * k * look.I));
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.moveTo(hp[0], hp[1]);
+        ctx.lineTo(ep[0] + px * r, ep[1] + py * r); ctx.lineTo(ep[0] - px * r, ep[1] - py * r); ctx.closePath(); ctx.fill();
+        const pool = ctx.createRadialGradient(ep[0], ep[1], 0, ep[0], ep[1], Math.max(2, r * 1.1));
+        pool.addColorStop(0, rgbStr(look.rgb, Math.min(0.5, 0.16 * k * look.I))); pool.addColorStop(1, rgbStr(look.rgb, 0));
+        ctx.fillStyle = pool;
+        ctx.beginPath(); ctx.ellipse(ep[0], ep[1], Math.max(2, r * 1.1), Math.max(1.5, r * 0.55), 0, 0, TAU); ctx.fill();
+      }
+      ctx.fillStyle = rgbStr(look.rgb, Math.min(1, 0.4 + look.I));
+      ctx.beginPath(); ctx.arc(hp[0], hp[1], Math.max(1.2, F * 0.07 / head[2]), 0, TAU); ctx.fill();
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function size() {
+    const w = Math.max(200, Math.round(host.clientWidth - 16));
+    W = w; H = Math.round(w * 0.62); F = W * 0.55;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+  }
+
+  function build() {
+    host = document.createElement("div");
+    host.className = "stage venue";
+    canvas = document.createElement("canvas");
+    canvas.setAttribute("role", "img");
+    canvas.setAttribute("aria-label", (api.church.name || "Church") + " in 3D. Beams show the colour and effect on each group of lights.");
+    ctx = canvas.getContext("2d");
+    const cap = document.createElement("div");
+    cap.className = "venue-cap";
+    const txt = document.createElement("span");
+    txt.textContent = "Drag sideways to look around." + (anyAssumed ? " Focus of front light, movers and house light is approximate." : "");
+    tapHint = document.createElement("span");
+    tapHint.className = "venue-tap";
+    tapHint.textContent = "Tap a light to leave it out or put it back.";
+    tapHint.hidden = true;
+    const reset = document.createElement("button");
+    reset.type = "button"; reset.className = "small-btn venue-reset"; reset.textContent = "Reset view";
+    reset.addEventListener("click", () => { resetView(); draw(); });
+    cap.append(txt, tapHint, reset);
+    host.append(canvas, cap);
+    let dragX = null, downX = 0, downY = 0;
+    canvas.addEventListener("pointerdown", (e) => { dragX = downX = e.clientX; downY = e.clientY; canvas.setPointerCapture(e.pointerId); });
+    canvas.addEventListener("pointerup", (e) => {
+      if (tab !== "lights" || Math.hypot(e.clientX - downX, e.clientY - downY) > 6) return;
+      const r = canvas.getBoundingClientRect(), x = (e.clientX - r.left) * W / r.width, y = (e.clientY - r.top) * H / r.height;
+      let best = null, bd = 16;                                  // the nearest light within 16 px
+      for (const f of fixtures) {
+        if (!f.screen || !f.group) continue;
+        const d = Math.hypot(f.screen[0] - x, f.screen[1] - y);
+        if (d < bd) { bd = d; best = f; }
+      }
+      if (best) window.dispatchEvent(new CustomEvent("demo-fixture-tap", { detail: { channel: best.ch } }));
+    });
+    canvas.addEventListener("pointermove", (e) => {
+      if (dragX === null) return;
+      VIEW.yaw -= (e.clientX - dragX) * 0.008; dragX = e.clientX;
+      VIEW.yaw = Math.max(Math.PI - 1.35, Math.min(Math.PI + 1.35, VIEW.yaw));    // stay in front of the stage
+      if (reduced) draw();
+    });
+    const end = () => { dragX = null; };
+    canvas.addEventListener("pointerup", end); canvas.addEventListener("pointercancel", end);
+    window.addEventListener("resize", () => { if (host.isConnected) { size(); draw(); } });
+  }
+
+  function frame() {
+    if (!running) return;
+    if (host && host.isConnected && !document.hidden) draw();
+    requestAnimationFrame(frame);
+  }
+
+  function place(name) {
+    tab = name;
+    if (!host) build();
+    const sec = document.getElementById("tab-" + name);
+    if (name === "lights" || name === "colours" || name === "effects" || name === "tempo") {
+      sec.insertBefore(host, sec.firstChild);
+      tapHint.hidden = name !== "lights";
+      host.classList.toggle("tappable", name === "lights");
+      size(); draw();
+      if (!running) { running = true; requestAnimationFrame(frame); }
+    } else if (host.parentNode) {
+      host.parentNode.removeChild(host);
+    }
+  }
+
+  api.onChange(() => { if (host && host.isConnected) draw(); });
+  window.DemoStage = { place, norm, venue: { fixtures, ROOM, STAGE, beamEnd } };
+})();
+
+</script>
+<script>
+"use strict";
+// Lighting Control phone app. Vanilla JS, no build. Every console change is a POST to the hub;
+// the hub decides (Service Lock, role, allowlist). This page only asks.
+
+const $ = (id) => document.getElementById(id);
+const state = {
+  me: null, status: null, sets: [], effects: [],
+  tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
+  features: {}, fxDir: {}, running: {}, lights: [], fxColours: null, fxGroups: {},
+};
+const feature = (name) => !!state.features[name];
+
+// 16 common stage colours for "Pick your own" (name, #rrggbb). Plain data: S&S can change the list.
+const STAGE_COLOURS = [
+  ["Red", "#e02020"], ["Orange", "#ff6a13"], ["Amber", "#ffa020"], ["Gold", "#ffd060"],
+  ["Green", "#1fb34a"], ["Teal", "#1fb5b0"], ["Cyan", "#20c8e8"], ["Sky Blue", "#4d8dff"],
+  ["Blue", "#2f6bff"], ["Deep Blue", "#1f3fbf"], ["Violet", "#7a3fd0"], ["Lavender", "#b79cff"],
+  ["Magenta", "#e0208c"], ["Pink", "#ff8fc8"], ["Warm White", "#ffe2b0"], ["White", "#ffffff"],
+];
+const PICK_NAMES = ["Main", "Second", "Third"];
+
+// Demo mode: ?demo=1, or the built demo page. Every /api/ call then goes to the in-browser mock
+// (demo-api.js) instead of the hub, through send() below. Nothing else in this file knows.
+const DEMO = window.TIER1_DEMO === true || new URLSearchParams(location.search).get("demo") === "1";
+
+const NOTICE_FIRST = "Please read and accept the notice first";
+
+// ---------- helpers
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const c of kids) if (c != null) n.append(c);
+  return n;
+}
+
+// The only place a request leaves this page: to the hub, or to the demo mock.
+async function send(method, path, body) {
+  if (DEMO) return window.DemoApi.call(method, path, body);
+  const opts = { method, headers: { "X-Requested-With": "tier1" }, credentials: "same-origin" };
+  if (body !== undefined) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
+  let res;
+  try { res = await fetch(path, opts); } catch (e) { throw new Error("Cannot reach the hub. Check your connection."); }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* no body */ }
+  return { status: res.status, ok: res.ok, data };
+}
+
+async function api(method, path, body) {
+  const res = await send(method, path, body);
+  const data = res.data;
+  if (res.status === 401 && path !== "/api/login") { showLogin(); throw new Error("Please sign in"); }
+  if (res.status === 403 && data && data.detail === NOTICE_FIRST) showNotice();   // the notice changed while signed in
+  if (!res.ok) {
+    let msg = data && data.detail;
+    if (Array.isArray(msg)) msg = "That value is not allowed.";
+    throw new Error(msg || ("Something went wrong (" + res.status + ")"));
+  }
+  return data;
+}
+
+let resultTimer = null;
+function showResult(text, kind) {
+  const r = $("result");
+  r.textContent = text; r.className = "result " + kind; r.hidden = false;
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => { r.hidden = true; }, kind === "ok" ? 4000 : 9000);
+}
+
+function describe(r) {
+  if (!r.allowed) return ["Not applied: " + r.reason + ".", "bad"];
+  if (r.outcome === "confirmed") return ["Applied.", "ok"];
+  if (r.outcome === "unconfirmed") return ["Sent, but the console did not answer back. Check the console to be sure.", "warn"];
+  if (r.outcome === "needs_confirm") return ["The console is asking to confirm. Nothing was changed.", "warn"];
+  return ["The console reported a problem: " + r.reason + ".", "bad"];
+}
+
+// A change: POST, then show what happened.
+async function change(path, body, okText) {
+  if (isLocked() || !canChange()) return null;
+  try {
+    const r = await api("POST", path, body);
+    let [text, kind] = describe(r);
+    if (kind === "ok") text = okText || r.detail || text;
+    showResult(text, kind);
+    refreshStatus();
+    return r;
+  } catch (e) {
+    showResult(e.message, "bad");
+    return null;
+  }
+}
+
+const canChange = () => !!(state.me && state.me.can.change);
+const isLocked = () => !state.status || state.status.lock.locked;
+
+// ---------- sign in / out
+function showLogin() {
+  state.me = null; stopPolling();
+  $("app-view").hidden = true; $("notice-view").hidden = true; $("login-view").hidden = false;
+  $("login-pass").value = "";
+}
+
+// First sign-in notice (D-022): nothing else is shown until "I understand" is tapped.
+function showNotice() {
+  stopPolling();
+  $("login-view").hidden = true; $("app-view").hidden = true; $("notice-view").hidden = false;
+  $("notice-msg").textContent = "";
+  $("notice-ok").focus();
+}
+$("notice-ok").addEventListener("click", async () => {
+  $("notice-msg").textContent = ""; $("notice-ok").disabled = true;
+  try { await api("POST", "/api/acknowledge-notice", {}); await enterApp(); }
+  catch (e) { $("notice-msg").textContent = e.message; }
+  $("notice-ok").disabled = false;
+});
+
+$("login-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("login-msg").textContent = ""; $("login-btn").disabled = true;
+  try {
+    await api("POST", "/api/login", { username: $("login-user").value, password: $("login-pass").value });
+    await enterApp();
+  } catch (e) { $("login-msg").textContent = e.message; }
+  $("login-btn").disabled = false;
+});
+
+$("signout").addEventListener("click", async () => {
+  try { await api("POST", "/api/logout", {}); } catch (e) { /* already signed out */ }
+  showLogin();
+});
+
+async function enterApp() {
+  state.me = await api("GET", "/api/me");
+  if (state.me.notice_ack_needed) { showNotice(); return; }
+  state.features = state.me.features || {};
+  document.querySelector('.tabbar [data-tab="lights"]').hidden = !feature("lights");
+  if (state.tab === "lights" && !feature("lights")) state.tab = "colours";
+  $("sets-hint").textContent = feature("color_variants")
+    ? "Suggestions from S&S that work well together. Tap one to send it; tap it again for a different mix."
+    : "Suggestions from S&S that work well together. Tap one to send it.";
+  renderNotes();
+  $("notice-view").hidden = true;
+  $("login-view").hidden = true; $("app-view").hidden = false;
+  $("church-name").textContent = state.me.church;
+  document.title = state.me.church + " lighting";
+  $("me-text").textContent = "Signed in as " + state.me.username + " (" + state.me.role + ").";
+  $("history-box").hidden = !state.me.can.history;
+  $("schedule-box").hidden = !state.me.can.schedule;
+  await refreshStatus();
+  selectTab(state.tab);
+  loadLists();
+  startPolling();
+}
+
+// ---------- status and lock
+let pollTimer = null;
+function startPolling() { stopPolling(); pollTimer = setInterval(() => { if (!document.hidden) refreshStatus(); }, 10000); }
+function stopPolling() { clearInterval(pollTimer); pollTimer = null; }
+
+async function refreshStatus() {
+  try { state.status = await api("GET", "/api/status"); } catch (e) { return; }
+  renderStatus();
+}
+
+function renderStatus() {
+  const s = state.status, lk = s.lock;
+  const dot = $("dot");
+  dot.className = "dot " + (s.console.reachable ? "up" : "down");
+  $("dot-text").textContent = DEMO ? "Simulated console"
+    : s.console.reachable ? "Console connected (" + Math.round(s.console.ping_ms) + " ms)"
+    : "Console not answering";
+  const sw = $("lock-switch");
+  sw.classList.toggle("on", lk.locked);
+  sw.setAttribute("aria-pressed", String(lk.locked));
+    $("lock-text").textContent = lk.locked ? "Locked" : "Service Lock off";
+  const b = $("banner");
+  if (lk.locked) {
+    const why = lk.reason === "scheduled" ? " (scheduled)" : lk.reason === "unreadable" ? " (lock file unreadable)" : "";
+    b.textContent = "Locked for service" + why; b.className = "banner"; b.hidden = false;
+  } else if (!canChange()) {
+    b.textContent = "Your role can look and lock, but not change the lights."; b.className = "banner info"; b.hidden = false;
+  } else { b.hidden = true; }
+  const used = s.allowance.used;
+  $("usage-text").textContent = used + " look request" + (used === 1 ? "" : "s") +
+    " used this month. Buttons in this app are free and are not counted.";
+  state.running = s.effects || {};
+  markRunning();
+  $("unlock-note").textContent = lk.locked ? "To unlock, tap the lock at the top and enter the Service Lock PIN." : "";
+  applyDisabled();
+  if (state.me.can.schedule) loadSchedule();
+}
+
+function applyDisabled() {
+  const off = isLocked() || !canChange();
+  document.querySelectorAll(".change").forEach((b) => { b.disabled = off; });
+  document.querySelectorAll("#set-list button, #effects-list .change").forEach((b) => { b.disabled = off; });
+  $("pick-send").disabled = off || state.picked.length < 2;
+  updateTempoControls();
+}
+
+$("lock-switch").addEventListener("click", async () => {
+  if (!state.status) return;
+  if (!state.status.lock.locked) {
+    try { await api("POST", "/api/lock", {}); showResult("Service Lock is on.", "ok"); }
+    catch (e) { showResult(e.message, "bad"); }
+    refreshStatus();
+  } else {
+    $("pin").value = ""; $("pin-msg").textContent = ""; $("pin-dialog").showModal(); $("pin").focus();
+  }
+});
+$("pin-cancel").addEventListener("click", () => $("pin-dialog").close());
+$("pin-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("pin-msg").textContent = "";
+  try {
+    await api("POST", "/api/unlock", { pin: $("pin").value });
+    $("pin").value = ""; $("pin-dialog").close();
+    showResult("Service Lock is off. Changes are allowed.", "ok");
+    refreshStatus();
+  } catch (e) { $("pin-msg").textContent = e.message; $("pin").value = ""; }
+});
+
+// ---------- lists
+async function loadLists() {
+  try {
+    const [c, e] = await Promise.all([api("GET", "/api/colour-sets"), api("GET", "/api/effects")]);
+    state.sets = c.sets; state.effects = e.effects;
+  } catch (err) { showResult(err.message, "bad"); }
+  renderSets(); renderPicker(); renderEffects(); renderTempoChoices();
+}
+
+// ---------- colour sets and picking your own (D-027): the hub places the colours, not the user
+function setStrip(colours, cls) {
+  const strip = el("span", { class: cls || "strip", "aria-hidden": "true" });
+  for (const c of colours) strip.append(el("i", { style: "background:" + c }));
+  return strip;
+}
+
+async function sendColours(colours) {
+  const r = await change("/api/colour-set", { colours }, feature("color_variants") ? null : "Sent to the stage.");
+  const box = $("placement");
+  box.hidden = !(r && r.detail && state.me.role === "Admin");
+  if (!box.hidden) box.textContent = r.detail;
+  return r;
+}
+
+function renderSets() {
+  const list = $("set-list"); list.replaceChildren();
+  if (!state.sets.length) list.append(el("p", { class: "muted", text: "No color sets yet. Ask the S&S team." }));
+  for (const s of state.sets) {
+    const b = el("button", { type: "button", class: "set change" },
+      setStrip(s.colours),
+      el("span", { class: "set-text" }, el("span", { class: "set-name", text: s.name }),
+        el("span", { class: "set-mood", text: s.mood })));
+    b.addEventListener("click", () => sendColours(s.colours));
+    list.append(b);
+  }
+  applyDisabled();
+}
+
+function colourName(hex) {
+  const f = STAGE_COLOURS.find((c) => c[1] === hex);
+  return f ? f[0] : "Custom color";
+}
+
+function renderPicker() {
+  const grid = $("swatch-grid"); grid.replaceChildren();
+  for (const [name, hex] of STAGE_COLOURS) {
+    const b = el("button", { type: "button", class: "sw", "aria-label": "Add " + name });
+    b.append(el("i", { style: "background:" + hex }), el("span", { text: name }));
+    b.addEventListener("click", () => addPick(hex));
+    grid.append(b);
+  }
+  const tray = $("pick-tray"); tray.replaceChildren();
+  for (let i = 0; i < 3; i++) {
+    const hex = state.picked[i];
+    if (hex) {
+      const b = el("button", { type: "button", class: "slot full", "aria-label": "Remove " + colourName(hex) });
+      b.append(el("i", { style: "background:" + hex }), el("span", { text: PICK_NAMES[i] }), el("small", { text: colourName(hex) }));
+      b.addEventListener("click", () => { state.picked.splice(i, 1); renderPicker(); });
+      tray.append(b);
+    } else {
+      const optional = i === 2;
+      tray.append(el("div", { class: "slot" }, el("i", {}), el("span", { text: PICK_NAMES[i] }),
+        el("small", { text: optional ? "optional" : "choose one" })));
+    }
+  }
+  $("pick-clear").hidden = !state.picked.length;
+  applyDisabled();
+}
+
+function addPick(hex) {
+  if (state.picked.length >= 3) { showResult("You have 3 colors. Tap one to take it out first.", "warn"); return; }
+  state.picked.push(hex); renderPicker();
+}
+$("pick-clear").addEventListener("click", () => { state.picked = []; renderPicker(); });
+$("pick-send").addEventListener("click", () => { if (state.picked.length >= 2) sendColours(state.picked.slice()); });
+
+function hslHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+  const f = (n) => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))));
+  return "#" + [f(0), f(8), f(4)].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+function mixHex() { return hslHex(Number($("mix-h").value), Number($("mix-s").value), Number($("mix-l").value)); }
+function updateMix() { $("mix-preview").style.background = mixHex(); }
+["mix-h", "mix-s", "mix-l"].forEach((id) => $(id).addEventListener("input", updateMix));
+$("mix-add").addEventListener("click", () => addPick(mixHex()));
+
+// ---------- effects
+// An effect is known by its id where the server gives one (the demo: "color:wave", "movement:wave"),
+// else by its name; category and direction are sent only when the server offers them (D-035).
+const fxId = (e) => e.id || e.name;
+const fxBody = (e, extra) => Object.assign({ effect_name: e.name }, e.category ? { category: e.category } : {}, e.all ? { all: true } : {}, extra || {});
+
+const runningIds = () => (state.running.list || []).map((r) => r.id).concat(
+  ["color", "intensity", "movement"].map((c) => state.running[c]).filter((x) => typeof x === "string"));
+function markRunning() {
+  document.querySelectorAll("#effects-list .card").forEach((c) => {
+    const on = runningIds().indexOf(c.dataset.fx) >= 0;
+    c.classList.toggle("running", on);
+    const tag = c.querySelector(".run-tag");
+    if (tag) tag.hidden = !on;
+  });
+}
+
+function renderEffects() {
+  const top = $("effects-top"); top.replaceChildren();
+  const box = $("effects-list"); box.replaceChildren();
+  if (!state.effects.length) {
+    box.append(el("p", { class: "muted", text: "No effects are set up for this church yet. Ask the S&S team." }));
+    return;
+  }
+  if (feature("clear_fx")) {
+    const clear = el("button", { type: "button", class: "big change", text: "Clear effects" });
+    clear.addEventListener("click", () => change("/api/clear-effects", {}));
+    top.append(clear);
+  }
+  const split = feature("movement_fx") && state.effects.some((e) => e.category === "movement");
+  const SECTIONS = [["color", "Color"], ["intensity", "Intensity"], ["movement", "Movement"]];
+  const SUB = { color: "colors change", intensity: "brightness", movement: "lights that move" };
+  const STOP = { color: "Stop color effect", intensity: "Stop intensity effect", movement: "Stop movement" };
+  if (split) {
+    // one kind at a time, picked here (the two lists ran together on a phone)
+    if (!state.fxCat) state.fxCat = "color";
+    const seg = el("div", { class: "seg", role: "group", "aria-label": "Kind of effect" });
+    for (const [cat, title] of SECTIONS) {
+      const b = el("button", { type: "button", class: "seg-btn", "aria-pressed": String(state.fxCat === cat) },
+        el("span", { text: title }), el("small", { text: SUB[cat] }));
+      b.addEventListener("click", () => { state.fxCat = cat; renderEffects(); });
+      seg.append(b);
+    }
+    top.append(seg);
+  }
+  const sections = split ? SECTIONS.filter(([cat]) => cat === state.fxCat) : [[null, null]];
+  for (const [cat, title] of sections) {
+    if (title) {
+      const stop = el("button", { type: "button", class: "small-btn change stop-btn", text: STOP[cat] });
+      stop.addEventListener("click", () => change("/api/clear-effects", { category: cat }));
+      box.append(el("div", { class: "fx-head" }, el("h2", { text: title }), feature("clear_fx") ? stop : null));
+      if (feature("lights") && state.lights.length) renderFxGroups(box, cat);
+      if (cat === "color") renderFxColours(box);
+      box.append(el("p", { class: "muted small", text: {
+        color: "Colors change across the lights. Brightness and movement stay as they are.",
+        intensity: "Lights get brighter and dimmer. Colors stay as they are.",
+        movement: "Only lights that move run these. Color stays as it is." }[cat] }));
+    }
+    for (const e of state.effects.filter((x) => !cat || x.category === cat)) renderEffectCard(box, e);
+  }
+  applyDisabled();
+  markRunning();
+}
+
+// The colors a color effect steps between: 2-4, picked here, starting from the last color set sent.
+function fxColours() {
+  if (!state.fxColours) {
+    const last = (state.running && state.running.last_colours) || [];
+    state.fxColours = last.length >= 2 ? last.slice(0, 4) : ["#2f6bff", "#ffa020"];
+  }
+  return state.fxColours;
+}
+function renderFxColours(box) {
+  const cols = fxColours();
+  const tray = el("div", { class: "fx-tray", "aria-label": "Colors for this effect" });
+  cols.forEach((hex, i) => {
+    const b = el("button", { type: "button", class: "fx-slot", "aria-label": "Take out " + colourName(hex) });
+    b.append(el("i", { style: "background:" + hex }), el("small", { text: colourName(hex) }));
+    b.addEventListener("click", () => {
+      if (cols.length <= 2) { showResult("A color effect needs at least 2 colors.", "warn"); return; }
+      cols.splice(i, 1); fxColoursChanged();
+    });
+    tray.append(b);
+  });
+  const quick = el("div", { class: "fx-quick", "aria-label": "Add a color" });
+  for (const [name, hex] of STAGE_COLOURS) {
+    const b = el("button", { type: "button", class: "fx-sw", "aria-label": "Add " + name, title: name });
+    b.append(el("i", { style: "background:" + hex }));
+    b.addEventListener("click", () => {
+      if (cols.length >= 4) cols.shift();            // keep the newest 4
+      cols.push(hex); fxColoursChanged();
+    });
+    quick.append(b);
+  }
+  box.append(el("div", { class: "card fx-colours" },
+    el("div", { class: "k", text: "Colors for the color effect (2 to 4). Tap a color to add it; tap one above to take it out." }),
+    tray, quick));
+}
+function fxColoursChanged() {
+  renderEffects();
+  const ids = (state.running.list || []).filter((r) => r.category === "color").map((r) => r.id);
+  for (const id of ids.slice(-1)) {
+    const e = state.effects.find((x) => fxId(x) === id);
+    if (e) change("/api/apply-effect", fxBody(e, Object.assign({ direction: state.fxDir[id], colours: fxColours().slice() }, groupsBody(e))));
+  }
+}
+
+// ---- user defaults: tap Default to go back to it, hold Default to save what is picked as the new default.
+// Kept in this browser for the demo (the real app would keep them on the hub per church).
+const DEFAULTS_KEY = "tier1.defaults.v1";
+let userDefaults = { fx: {}, lights: {} };
+try { userDefaults = Object.assign(userDefaults, JSON.parse(localStorage.getItem(DEFAULTS_KEY) || "{}")); } catch (e) { /* no storage */ }
+function saveDefaults() { try { localStorage.setItem(DEFAULTS_KEY, JSON.stringify(userDefaults)); } catch (e) { /* no storage */ } }
+const HOLD_MS = 700;
+function holdButton(label, onTap, onHold) {
+  const b = el("button", { type: "button", class: "small-btn area-all", text: label, title: "Tap to reset. Hold to save as default." });
+  let timer = null, held = false;
+  b.addEventListener("pointerdown", () => { held = false; timer = setTimeout(() => { held = true; onHold(); }, HOLD_MS); });
+  const stop = () => { clearTimeout(timer); timer = null; };
+  b.addEventListener("pointerup", () => { const was = timer !== null; stop(); if (was && !held) onTap(); });
+  b.addEventListener("pointerleave", stop); b.addEventListener("pointercancel", stop);
+  b.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); (ev.shiftKey ? onHold : onTap)(); } });
+  b.addEventListener("contextmenu", (ev) => ev.preventDefault());   // a long press on a phone should not open a menu
+  return b;
+}
+
+// ---- which groups an effect runs on (D-038): picked here per type; Stage, Front and House rows.
+const AREAS = [["stage", "Stage"], ["front", "Front"], ["house", "House"]];
+const canRun = (cat, g) => cat === "movement" ? g.moves : cat === "color" ? g.takes_colour : true;
+const runsByDefault = (cat, g) => cat === "intensity" ? g.takes_colour : canRun(cat, g);
+function pickedGroups(cat) {
+  if (!state.fxGroups[cat]) state.fxGroups[cat] = state.lights.filter((g) => runsByDefault(cat, g)).map((g) => g.number);
+  return state.fxGroups[cat];
+}
+function groupsBody(e) {
+  return e.category && feature("lights") && state.lights.length ? { groups: pickedGroups(e.category).slice() } : {};
+}
+function renderFxGroups(box, cat) {
+  const picked = pickedGroups(cat);
+  const card = el("div", { class: "card fx-groups" }, el("div", { class: "k", text: "Run the next effect on these groups. Hold Default to save what's picked as your default." }));
+  for (const [area, label] of AREAS) {
+    const gs = state.lights.filter((g) => (g.area || "stage") === area && canRun(cat, g) && g.lights.length);
+    if (!gs.length) continue;
+    const row = el("div", { class: "chips" });
+    for (const g of gs) {
+      const out = g.lights.every((l) => !l.on);
+      const b = el("button", { type: "button", class: "chip grp" + (picked.indexOf(g.number) >= 0 ? " on" : ""),
+        "aria-pressed": String(picked.indexOf(g.number) >= 0), text: g.label + (out ? " (left out)" : "") });
+      b.addEventListener("click", () => {
+        const i = picked.indexOf(g.number);
+        if (i >= 0) picked.splice(i, 1); else picked.push(g.number);
+        renderEffects();
+      });
+      row.append(b);
+    }
+    // "All stage" etc. adds every group in the area to what is picked (Cory: add all stage groups at once)
+    const allIn = gs.every((g) => picked.indexOf(g.number) >= 0);
+    const all = el("button", { type: "button", class: "small-btn area-all", text: (allIn ? "Clear " : "All ") + label.toLowerCase() });
+    all.addEventListener("click", () => {
+      for (const g of gs) {
+        const i = picked.indexOf(g.number);
+        if (allIn && i >= 0) picked.splice(i, 1);
+        if (!allIn && i < 0) picked.push(g.number);
+      }
+      renderEffects();
+    });
+    const saved = (userDefaults.fx[cat] || {})[area];
+    const def = holdButton("Default", () => {             // tap: this area back to its default (saved, or the type's)
+      for (const g of gs) {
+        const i = picked.indexOf(g.number), want = saved ? saved.indexOf(g.number) >= 0 : runsByDefault(cat, g);
+        if (want && i < 0) picked.push(g.number);
+        if (!want && i >= 0) picked.splice(i, 1);
+      }
+      renderEffects();
+    }, () => {                                            // hold: what is picked here becomes the default
+      (userDefaults.fx[cat] = userDefaults.fx[cat] || {})[area] = gs.filter((g) => picked.indexOf(g.number) >= 0).map((g) => g.number);
+      saveDefaults();
+      showResult("Saved as the default for " + label + ".", "ok");
+    });
+    card.append(el("div", { class: "area-head" }, el("div", { class: "area-lbl", text: label }), el("div", { class: "area-btns" }, def, all)), row);
+  }
+  box.append(card);
+}
+
+function renderEffectCard(box, e) {
+  {
+    const out = el("output", { text: "100" });
+    const size = el("input", { type: "range", min: "0", max: "200", value: "100", "aria-label": "Size for " + e.name });
+    size.addEventListener("input", () => { out.textContent = size.value; });
+    size.addEventListener("change", () => change("/api/effect-size", fxBody(e, { size: parseInt(size.value, 10) })));
+    size.classList.add("change");
+    let dirRow = null;
+    if (feature("fx_directions") && e.directions && e.directions.length) {
+      const id = fxId(e);
+      if (!state.fxDir[id]) state.fxDir[id] = e.directions[0][0];
+      dirRow = el("div", { class: "dir-row", role: "group", "aria-label": "Direction for " + e.name });
+      for (const [value, label] of e.directions) {
+        const b = el("button", { type: "button", class: "dir-btn", text: label, "aria-pressed": String(state.fxDir[id] === value) });
+        b.addEventListener("click", () => {
+          state.fxDir[id] = value;
+          dirRow.querySelectorAll(".dir-btn").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          if (runningIds().indexOf(id) >= 0) change("/api/apply-effect", fxBody(e, Object.assign({ direction: value }, groupsBody(e))));
+        });
+        dirRow.append(b);
+      }
+    }
+    const apply = el("button", { type: "button", class: "big primary change", text: "Apply effect" });
+    apply.addEventListener("click", () => {
+      const body = fxBody(e, Object.assign(dirRow ? { direction: state.fxDir[fxId(e)] } : {},
+        e.category === "color" && feature("movement_fx") ? { colours: fxColours().slice() } : {}, groupsBody(e)));
+      if (body.groups && !body.groups.length) { showResult("Pick at least one group above.", "warn"); return; }
+      change("/api/apply-effect", body);
+    });
+    const card = el("div", { class: "card" },
+      el("h3", {}, e.name, el("span", { class: "run-tag", text: "Running", hidden: "" })),
+      e.category ? el("div", { class: "fx-kind " + e.category, text: { color: "Color effect", intensity: "Intensity effect", movement: "Movement effect" }[e.category] }) : null,
+      e.demo ? el("div", { class: "demo-tag", text: e.proposed ? "Demo effect · name proposed" : "Demo effect" }) : null,
+      el("div", { text: e.what_you_see }),
+      el("div", { class: "k", text: "When to use it" }),
+      el("div", { text: e.when_to_use_it }),
+      dirRow ? el("div", { class: "k", text: "Direction" }) : null,
+      dirRow,
+      apply,
+      el("div", { class: "k", text: "Size (after the effect is running)" }),
+      el("div", { class: "size-row" }, size, out));
+    card.dataset.fx = fxId(e);
+    box.append(card);
+  }
+}
+
+// ---------- lights in the scene (D-035)
+async function loadLights() {
+  if (!feature("lights")) return;                     // async: always a promise
+  try { state.lights = (await api("GET", "/api/lights")).groups; } catch (e) { showResult(e.message, "bad"); return; }
+  renderLights();
+}
+
+async function setLights(channels, on) {
+  const r = await change("/api/lights", { channels, on });
+  if (r) loadLights();
+}
+
+function renderLights() {
+  const box = $("lights-list"); box.replaceChildren();
+  const order = { stage: 0, front: 1, house: 2 };
+  let lastArea = null;
+  for (const g of state.lights.slice().sort((a, b) => (order[a.area] || 0) - (order[b.area] || 0))) {
+    if (!g.lights.length) continue;
+    if (g.area !== lastArea) {
+      lastArea = g.area;
+      const area = g.area;
+      const areaLights = () => [].concat(...state.lights.filter((x) => x.area === area).map((x) => x.lights));
+      const def = holdButton("Default", async () => {      // tap: this area's lights back to the default
+        const ls = areaLights(), saved = userDefaults.lights[area];
+        const wantOn = (l) => saved ? saved.indexOf(l.channel) >= 0 : l.default_on;
+        const on = ls.filter((l) => wantOn(l) && !l.on).map((l) => l.channel);
+        const off = ls.filter((l) => !wantOn(l) && l.on).map((l) => l.channel);
+        if (!on.length && !off.length) { showResult("Already at the default.", "ok"); return; }
+        if (on.length) await change("/api/lights", { channels: on, on: true });
+        if (off.length) await change("/api/lights", { channels: off, on: false });
+        loadLights();
+      }, () => {                                           // hold: the lights in the scene now become the default
+        userDefaults.lights[area] = areaLights().filter((l) => l.on).map((l) => l.channel);
+        saveDefaults();
+        showResult("Saved as the default for " + ({ stage: "Stage", front: "Front", house: "House" }[area] || "this area") + ".", "ok");
+      });
+      def.classList.add("change");
+      box.append(el("div", { class: "area-head lights-area" }, el("h2", { text: { stage: "Stage", front: "Front", house: "House" }[area] || "Stage" }), def));
+    }
+    const onCount = g.lights.filter((l) => l.on).length, allOn = onCount === g.lights.length;
+    const sw = el("button", { type: "button", class: "group-switch change" + (onCount ? " on" : ""), "aria-pressed": String(onCount > 0),
+      text: onCount === 0 ? "Left out" : allOn ? "In the scene" : onCount + " of " + g.lights.length + " in" });
+    sw.addEventListener("click", () => setLights(g.lights.map((l) => l.channel), onCount === 0));
+    const chips = el("div", { class: "chips" });
+    for (const l of g.lights) {
+      const c = el("button", { type: "button", class: "chip change" + (l.on ? " on" : ""), "aria-pressed": String(l.on),
+        "aria-label": g.label + " light " + l.channel + (l.on ? ", in the scene" : ", left out"), text: String(l.channel) });
+      c.addEventListener("click", () => setLights([l.channel], !l.on));
+      chips.append(c);
+    }
+    box.append(el("div", { class: "card light-group" },
+      el("div", { class: "lg-head" }, el("h3", { text: g.label }), sw), chips));
+  }
+  applyDisabled();
+}
+window.addEventListener("demo-fixture-tap", (ev) => {
+  if (state.tab !== "lights" || isLocked() || !canChange()) return;
+  const ch = ev.detail.channel;
+  const l = [].concat(...state.lights.map((g) => g.lights)).find((x) => x.channel === ch);
+  if (l) setLights([ch], !l.on);
+});
+
+// ---------- tempo
+function renderTempoChoices() {
+  const sel = $("tempo-effect"); sel.replaceChildren();
+  if (!state.effects.length) sel.append(el("option", { value: "", text: "No effects set up" }));
+  const catLabel = (e) => e.category && state.effects.some((x) => x.category && x.category !== e.category) ? " (" + e.category + ")" : "";
+  // demo: one tempo drives every running effect, so there is nothing to pick (kept simple on purpose)
+  sel.closest(".row").hidden = feature("tempo_all");
+  if (feature("tempo_all")) sel.append(el("option", { value: ALL_FX.id, text: ALL_FX.name }));
+  for (const e of state.effects) sel.append(el("option", { value: fxId(e), text: e.name + catLabel(e) + (e.tempo_measured ? "" : " (not measured yet)") }));
+  if (state.effects.some((e) => fxId(e) === state.tempoEffect)) sel.value = state.tempoEffect;
+  else if (feature("tempo_all")) state.tempoEffect = ALL_FX.id;
+  else state.tempoEffect = (state.effects.find((e) => e.tempo_measured) ? fxId(state.effects.find((e) => e.tempo_measured)) : state.effects.length ? fxId(state.effects[0]) : "");
+  if (state.tempoEffect) sel.value = state.tempoEffect;
+  updateTempoControls();
+}
+$("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); sendTempoSoon(); });
+
+// "All running effects" (demo): one tempo for every effect, like a speed master
+const ALL_FX = { id: "__all__", name: "All running effects", tempo_measured: true, all: true };
+function currentEffect() {
+  if (state.tempoEffect === ALL_FX.id && feature("tempo_all")) return ALL_FX;
+  return state.effects.find((e) => fxId(e) === state.tempoEffect) || null;
+}
+function updateTempoControls() {
+  const e = currentEffect(), note = $("tempo-note");
+  if (!e) note.textContent = "Pick an effect to follow the tempo.";
+  else if (!e.tempo_measured) note.textContent = "Tempo is not measured yet for this effect, so it cannot follow a tempo.";
+  else note.textContent = "";
+  updateNoteLine();
+  $("tempo-live").textContent = !e || !e.tempo_measured ? "" : isLocked() ? "Unlock to send the tempo." : !canChange() ? "" : "Live: the tempo goes to the lights as you tap.";
+}
+
+// ---- note value (D-028). The table comes from the hub (/api/me), so the app never carries its own copy.
+function renderNotes() {
+  const row = $("note-row"); row.replaceChildren();
+  const notes = state.me.notes || [];
+  if (!notes.some((n) => n.name === state.note)) state.note = state.me.default_note || "1/4";
+  for (const n of notes) {
+    const b = el("button", { type: "button", class: "note-btn", text: n.name, "aria-label": n.spoken,
+      "aria-pressed": n.name === state.note ? "true" : "false", title: n.label });
+    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); restartBeat(); sendTempoSoon(); });
+    row.append(b);
+  }
+  updateNoteLine();
+}
+function currentNote() { return (state.me.notes || []).find((n) => n.name === state.note) || null; }
+function updateNoteLine() {
+  const n = currentNote(), line = $("note-line");
+  if (!n) { line.textContent = ""; return; }
+  const label = n.label.charAt(0).toLowerCase() + n.label.slice(1);
+  const e = currentEffect();
+  const bpm = Math.round(getBpm() * n.multiplier * (e && e.eos_bpm_per_tempo ? e.eos_bpm_per_tempo : 1));
+  line.textContent = "Effect cycle: every " + label + " note (" + bpm + " per minute on the console)";
+}
+
+function getBpm() { return Math.max(40, Math.min(200, Math.round(Number($("bpm").value) || 120))); }
+function setBpm(n) {
+  $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n))));
+  $("bpm-wheel").setAttribute("aria-valuenow", $("bpm").value);
+  restartBeat(); updateNoteLine(); sendTempoSoon();
+}
+// The tempo wheel: like the edge of a scroll wheel. Dragging 8 px is 1 BPM; the ridges move with the drag.
+const WHEEL_PX_PER_BPM = 8;
+let wheelX = null, wheelBpm = 0, wheelShift = 0;
+const wheel = $("bpm-wheel");
+function wheelShow() {
+  wheel.style.backgroundPositionX = "0px, " + wheelShift + "px";       // only the ridges move, not the end shading
+  wheel.setAttribute("aria-valuenow", String(getBpm()));
+}
+wheel.addEventListener("pointerdown", (ev) => {
+  if (ev.target === $("bpm")) return;                 // tapping the number still lets you type one
+  wheelX = ev.clientX; wheelBpm = getBpm(); wheel.setPointerCapture(ev.pointerId); wheel.classList.add("turning");
+});
+wheel.addEventListener("pointermove", (ev) => {
+  if (wheelX === null) return;
+  const dx = ev.clientX - wheelX;
+  wheelShift += ev.movementX || 0;
+  const n = wheelBpm + Math.round(dx / WHEEL_PX_PER_BPM);
+  if (n !== getBpm()) setBpm(n);
+  wheelShow();
+});
+const wheelEnd = () => { wheelX = null; wheel.classList.remove("turning"); };
+wheel.addEventListener("pointerup", wheelEnd); wheel.addEventListener("pointercancel", wheelEnd);
+wheel.addEventListener("keydown", (ev) => {
+  const step = ev.key === "ArrowRight" || ev.key === "ArrowUp" ? 1 : ev.key === "ArrowLeft" || ev.key === "ArrowDown" ? -1 : 0;
+  if (!step) return;
+  ev.preventDefault(); wheelShift += step * WHEEL_PX_PER_BPM; setBpm(getBpm() + step); wheelShow();
+});
+$("bpm").addEventListener("change", () => setBpm(getBpm()));
+
+$("tap").addEventListener("pointerdown", (ev) => {
+  ev.preventDefault();
+  const now = performance.now();
+  if (state.taps.length && now - state.taps[state.taps.length - 1] > 2000) state.taps = [];   // idle for 2 s: start over
+  state.taps.push(now);
+  if (state.taps.length > 8) state.taps.shift();
+  if (state.taps.length >= 2) {
+    const span = state.taps[state.taps.length - 1] - state.taps[0];
+    setBpm(60000 / (span / (state.taps.length - 1)));
+  }
+  flash();
+});
+
+let beatTimer = null;
+function flash() { const b = $("beat"); b.classList.add("flash"); setTimeout(() => b.classList.remove("flash"), 90); }
+function restartBeat() {
+  clearInterval(beatTimer);
+  if (state.tab !== "tempo") return;
+  const n = state.me && currentNote();
+  beatTimer = setInterval(flash, 60000 / (getBpm() * (n ? n.multiplier : 1)));   // flashes once per chosen note
+}
+
+// Tempo is live: a tap, +/-, a typed tempo or a note sends it after a short pause, so a
+// burst of taps sends once (and stays under the hub's writes-per-minute limit). Nothing is sent when it would
+// not change anything.
+let tempoTimer = null, tempoSent = "";
+function sendTempoSoon() {
+  clearTimeout(tempoTimer);
+  tempoTimer = setTimeout(() => {
+    const e = currentEffect();
+    if (!e || !e.tempo_measured || isLocked() || !canChange()) return;
+    const key = fxId(e) + "|" + getBpm() + "|" + state.note;
+    if (key === tempoSent) return;
+    tempoSent = key;
+    change("/api/tempo", fxBody(e, { tempo: getBpm(), note: state.note })).then((r) => { if (!r || !r.allowed) tempoSent = ""; });
+  }, 600);
+}
+
+// ---------- more
+async function loadHistory() {
+  if (!state.me.can.history) return;
+  const ul = $("history-list"); ul.replaceChildren();
+  try {
+    const h = await api("GET", "/api/history?limit=30");
+    if (!h.history.length) ul.append(el("li", { class: "muted", text: "Nothing yet." }));
+    for (const r of h.history) {
+      const when = new Date(r.ts).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" });
+      ul.append(el("li", {},
+        el("span", { class: "t", text: when + " · " + r.user + " · " }),
+        el("span", { text: r.op.replace(/_/g, " ") + " " }),
+        el("span", { class: r.allowed ? "" : "no", text: r.allowed ? "(" + r.outcome + ")" : "(refused: " + r.reason + ")" })));
+    }
+  } catch (e) { ul.append(el("li", { class: "no", text: e.message })); }
+}
+
+async function loadSchedule() {
+  try {
+    const s = await api("GET", "/api/schedule");
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    $("schedule-text").textContent = s.windows.length
+      ? s.windows.map((w) => days[w.weekday] + " " + w.start + " to " + w.end).join(", ") + " (" + s.timezone + ")"
+      : "No scheduled lock. Ask the S&S team to set one.";
+  } catch (e) { /* leave as is */ }
+}
+
+// ---------- help (D-030): open from any screen, address shown as text to select or copy
+document.querySelectorAll(".help-btn").forEach((b) => b.addEventListener("click", () => {
+  $("help-msg").textContent = ""; $("help-dialog").showModal();
+}));
+$("help-copy").addEventListener("click", async () => {
+  const addr = $("help-email").textContent;
+  try { await navigator.clipboard.writeText(addr); $("help-msg").textContent = "Copied."; }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents($("help-email"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    $("help-msg").textContent = "Selected. Copy it from here.";
+  }
+});
+
+// ---------- tabs
+function selectTab(name) {
+  state.tab = name;
+  document.querySelectorAll(".tab").forEach((s) => { s.hidden = s.id !== "tab-" + name; });
+  document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  if (name === "more") { loadHistory(); if (state.me.can.schedule) loadSchedule(); }
+  if (name === "lights" || (name === "effects" && feature("lights"))) loadLights().then(() => { if (name === "effects") renderEffects(); });
+  if (DEMO) window.DemoStage.place(name);
+  restartBeat();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".tabbar button").forEach((b) => b.addEventListener("click", () => selectTab(b.dataset.tab)));
+
+// ---------- start
+updateMix();
+if (DEMO) {
+  document.body.classList.add("demo");
+  document.querySelectorAll(".demo-only").forEach((n) => { n.hidden = false; });
+  document.querySelectorAll(".live-only").forEach((n) => { n.hidden = true; });
+  // The demo is for people deciding whether they want this (D-034): "Learn more" instead of "Help".
+  document.querySelectorAll(".help-btn").forEach((b) => { b.textContent = "Learn more"; });
+  $("help-title").textContent = "Learn more";
+  $("help-lead").textContent = "Want this for your church, or have a question? Email S&S Production Services, LLC:";
+  $("help-tail").textContent = "Tell us your church's name and what console you use.";
+  $("notice-help").textContent = "The S&S team set it up and support it. Tap Learn more any time to reach a person.";
+  const sizeRibbon = () => document.documentElement.style.setProperty("--ribbon-h", $("demo-ribbon").offsetHeight + "px");
+  sizeRibbon(); window.addEventListener("resize", sizeRibbon);
+  $("demo-start").addEventListener("click", async () => {
+    $("demo-login-msg").textContent = "";
+    try { await api("POST", "/api/login", { username: "demo", password: "" }); await enterApp(); }
+    catch (e) { $("demo-login-msg").textContent = e.message; }
+  });
+} else if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+document.addEventListener("visibilitychange", () => { if (!document.hidden && state.me) refreshStatus(); });
+api("GET", "/api/me").then(enterApp).catch(showLogin);
+
+</script>
+</body>
+</html>
