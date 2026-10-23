@@ -1953,7 +1953,7 @@ function renderFxGroups(box, cat) {
       });
       row.append(b);
     }
-    // "All stage" etc. adds every group in the area to what is picked (Cory: add all stage groups at once)
+    // "All stage" etc. adds every group in the area to what is picked
     const allIn = gs.every((g) => picked.indexOf(g.number) >= 0);
     const all = el("button", { type: "button", class: "small-btn area-all", text: (allIn ? "Clear " : "All ") + label.toLowerCase() });
     all.addEventListener("click", () => {
