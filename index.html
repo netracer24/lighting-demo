@@ -138,9 +138,20 @@ input.hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0
 }
 .tap:active { background: #3a4260; }
 .bpm-row { display: flex; align-items: center; gap: 10px; }
-.step { flex: 0 0 72px; font-size: 24px; font-weight: 700; }
-.bpm-box { flex: 1; text-align: center; }
-.bpm-box input { text-align: center; font-size: 34px; font-weight: 800; min-height: 72px; }
+/* tempo wheel: ridges like the edge of a scroll wheel, shaded darker at the ends so it reads as round */
+.bpm-wheel {
+  flex: 1; position: relative; border-radius: 16px; border: 1px solid var(--line); padding: 8px 0 6px;
+  cursor: ew-resize; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.75)),
+    repeating-linear-gradient(90deg, #2b3040 0 6px, #3b4256 6px 8px, #1d212c 8px 12px);
+}
+.bpm-wheel.turning, .bpm-wheel:focus-visible { border-color: var(--accent); outline: none; }
+.bpm-box { text-align: center; position: relative; }
+.bpm-box input { text-align: center; font-size: 34px; font-weight: 800; min-height: 60px; width: 130px; margin: 0 auto; display: block;
+  background: rgba(16,18,24,.82); border-color: transparent; }
+.bpm-box span { display: block; color: var(--text); text-shadow: 0 1px 2px #000; }
+.wheel-hint { margin: 6px 0 0; text-align: center; }
 .note-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
 .note-btn { flex: 1 1 22%; min-width: 72px; min-height: 60px; font-size: 20px; font-weight: 700; }
 .note-btn[aria-pressed="true"] { background: var(--accent); color: #1a1405; border-color: var(--accent); }
@@ -376,14 +387,17 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
       <p id="tempo-note" class="muted"></p>
       <button id="tap" type="button" class="tap">TAP</button>
       <div class="bpm-row">
-        <button id="bpm-minus" type="button" class="step">-1</button>
-        <div class="bpm-box">
-          <input id="bpm" type="number" inputmode="numeric" min="40" max="200" value="120" aria-label="Tempo in beats per minute">
-          <span class="muted small">beats per minute</span>
+        <!-- Drag the wheel left or right to change the tempo; arrow keys step by 1 -->
+        <div id="bpm-wheel" class="bpm-wheel" role="slider" tabindex="0" aria-label="Tempo wheel: drag left or right"
+             aria-valuemin="40" aria-valuemax="200" aria-valuenow="120">
+          <div class="bpm-box">
+            <input id="bpm" type="number" inputmode="numeric" min="40" max="200" value="120" aria-label="Tempo in beats per minute">
+            <span class="small">beats per minute</span>
+          </div>
         </div>
-        <button id="bpm-plus" type="button" class="step">+1</button>
         <div id="beat" class="beat" aria-hidden="true"></div>
       </div>
+      <p class="muted small wheel-hint">Drag the wheel left or right to change the tempo.</p>
       <div id="note-row" class="note-row" role="group" aria-label="Note value"></div>
       <p id="note-line" class="muted small"></p>
       <p id="tempo-live" class="muted small" role="status"></p>
@@ -1742,9 +1756,38 @@ function updateNoteLine() {
 }
 
 function getBpm() { return Math.max(40, Math.min(200, Math.round(Number($("bpm").value) || 120))); }
-function setBpm(n) { $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n)))); restartBeat(); updateNoteLine(); sendTempoSoon(); }
-$("bpm-minus").addEventListener("click", () => setBpm(getBpm() - 1));
-$("bpm-plus").addEventListener("click", () => setBpm(getBpm() + 1));
+function setBpm(n) {
+  $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n))));
+  $("bpm-wheel").setAttribute("aria-valuenow", $("bpm").value);
+  restartBeat(); updateNoteLine(); sendTempoSoon();
+}
+// The tempo wheel: like the edge of a scroll wheel. Dragging 8 px is 1 BPM; the ridges move with the drag.
+const WHEEL_PX_PER_BPM = 8;
+let wheelX = null, wheelBpm = 0, wheelShift = 0;
+const wheel = $("bpm-wheel");
+function wheelShow() {
+  wheel.style.backgroundPositionX = "0px, " + wheelShift + "px";       // only the ridges move, not the end shading
+  wheel.setAttribute("aria-valuenow", String(getBpm()));
+}
+wheel.addEventListener("pointerdown", (ev) => {
+  if (ev.target === $("bpm")) return;                 // tapping the number still lets you type one
+  wheelX = ev.clientX; wheelBpm = getBpm(); wheel.setPointerCapture(ev.pointerId); wheel.classList.add("turning");
+});
+wheel.addEventListener("pointermove", (ev) => {
+  if (wheelX === null) return;
+  const dx = ev.clientX - wheelX;
+  wheelShift += ev.movementX || 0;
+  const n = wheelBpm + Math.round(dx / WHEEL_PX_PER_BPM);
+  if (n !== getBpm()) setBpm(n);
+  wheelShow();
+});
+const wheelEnd = () => { wheelX = null; wheel.classList.remove("turning"); };
+wheel.addEventListener("pointerup", wheelEnd); wheel.addEventListener("pointercancel", wheelEnd);
+wheel.addEventListener("keydown", (ev) => {
+  const step = ev.key === "ArrowRight" || ev.key === "ArrowUp" ? 1 : ev.key === "ArrowLeft" || ev.key === "ArrowDown" ? -1 : 0;
+  if (!step) return;
+  ev.preventDefault(); wheelShift += step * WHEEL_PX_PER_BPM; setBpm(getBpm() + step); wheelShow();
+});
 $("bpm").addEventListener("change", () => setBpm(getBpm()));
 
 $("tap").addEventListener("pointerdown", (ev) => {
