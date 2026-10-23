@@ -253,6 +253,14 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 .fx-quick { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
 .fx-sw { min-height: 44px; padding: 5px; background: var(--panel2); }
 .fx-sw i { display: block; height: 100%; min-height: 32px; border-radius: 6px; border: 1px solid rgba(255,255,255,.18); }
+/* groups for the next effect (D-038) */
+.fx-groups { padding: 10px 12px; }
+.area-lbl { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin: 10px 0 0; }
+.chip.grp { min-width: 0; padding: 0 12px; }
+.chip.grp.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.area-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.area-head .area-lbl { margin: 0; }
+.area-all { min-height: 36px; font-size: 13px; padding: 0 10px; }
 
 </style>
 </head>
@@ -490,12 +498,13 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
   // take color; the others do. A built demo for another church (tools/build_demo.py --church) replaces
   // these with window.DEMO_CHURCH: {name, groups: [{number, label, role, takes_colour, moves, channels}], off}.
+  // area: where the group is, for the group picker (stage, front, house).
   const DEFAULT_GROUPS = [
-    { number: "1", label: "Front Wash", role: "front", takes_colour: false, channels: [[1, 8]] },
-    { number: "2", label: "Back Light", role: "back", takes_colour: true, channels: [[11, 18]] },
-    { number: "3", label: "Movers", role: "air", takes_colour: true, moves: true, channels: [[301, 306]] },
-    { number: "4", label: "Stage Pars", role: "accent", takes_colour: true, channels: [[21, 28]] },
-    { number: "5", label: "Side Light", role: "side", takes_colour: true, channels: [[31, 36]] },
+    { number: "1", label: "Front Wash", role: "front", area: "front", takes_colour: false, channels: [[1, 8]] },
+    { number: "2", label: "Back Light", role: "back", area: "stage", takes_colour: true, channels: [[11, 18]] },
+    { number: "3", label: "Movers", role: "air", area: "stage", takes_colour: true, moves: true, channels: [[301, 306]] },
+    { number: "4", label: "Stage Pars", role: "accent", area: "stage", takes_colour: true, channels: [[21, 28]] },
+    { number: "5", label: "Side Light", role: "side", area: "front", takes_colour: true, channels: [[31, 36]] },
   ];
   const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS, off: [] };
   const GROUPS = CHURCH.groups;
@@ -640,7 +649,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
     const st = {
       signedIn: false, noticeAck: false, locked: true, changedBy: null, changedAt: null,
       wrong: 0, lockedOutUntil: 0, history: [],
-      groups: {}, chan: {}, fx: { color: null, intensity: null, movement: null }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
+      groups: {}, chan: {}, fx: { color: [], intensity: [], movement: [] }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
       lastColours: [WARM_WHITE],
     };
     const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
@@ -702,9 +711,20 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return { variant: v.kind, detail: v.label + ".", groups: shown };
     }
 
+    // Which groups can run an effect of this type: movement only on lights that move, color only on groups
+    // that take color, intensity on any group.
+    const canRun = (cat, g) => cat === "movement" ? g.moves === true : cat === "color" ? g.takes_colour : true;
+    const DEFAULT_RUN = (cat, g) => cat === "intensity" ? g.takes_colour : canRun(cat, g);    // when no group is picked
+    function instFor(cat, ch) {                          // the running effect of this type on this light
+      for (const f of st.fx[cat]) if (f.pos[ch] !== undefined && f.chans.indexOf(ch) >= 0) return f;
+      return null;
+    }
+    const current = (cat) => st.fx[cat].length ? st.fx[cat][st.fx[cat].length - 1] : null;
+
     function applyEffect(eff, body) {
       const cat = eff.category;
-      const groups = GROUPS.filter((g) => cat === "movement" ? g.moves : g.takes_colour);
+      const picked = Array.isArray(body.groups) ? body.groups.map(String) : null;
+      const groups = GROUPS.filter((g) => picked ? picked.indexOf(g.number) >= 0 && canRun(cat, g) : DEFAULT_RUN(cat, g));
       const chans = acrossOrder([].concat(...groups.map(lit)));
       if (!chans.length) return null;
       const dir = eff.fixed || (eff.directions && eff.directions.some((d) => d[0] === body.direction) ? body.direction : "ltr");
@@ -713,10 +733,11 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       chans.forEach((ch, i) => { pos[ch] = orderPos(i, chans.length, dir, seed); });
       // a color effect steps between its own colors (body.colours, 2-4) or, without them, the last color set
       const colours = cat === "color" && Array.isArray(body.colours) && body.colours.length >= 2 ? body.colours.map((h) => h.toLowerCase()) : null;
-      st.fx[cat] = { id: eff.id, name: eff.name, kind: eff.kind, dir, chans, pos, n: chans.length, started: now(), colours };
-      for (const g of GROUPS) {                                   // the group view of the same thing
-        if (st.groups[g.number].fx && st.groups[g.number].fx.category === cat) st.groups[g.number].fx = null;
-      }
+      // the new effect takes over these lights; effects of the same type on other lights keep running
+      for (const f of st.fx[cat]) f.chans = f.chans.filter((ch) => chans.indexOf(ch) < 0);
+      st.fx[cat] = st.fx[cat].filter((f) => f.chans.length);
+      st.fx[cat].push({ id: eff.id, name: eff.name, kind: eff.kind, dir, chans, pos, n: chans.length, started: now(), colours,
+        groups: groups.filter((g) => lit(g).length).map((g) => g.number) });
       for (const g of groups) if (lit(g).length) st.groups[g.number].fx = { name: eff.name, kind: eff.kind, category: cat };
       return { dir, groups: groups.filter((g) => lit(g).length) };
     }
@@ -733,7 +754,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       }
       if (path === "/api/clear-effects") {
         const cats = CATEGORIES.indexOf(body.category) >= 0 ? [body.category] : CATEGORIES.slice();
-        for (const c of cats) st.fx[c] = null;
+        for (const c of cats) st.fx[c] = [];
         for (const g of GROUPS) if (st.groups[g.number].fx && cats.indexOf(st.groups[g.number].fx.category) >= 0) st.groups[g.number].fx = null;
         log(op, args, true, "");
         changed();
@@ -744,8 +765,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
         if (!chans.length) return refused("Those lights are not in this church");
         for (const ch of chans) st.chan[ch].on = !!body.on;
         for (const c of CATEGORIES) {                       // a light taken out stops running effects
-          const fx = st.fx[c];
-          if (fx && !body.on) fx.chans = fx.chans.filter((ch) => chans.indexOf(ch) < 0);
+          if (!body.on) for (const fx of st.fx[c]) fx.chans = fx.chans.filter((ch) => chans.indexOf(ch) < 0);
         }
         log(op, args, true, "");
         changed();
@@ -776,7 +796,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
         group.rgb = [body.r, body.g, body.b];
       } else if (path === "/api/apply-effect") {
         const r = applyEffect(eff, body);
-        if (!r) return refused(eff.category === "movement" ? "No lights in this scene can move" : "No lights in this church are set up for this effect");
+        if (!r) return refused(Array.isArray(body.groups) ? "None of those groups can run this effect, or their lights are left out"
+          : eff.category === "movement" ? "No lights in this scene can move" : "No lights in this church are set up for this effect");
         log(op, args, true, "");
         changed();
         const dirLabel = (DIRECTIONS.find((d) => d[0] === r.dir) || [0, ""])[1];
@@ -830,6 +851,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       "/api/apply-palette": { op: "apply_colour_palette", valid: (b) => num(b.group, 1, 9999) && num(b.cp, 1, 9999) },
       "/api/colour": { op: "set_colour_rgb", valid: (b) => num(b.group, 1, 9999) && num(b.r, 0, 100) && num(b.g, 0, 100) && num(b.b, 0, 100) },
       "/api/apply-effect": { op: "apply_effect", valid: (b) => typeof b.effect_name === "string" && cat(b) && (b.direction === undefined || ALL_DIRS.indexOf(b.direction) >= 0)
+        && (b.groups === undefined || (Array.isArray(b.groups) && b.groups.length > 0 && b.groups.every((n) => GROUPS.some((g) => g.number === String(n)))))
         && (b.colours === undefined || (Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 4 && b.colours.every(isHex))) },
       "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
       "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) },
@@ -856,9 +878,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return ok({ ok: true, reason: "unlocked", lock: lockInfo() });
     }
 
-    const running = () => ({ color: st.fx.color && st.fx.color.id, intensity: st.fx.intensity && st.fx.intensity.id,
-      last_colours: st.lastColours.slice(),
-      movement: st.fx.movement && st.fx.movement.id });
+    const running = () => ({ last_colours: st.lastColours.slice(),
+      list: [].concat(...CATEGORIES.map((c) => st.fx[c].map((f) => ({ id: f.id, category: c, groups: f.groups.slice() })))) });
 
     async function call(method, path, body) {
       const url = String(path).split("?")[0];
@@ -895,7 +916,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "GET" && url === "/api/schedule") return fail(403, "Your role cannot do that");
       if (method === "GET" && url === "/api/groups") return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label })) });
       if (method === "GET" && url === "/api/lights") {
-        return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label, role: g.role,
+        return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label, role: g.role, area: g.area || "stage",
+          takes_colour: g.takes_colour, moves: g.moves === true,
           lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on })) })) });
       }
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
@@ -946,8 +968,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       const out = { on: c.on, rgb: c.rgb.map((v) => v * 2.55), I: c.on ? 0.85 : 0, pan: 0, tilt: 0, color: null, intensity: null, movement: null };
       if (!c.on) return out;
       for (const c of ["color", "intensity"]) {
-        const cf = st.fx[c];
-        if (!cf || cf.pos[ch] === undefined || cf.chans.indexOf(ch) < 0) continue;
+        const cf = instFor(c, ch);
+        if (!cf) continue;
         const p = still ? 0 : phaseOf(cf, t), amp = Math.min(1, (st.fxSize[cf.id] === undefined ? 100 : st.fxSize[cf.id]) / 100);
         out[c] = cf.name;
         if (cf.kind === "cfan") {                              // the next color arrives in the effect's order
@@ -969,8 +991,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
           out.I *= 1 - 0.92 * amp * (1 - level(cf.kind, cf.pos[ch], p, cf.n));
         }
       }
-      const mf = st.fx.movement;
-      if (mf && mf.pos[ch] !== undefined && mf.chans.indexOf(ch) >= 0) {
+      const mf = instFor("movement", ch);
+      if (mf) {
         const p = still ? 0 : phaseOf(mf, t), d = mf.pos[ch], TAU = Math.PI * 2;
         const amp = Math.min(2, (st.fxSize[mf.id] === undefined ? 100 : st.fxSize[mf.id]) / 100);
         out.movement = mf.name;
@@ -982,7 +1004,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
 
     return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS, church: CHURCH,
       CHANGE_ENDPOINTS, DEMO_ONLY_CHANGES, DEMO_PIN, NOTES, DIRECTIONS, fxBpm: st.fxBpm, fxSize: st.fxSize,
-      look, level, orderPos, acrossOrder, chanList, variantsFor };
+      look, level, orderPos, acrossOrder, chanList, variantsFor, current };
   }
 
   const api = create();
@@ -1102,7 +1124,7 @@ const $ = (id) => document.getElementById(id);
 const state = {
   me: null, status: null, sets: [], effects: [],
   tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
-  features: {}, fxDir: {}, running: {}, lights: [], fxColours: null,
+  features: {}, fxDir: {}, running: {}, lights: [], fxColours: null, fxGroups: {},
 };
 const feature = (name) => !!state.features[name];
 
@@ -1414,9 +1436,11 @@ $("mix-add").addEventListener("click", () => addPick(mixHex()));
 const fxId = (e) => e.id || e.name;
 const fxBody = (e, extra) => Object.assign({ effect_name: e.name }, e.category ? { category: e.category } : {}, extra || {});
 
+const runningIds = () => (state.running.list || []).map((r) => r.id).concat(
+  ["color", "intensity", "movement"].map((c) => state.running[c]).filter((x) => typeof x === "string"));
 function markRunning() {
   document.querySelectorAll("#effects-list .card").forEach((c) => {
-    const on = Object.values(state.running).indexOf(c.dataset.fx) >= 0;
+    const on = runningIds().indexOf(c.dataset.fx) >= 0;
     c.classList.toggle("running", on);
     const tag = c.querySelector(".run-tag");
     if (tag) tag.hidden = !on;
@@ -1457,6 +1481,7 @@ function renderEffects() {
       const stop = el("button", { type: "button", class: "small-btn change stop-btn", text: STOP[cat] });
       stop.addEventListener("click", () => change("/api/clear-effects", { category: cat }));
       box.append(el("div", { class: "fx-head" }, el("h2", { text: title }), feature("clear_fx") ? stop : null));
+      if (feature("lights") && state.lights.length) renderFxGroups(box, cat);
       if (cat === "color") renderFxColours(box);
       box.append(el("p", { class: "muted small", text: {
         color: "Colors change across the lights. Brightness and movement stay as they are.",
@@ -1505,9 +1530,56 @@ function renderFxColours(box) {
 }
 function fxColoursChanged() {
   renderEffects();
-  const id = state.running.color;
-  const e = id && state.effects.find((x) => fxId(x) === id);
-  if (e) change("/api/apply-effect", fxBody(e, { direction: state.fxDir[id], colours: fxColours().slice() }));
+  const ids = (state.running.list || []).filter((r) => r.category === "color").map((r) => r.id);
+  for (const id of ids.slice(-1)) {
+    const e = state.effects.find((x) => fxId(x) === id);
+    if (e) change("/api/apply-effect", fxBody(e, Object.assign({ direction: state.fxDir[id], colours: fxColours().slice() }, groupsBody(e))));
+  }
+}
+
+// ---- which groups an effect runs on (D-038): picked here per type; Stage, Front and House rows.
+const AREAS = [["stage", "Stage"], ["front", "Front"], ["house", "House"]];
+const canRun = (cat, g) => cat === "movement" ? g.moves : cat === "color" ? g.takes_colour : true;
+const runsByDefault = (cat, g) => cat === "intensity" ? g.takes_colour : canRun(cat, g);
+function pickedGroups(cat) {
+  if (!state.fxGroups[cat]) state.fxGroups[cat] = state.lights.filter((g) => runsByDefault(cat, g)).map((g) => g.number);
+  return state.fxGroups[cat];
+}
+function groupsBody(e) {
+  return e.category && feature("lights") && state.lights.length ? { groups: pickedGroups(e.category).slice() } : {};
+}
+function renderFxGroups(box, cat) {
+  const picked = pickedGroups(cat);
+  const card = el("div", { class: "card fx-groups" }, el("div", { class: "k", text: "Run the next effect on these groups" }));
+  for (const [area, label] of AREAS) {
+    const gs = state.lights.filter((g) => (g.area || "stage") === area && canRun(cat, g) && g.lights.length);
+    if (!gs.length) continue;
+    const row = el("div", { class: "chips" });
+    for (const g of gs) {
+      const out = g.lights.every((l) => !l.on);
+      const b = el("button", { type: "button", class: "chip grp" + (picked.indexOf(g.number) >= 0 ? " on" : ""),
+        "aria-pressed": String(picked.indexOf(g.number) >= 0), text: g.label + (out ? " (left out)" : "") });
+      b.addEventListener("click", () => {
+        const i = picked.indexOf(g.number);
+        if (i >= 0) picked.splice(i, 1); else picked.push(g.number);
+        renderEffects();
+      });
+      row.append(b);
+    }
+    // "All stage" etc. adds every group in the area to what is picked (Cory: add all stage groups at once)
+    const allIn = gs.every((g) => picked.indexOf(g.number) >= 0);
+    const all = el("button", { type: "button", class: "small-btn area-all", text: (allIn ? "Clear " : "All ") + label.toLowerCase() });
+    all.addEventListener("click", () => {
+      for (const g of gs) {
+        const i = picked.indexOf(g.number);
+        if (allIn && i >= 0) picked.splice(i, 1);
+        if (!allIn && i < 0) picked.push(g.number);
+      }
+      renderEffects();
+    });
+    card.append(el("div", { class: "area-head" }, el("div", { class: "area-lbl", text: label }), all), row);
+  }
+  box.append(card);
 }
 
 function renderEffectCard(box, e) {
@@ -1527,15 +1599,18 @@ function renderEffectCard(box, e) {
         b.addEventListener("click", () => {
           state.fxDir[id] = value;
           dirRow.querySelectorAll(".dir-btn").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-          if (Object.values(state.running).indexOf(id) >= 0) change("/api/apply-effect", fxBody(e, { direction: value }));
+          if (runningIds().indexOf(id) >= 0) change("/api/apply-effect", fxBody(e, Object.assign({ direction: value }, groupsBody(e))));
         });
         dirRow.append(b);
       }
     }
     const apply = el("button", { type: "button", class: "big primary change", text: "Apply effect" });
-    apply.addEventListener("click", () => change("/api/apply-effect",
-      fxBody(e, Object.assign(dirRow ? { direction: state.fxDir[fxId(e)] } : {},
-        e.category === "color" && feature("movement_fx") ? { colours: fxColours().slice() } : {}))));
+    apply.addEventListener("click", () => {
+      const body = fxBody(e, Object.assign(dirRow ? { direction: state.fxDir[fxId(e)] } : {},
+        e.category === "color" && feature("movement_fx") ? { colours: fxColours().slice() } : {}, groupsBody(e)));
+      if (body.groups && !body.groups.length) { showResult("Pick at least one group above.", "warn"); return; }
+      change("/api/apply-effect", body);
+    });
     const card = el("div", { class: "card" },
       el("h3", {}, e.name, el("span", { class: "run-tag", text: "Running", hidden: "" })),
       e.category ? el("div", { class: "fx-kind " + e.category, text: { color: "Color effect", intensity: "Intensity effect", movement: "Movement effect" }[e.category] }) : null,
@@ -1555,7 +1630,7 @@ function renderEffectCard(box, e) {
 
 // ---------- lights in the scene (D-035)
 async function loadLights() {
-  if (!feature("lights")) return;
+  if (!feature("lights")) return;                     // async: always a promise
   try { state.lights = (await api("GET", "/api/lights")).groups; } catch (e) { showResult(e.message, "bad"); return; }
   renderLights();
 }
@@ -1567,8 +1642,11 @@ async function setLights(channels, on) {
 
 function renderLights() {
   const box = $("lights-list"); box.replaceChildren();
-  for (const g of state.lights) {
+  const order = { stage: 0, front: 1, house: 2 };
+  let lastArea = null;
+  for (const g of state.lights.slice().sort((a, b) => (order[a.area] || 0) - (order[b.area] || 0))) {
     if (!g.lights.length) continue;
+    if (g.area !== lastArea) { lastArea = g.area; box.append(el("h2", { text: { stage: "Stage", front: "Front", house: "House" }[g.area] || "Stage" })); }
     const onCount = g.lights.filter((l) => l.on).length, allOn = onCount === g.lights.length;
     const sw = el("button", { type: "button", class: "group-switch change" + (onCount ? " on" : ""), "aria-pressed": String(onCount > 0),
       text: onCount === 0 ? "Left out" : allOn ? "In the scene" : onCount + " of " + g.lights.length + " in" });
@@ -1729,7 +1807,7 @@ function selectTab(name) {
   document.querySelectorAll(".tab").forEach((s) => { s.hidden = s.id !== "tab-" + name; });
   document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   if (name === "more") { loadHistory(); if (state.me.can.schedule) loadSchedule(); }
-  if (name === "lights") loadLights();
+  if (name === "lights" || (name === "effects" && feature("lights"))) loadLights().then(() => { if (name === "effects") renderEffects(); });
   if (DEMO) window.DemoStage.place(name);
   restartBeat();
   window.scrollTo(0, 0);
