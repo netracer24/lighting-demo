@@ -234,6 +234,15 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 /* six tabs fit a 320-375 px phone (D-035) */
 .tabbar button { flex: 1 1 0; min-width: 0; padding: 0 2px; font-size: 14px; }
 @media (max-width: 360px) { .tabbar button { font-size: 13px; } }
+/* Effects: Color / Movement switch and card label (D-035) */
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0 4px; }
+.seg-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 64px; font-weight: 700; }
+.seg-btn small { font-weight: 400; font-size: 12px; color: var(--muted); }
+.seg-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.seg-btn[aria-pressed="true"] small { color: var(--accent-text); }
+.fx-kind { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 1px 8px; margin: 0 6px 6px 0; border: 1px solid var(--line); }
+.fx-kind.color { color: #ffd08a; border-color: #7a5a20; }
+.fx-kind.movement { color: #9fd0ff; border-color: #2f5a86; }
 
 </style>
 </head>
@@ -359,7 +368,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
       </div>
       <div id="note-row" class="note-row" role="group" aria-label="Note value"></div>
       <p id="note-line" class="muted small"></p>
-      <button id="tempo-send" type="button" class="big primary change">Send tempo</button>
+      <p id="tempo-live" class="muted small" role="status"></p>
     </section>
 
     <!-- Chat (placeholder) -->
@@ -1392,7 +1401,21 @@ function renderEffects() {
     top.append(clear);
   }
   const split = feature("movement_fx") && state.effects.some((e) => e.category === "movement");
-  const sections = split ? [["color", "Color and intensity"], ["movement", "Movement"]] : [[null, null]];
+  const SECTIONS = [["color", "Color and intensity"], ["movement", "Movement"]];
+  if (split) {
+    // one kind at a time, picked here (Cory, 2026-10-23: the two lists ran together on a phone)
+    if (!state.fxCat) state.fxCat = "color";
+    const seg = el("div", { class: "seg", role: "group", "aria-label": "Kind of effect" });
+    for (const [cat, title] of SECTIONS) {
+      const b = el("button", { type: "button", class: "seg-btn", "aria-pressed": String(state.fxCat === cat) },
+        el("span", { text: cat === "color" ? "Color" : "Movement" }),
+        el("small", { text: cat === "color" ? "colors and brightness" : "lights that move" }));
+      b.addEventListener("click", () => { state.fxCat = cat; renderEffects(); });
+      seg.append(b);
+    }
+    top.append(seg);
+  }
+  const sections = split ? SECTIONS.filter(([cat]) => cat === state.fxCat) : [[null, null]];
   for (const [cat, title] of sections) {
     if (title) {
       const stop = el("button", { type: "button", class: "small-btn change stop-btn", text: cat === "color" ? "Stop color effect" : "Stop movement" });
@@ -1433,6 +1456,7 @@ function renderEffectCard(box, e) {
       fxBody(e, dirRow ? { direction: state.fxDir[fxId(e)] } : {})));
     const card = el("div", { class: "card" },
       el("h3", {}, e.name, el("span", { class: "run-tag", text: "Running", hidden: "" })),
+      e.category ? el("div", { class: "fx-kind " + e.category, text: e.category === "movement" ? "Movement effect" : "Color effect" }) : null,
       e.demo ? el("div", { class: "demo-tag", text: e.proposed ? "Demo effect · name proposed" : "Demo effect" }) : null,
       el("div", { text: e.what_you_see }),
       el("div", { class: "k", text: "When to use it" }),
@@ -1497,7 +1521,7 @@ function renderTempoChoices() {
   if (state.tempoEffect) sel.value = state.tempoEffect;
   updateTempoControls();
 }
-$("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); });
+$("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); sendTempoSoon(); });
 
 function currentEffect() { return state.effects.find((e) => fxId(e) === state.tempoEffect) || null; }
 function updateTempoControls() {
@@ -1506,7 +1530,7 @@ function updateTempoControls() {
   else if (!e.tempo_measured) note.textContent = "Tempo is not measured yet for this effect, so it cannot follow a tempo.";
   else note.textContent = "";
   updateNoteLine();
-  $("tempo-send").disabled = isLocked() || !canChange() || !e || !e.tempo_measured;
+  $("tempo-live").textContent = !e || !e.tempo_measured ? "" : isLocked() ? "Unlock to send the tempo." : !canChange() ? "" : "Live: the tempo goes to the lights as you tap.";
 }
 
 // ---- note value (D-028). The table comes from the hub (/api/me), so the app never carries its own copy.
@@ -1517,7 +1541,7 @@ function renderNotes() {
   for (const n of notes) {
     const b = el("button", { type: "button", class: "note-btn", text: n.name, "aria-label": n.spoken,
       "aria-pressed": n.name === state.note ? "true" : "false", title: n.label });
-    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); restartBeat(); });
+    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); restartBeat(); sendTempoSoon(); });
     row.append(b);
   }
   updateNoteLine();
@@ -1533,7 +1557,7 @@ function updateNoteLine() {
 }
 
 function getBpm() { return Math.max(40, Math.min(200, Math.round(Number($("bpm").value) || 120))); }
-function setBpm(n) { $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n)))); restartBeat(); updateNoteLine(); }
+function setBpm(n) { $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n)))); restartBeat(); updateNoteLine(); sendTempoSoon(); }
 $("bpm-minus").addEventListener("click", () => setBpm(getBpm() - 1));
 $("bpm-plus").addEventListener("click", () => setBpm(getBpm() + 1));
 $("bpm").addEventListener("change", () => setBpm(getBpm()));
@@ -1560,11 +1584,21 @@ function restartBeat() {
   beatTimer = setInterval(flash, 60000 / (getBpm() * (n ? n.multiplier : 1)));   // flashes once per chosen note
 }
 
-$("tempo-send").addEventListener("click", () => {
-  const e = currentEffect();
-  if (!e) return;
-  change("/api/tempo", fxBody(e, { tempo: getBpm(), note: state.note }));
-});
+// Tempo is live (Cory, 2026-10-23): a tap, +/-, a typed tempo or a note sends it after a short pause, so a
+// burst of taps sends once (and stays under the hub's writes-per-minute limit). Nothing is sent when it would
+// not change anything.
+let tempoTimer = null, tempoSent = "";
+function sendTempoSoon() {
+  clearTimeout(tempoTimer);
+  tempoTimer = setTimeout(() => {
+    const e = currentEffect();
+    if (!e || !e.tempo_measured || isLocked() || !canChange()) return;
+    const key = fxId(e) + "|" + getBpm() + "|" + state.note;
+    if (key === tempoSent) return;
+    tempoSent = key;
+    change("/api/tempo", fxBody(e, { tempo: getBpm(), note: state.note })).then((r) => { if (!r || !r.allowed) tempoSent = ""; });
+  }, 600);
+}
 
 // ---------- more
 async function loadHistory() {
