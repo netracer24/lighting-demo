@@ -272,6 +272,8 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 .area-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
 .area-head .area-lbl { margin: 0; }
 .area-all { min-height: 36px; font-size: 13px; padding: 0 10px; }
+.area-btns { display: flex; gap: 6px; }
+.lights-area h2 { margin: 18px 0 6px; }
 
 </style>
 </head>
@@ -338,7 +340,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   <main id="content">
     <!-- Lights in the scene (D-035; shown only when the server offers it) -->
     <section id="tab-lights" class="tab" hidden>
-      <p class="intro">Choose which lights are part of the scene you're building. A light that's left out isn't turned off: it keeps doing whatever it is doing, and Colors and Effects don't touch it. Tap a light in the picture, or use the switches below.</p>
+      <p class="intro">Choose which lights are part of the scene you're building. A light that's left out isn't turned off: it keeps doing whatever it is doing, and Colors and Effects don't touch it. Tap a light in the picture, or use the switches below. Hold Default to save the current choice as your default.</p>
       <div id="lights-list"></div>
     </section>
 
@@ -942,7 +944,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "GET" && url === "/api/lights") {
         return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label, role: g.role, area: g.area || "stage",
           takes_colour: g.takes_colour, moves: g.moves === true,
-          lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on })) })) });
+          lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on, default_on: !inRanges(ch, CHURCH.off) })) })) });
       }
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
       if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
@@ -1567,6 +1569,25 @@ function fxColoursChanged() {
   }
 }
 
+// ---- user defaults: tap Default to go back to it, hold Default to save what is picked as the new default.
+// Kept in this browser for the demo (the real app would keep them on the hub per church).
+const DEFAULTS_KEY = "tier1.defaults.v1";
+let userDefaults = { fx: {}, lights: {} };
+try { userDefaults = Object.assign(userDefaults, JSON.parse(localStorage.getItem(DEFAULTS_KEY) || "{}")); } catch (e) { /* no storage */ }
+function saveDefaults() { try { localStorage.setItem(DEFAULTS_KEY, JSON.stringify(userDefaults)); } catch (e) { /* no storage */ } }
+const HOLD_MS = 700;
+function holdButton(label, onTap, onHold) {
+  const b = el("button", { type: "button", class: "small-btn area-all", text: label, title: "Tap to reset. Hold to save as default." });
+  let timer = null, held = false;
+  b.addEventListener("pointerdown", () => { held = false; timer = setTimeout(() => { held = true; onHold(); }, HOLD_MS); });
+  const stop = () => { clearTimeout(timer); timer = null; };
+  b.addEventListener("pointerup", () => { const was = timer !== null; stop(); if (was && !held) onTap(); });
+  b.addEventListener("pointerleave", stop); b.addEventListener("pointercancel", stop);
+  b.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); (ev.shiftKey ? onHold : onTap)(); } });
+  b.addEventListener("contextmenu", (ev) => ev.preventDefault());   // a long press on a phone should not open a menu
+  return b;
+}
+
 // ---- which groups an effect runs on (D-038): picked here per type; Stage, Front and House rows.
 const AREAS = [["stage", "Stage"], ["front", "Front"], ["house", "House"]];
 const canRun = (cat, g) => cat === "movement" ? g.moves : cat === "color" ? g.takes_colour : true;
@@ -1580,7 +1601,7 @@ function groupsBody(e) {
 }
 function renderFxGroups(box, cat) {
   const picked = pickedGroups(cat);
-  const card = el("div", { class: "card fx-groups" }, el("div", { class: "k", text: "Run the next effect on these groups" }));
+  const card = el("div", { class: "card fx-groups" }, el("div", { class: "k", text: "Run the next effect on these groups. Hold Default to save what's picked as your default." }));
   for (const [area, label] of AREAS) {
     const gs = state.lights.filter((g) => (g.area || "stage") === area && canRun(cat, g) && g.lights.length);
     if (!gs.length) continue;
@@ -1607,7 +1628,20 @@ function renderFxGroups(box, cat) {
       }
       renderEffects();
     });
-    card.append(el("div", { class: "area-head" }, el("div", { class: "area-lbl", text: label }), all), row);
+    const saved = (userDefaults.fx[cat] || {})[area];
+    const def = holdButton("Default", () => {             // tap: this area back to its default (saved, or the type's)
+      for (const g of gs) {
+        const i = picked.indexOf(g.number), want = saved ? saved.indexOf(g.number) >= 0 : runsByDefault(cat, g);
+        if (want && i < 0) picked.push(g.number);
+        if (!want && i >= 0) picked.splice(i, 1);
+      }
+      renderEffects();
+    }, () => {                                            // hold: what is picked here becomes the default
+      (userDefaults.fx[cat] = userDefaults.fx[cat] || {})[area] = gs.filter((g) => picked.indexOf(g.number) >= 0).map((g) => g.number);
+      saveDefaults();
+      showResult("Saved as the default for " + label + ".", "ok");
+    });
+    card.append(el("div", { class: "area-head" }, el("div", { class: "area-lbl", text: label }), el("div", { class: "area-btns" }, def, all)), row);
   }
   box.append(card);
 }
@@ -1676,7 +1710,27 @@ function renderLights() {
   let lastArea = null;
   for (const g of state.lights.slice().sort((a, b) => (order[a.area] || 0) - (order[b.area] || 0))) {
     if (!g.lights.length) continue;
-    if (g.area !== lastArea) { lastArea = g.area; box.append(el("h2", { text: { stage: "Stage", front: "Front", house: "House" }[g.area] || "Stage" })); }
+    if (g.area !== lastArea) {
+      lastArea = g.area;
+      const area = g.area;
+      const areaLights = () => [].concat(...state.lights.filter((x) => x.area === area).map((x) => x.lights));
+      const def = holdButton("Default", async () => {      // tap: this area's lights back to the default
+        const ls = areaLights(), saved = userDefaults.lights[area];
+        const wantOn = (l) => saved ? saved.indexOf(l.channel) >= 0 : l.default_on;
+        const on = ls.filter((l) => wantOn(l) && !l.on).map((l) => l.channel);
+        const off = ls.filter((l) => !wantOn(l) && l.on).map((l) => l.channel);
+        if (!on.length && !off.length) { showResult("Already at the default.", "ok"); return; }
+        if (on.length) await change("/api/lights", { channels: on, on: true });
+        if (off.length) await change("/api/lights", { channels: off, on: false });
+        loadLights();
+      }, () => {                                           // hold: the lights in the scene now become the default
+        userDefaults.lights[area] = areaLights().filter((l) => l.on).map((l) => l.channel);
+        saveDefaults();
+        showResult("Saved as the default for " + ({ stage: "Stage", front: "Front", house: "House" }[area] || "this area") + ".", "ok");
+      });
+      def.classList.add("change");
+      box.append(el("div", { class: "area-head lights-area" }, el("h2", { text: { stage: "Stage", front: "Front", house: "House" }[area] || "Stage" }), def));
+    }
     const onCount = g.lights.filter((l) => l.on).length, allOn = onCount === g.lights.length;
     const sw = el("button", { type: "button", class: "group-switch change" + (onCount ? " on" : ""), "aria-pressed": String(onCount > 0),
       text: onCount === 0 ? "Left out" : allOn ? "In the scene" : onCount + " of " + g.lights.length + " in" });
