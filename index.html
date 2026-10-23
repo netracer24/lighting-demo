@@ -493,7 +493,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
   // /api/me lists the matching feature. Service Lock refuses them like any other change.
   const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
-  const FEATURES = { lights: true, color_variants: true, fx_directions: true, movement_fx: true, clear_fx: true };
+  const FEATURES = { lights: true, color_variants: true, fx_directions: true, movement_fx: true, clear_fx: true, tempo_all: true };
 
   // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
   // take color; the others do. A built demo for another church (tools/build_demo.py --church) replaces
@@ -780,6 +780,16 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
         if (why) { log(op, args, false, why); return refused(why); }
       }
       let eff = null, extra = {};
+      if (path === "/api/tempo" && body.all === true) {        // one tempo for every effect, running now or started later
+        const note = NOTES.find((n) => n.name === (body.note === undefined ? DEFAULT_NOTE : body.note));
+        const bpm = roundEven(body.tempo * note.multiplier);
+        if (bpm < EOS_BPM_MIN || bpm > EOS_BPM_MAX) return refused("A tempo of " + body.tempo + " with note " + note.label + " is outside what the console accepts. Try a slower note.");
+        st.tempoAll = bpm;
+        for (const k in st.fxBpm) delete st.fxBpm[k];
+        log(op, args, true, "");
+        changed();
+        return confirmed("Tempo " + body.tempo + " for all effects.", { eos_bpm: bpm, note: note.name });
+      }
       if (path === "/api/apply-effect" || path === "/api/effect-size" || path === "/api/tempo") {
         eff = findEffect(body);
         if (!eff) return refused("'" + body.effect_name + "' is not an agreed effect set up for this church");
@@ -854,7 +864,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
         && (b.groups === undefined || (Array.isArray(b.groups) && b.groups.length > 0 && b.groups.every((n) => GROUPS.some((g) => g.number === String(n)))))
         && (b.colours === undefined || (Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 4 && b.colours.every(isHex))) },
       "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
-      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) },
+      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) && (b.all === undefined || b.all === true) },
       "/api/clear-effects": { op: "clear_effects", valid: cat },
       "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
     };
@@ -940,10 +950,16 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
 
     // ---- what a visualiser draws for one fixture right now
     function period(id) {
-      const bpm = st.fxBpm[id];
+      const bpm = st.fxBpm[id] || st.tempoAll;
       return bpm ? Math.max(0.25, Math.min(8, 60 / bpm)) : 2;
     }
-    const phaseOf = (fx, t) => (t - fx.started) / 1000 / period(fx.id);
+    // the cycle position carries on smoothly when the tempo changes
+    function phaseOf(fx, t) {
+      const per = period(fx.id);
+      if (fx.per === undefined) { fx.per = per; fx.p0 = 0; fx.t0 = fx.started; }
+      if (per !== fx.per) { fx.p0 += (t - fx.t0) / 1000 / fx.per; fx.t0 = t; fx.per = per; }
+      return fx.p0 + (t - fx.t0) / 1000 / per;
+    }
     const frac = (x) => x - Math.floor(x);
     // intensity 0..1 for a color/intensity effect at order position d and cycle position p
     function level(kind, d, p, n) {
@@ -1434,7 +1450,7 @@ $("mix-add").addEventListener("click", () => addPick(mixHex()));
 // An effect is known by its id where the server gives one (the demo: "color:wave", "movement:wave"),
 // else by its name; category and direction are sent only when the server offers them (D-035).
 const fxId = (e) => e.id || e.name;
-const fxBody = (e, extra) => Object.assign({ effect_name: e.name }, e.category ? { category: e.category } : {}, extra || {});
+const fxBody = (e, extra) => Object.assign({ effect_name: e.name }, e.category ? { category: e.category } : {}, e.all ? { all: true } : {}, extra || {});
 
 const runningIds = () => (state.running.list || []).map((r) => r.id).concat(
   ["color", "intensity", "movement"].map((c) => state.running[c]).filter((x) => typeof x === "string"));
@@ -1675,15 +1691,24 @@ function renderTempoChoices() {
   const sel = $("tempo-effect"); sel.replaceChildren();
   if (!state.effects.length) sel.append(el("option", { value: "", text: "No effects set up" }));
   const catLabel = (e) => e.category && state.effects.some((x) => x.category && x.category !== e.category) ? " (" + e.category + ")" : "";
+  // demo: one tempo drives every running effect, so there is nothing to pick (kept simple on purpose)
+  sel.closest(".row").hidden = feature("tempo_all");
+  if (feature("tempo_all")) sel.append(el("option", { value: ALL_FX.id, text: ALL_FX.name }));
   for (const e of state.effects) sel.append(el("option", { value: fxId(e), text: e.name + catLabel(e) + (e.tempo_measured ? "" : " (not measured yet)") }));
   if (state.effects.some((e) => fxId(e) === state.tempoEffect)) sel.value = state.tempoEffect;
+  else if (feature("tempo_all")) state.tempoEffect = ALL_FX.id;
   else state.tempoEffect = (state.effects.find((e) => e.tempo_measured) ? fxId(state.effects.find((e) => e.tempo_measured)) : state.effects.length ? fxId(state.effects[0]) : "");
   if (state.tempoEffect) sel.value = state.tempoEffect;
   updateTempoControls();
 }
 $("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); sendTempoSoon(); });
 
-function currentEffect() { return state.effects.find((e) => fxId(e) === state.tempoEffect) || null; }
+// "All running effects" (demo): one tempo for every effect, like a speed master
+const ALL_FX = { id: "__all__", name: "All running effects", tempo_measured: true, all: true };
+function currentEffect() {
+  if (state.tempoEffect === ALL_FX.id && feature("tempo_all")) return ALL_FX;
+  return state.effects.find((e) => fxId(e) === state.tempoEffect) || null;
+}
 function updateTempoControls() {
   const e = currentEffect(), note = $("tempo-note");
   if (!e) note.textContent = "Pick an effect to follow the tempo.";
