@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101218">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lighting">
+<title>Lighting Control demo</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADh0lEQVR42u3dMY7UQBCG0T4CQgR7GALOwSm5IZsjgrXdtqv+etKXM+56qtZIy3h9+/4hnW45AgEkgASQAJIAEkACSABJAAkgASSAJIAEkAASQBJAAkgACSABJAEkgASQAJIA+nK/f/44kXMbCugcF6RGA7oPzXBMixuSAKroZoikhQ5GADVwkyppoYPRXEDd9QQYWuhgNAtQHp3WjBY9/+3vn1//xFBvQI9BOdpwRmugnutonsEEUCE696G5GxNAL+t5ns52RgC9oOddN9slAfScnmp0djEC6HY9lelsYQQQPWmGVoCeXnSuMwJom56+dC4yAoieEEOLHoZ6A0LnCqPpgOjpbmjRw9AIQHP0nDA0ERA9GYYWPQwlA5qs56ihKYDoSTK06GEIIIBmAKInz1BFQKxcNJQJiJ5IQ8vl5SLLAcRHuyW0rB9LKAQQGR2XUBVATNxhKAGQ9ZO9hJb1YwnVBWT9xC+hZf1YQgABlAjI/TXhFlvWjyUEEEBxgOgZYggggAACCCABRM9EQwABBJAAEkAHAJn3K4YA0gBA7q9RtxhAAAEkgAQQQAABBFB9QCad9E0eIIAAEkACCCCAAALI13h6ABJAAAEEEEAAAQSQRgHyTd6ftAIEkP/WQw9AAggggAACyM+70OP3gQQQQAABBJCf+aUHIAHE0DN6ugKyhOLXD0AAeeEcPcGALKHs9eOlu9aP134D5L3xDDVdP7UAMbRXTw4gSyh1/ZQDxFCv9fMcIEsocv08CoihPD1FATHU4vJ6ARBDYXoAAqgbIIaS9LwDiKEYPQ0ADTd06KAGAWIoQ8+bgBgK0NMJ0ChDR09mKCCGuut5HxBDrfWUAHTCUCSjE4dQYXYlADHUVE8hQJMN9dVTC9A5Q60ZnXveUiOrBei0oXaMTj9mtXmVAzTBUIyeooCuGCrO6Mpz1ZxUUUAXDRVkdPFxyo6pLqDrhipI2vIIlWdUGtAuQ68w2vXJiw+oOqC9jO7GtPdzthhND0DbDW3EdNMH6zKXNoBuZfQVWI/9070m0gzQk4Zeqd04+gFKZdR0EF0BJTFqPYLegAIMdT//9oD6Mso4+RBAjSSFHXgaoMqMIo86E1ApSdknHA7oRUlDDnYKoGcwDTzMiYB2kXJuAAkgASSABJAEkAASQAJIAkgACSABJAEkgASQAJIAEkACSAAJIAkgASSABJAEkJ7pE7KFBN+qFkrMAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAADTklEQVR42u3dwQ3UMBCGUZeAEAeK4UAdVEmH0AASG8eJ5x8/6SsgGT9NDqtNxpev36V/NoxAcAgOwSE4BIfgEByCQ3AIDgkOwSE4BIfgEByCQ3AIDsEhwSE4BIfgWNuvH9/+GxwcXAsOIE6HMpigpD+OXSYaKxlMUNIQR2UWPYgMLBBpgiORRS6RQQYf2Th6sIgjMo5l8ef3zw87lsg4RMbnFF7mAsc2GWtNPKQEjldZPG3iCSVwPCvjfRNrlcDxiIwKLJYQgWOljGos7hOBo7+MBj5GqIz6LG4SgWNGRhaLO0ROx3GOjEQfgww+yuE4kMU0kbNwHC4jxUd1HF1lXPVxCg4yUnwMMvgogYOMLB8VcZwm45KPnjjIiPMBBxy7cZCR6GOQwUd1HExc9dEBh7WRuzyGtWF57MFhbUQvj2FtWB4bcJCR7gMOOEricPZLfOThsDYaLI9hbVgecMBRA4dnSo8ny7A2LA844CiAwzOlzZNlWBuWBxxwwAFHWRxkdPIBBxxwwAEHHHDAAYfOweF0n/ZRF4e10Wx5wAEHHHDAAQcccMAhOAQHHHDAAQcccMABBxxw+OHND29+src24IADDsEhOAQHHHDw4e+QcMABBxxe3uLlLV77ZG3AAYdXTZKRj8PyaLA24IDDi/E9U3xSw9rwMR4y4FBjHHxEy/Dp0GwZ2Tgsj9y14XPl1sZWHJZH6NoohIOPamvjJRx8JMp4DwcfcTLggKMGDj6yZBTFcaCPzyfTFgcfQTI24OAjRcYeHHxEyAjA0djHpSEchIOP+jJ24rjqow2Rq3e98YB24jjQR5CM/TiO8pElowSOCR9xRCZusMK5lMAx5yOCyNx9FTmUKjha+oiWUQvHtI+CRKZvpNRx1MJxx0cRIneuv9pZlMNx08cuJfevueBBVMSxisgLSpZcZNkjqItjlY8nlCy8sMrzL41jrY9pLs9dQ/HhV8fxNJFdRYw9A0cnIkEDT8LRwEfWtMNw5BJJnHMkjiwiuRMOxlGfSPps43EUVNJmpH1wbFfSb5INcbyspPEAO+N4DsohQzsFx7SYk+dzNA7BITgEh+AQHIJDcAgOwSE4TEFwCA7BITgEh+AQHIJDcAgOCQ7BITgEh97vL7O7wnn9DAlqAAAAAElFTkSuQmCC">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<style>
+:root {
+  --bg: #101218; --panel: #1a1d26; --panel2: #232733; --line: #2f3442;
+  --text: #e9ebf0; --muted: #9aa1b2; --accent: #ffb040; --accent-text: #1a1204;
+  --ok: #4cc38a; --bad: #ff6b6b; --warn: #ffb040; --lockred: #d94b4b;
+  --tap: 56px;
+}
+* { box-sizing: border-box; }
+html { color-scheme: dark; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 17px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding-bottom: env(safe-area-inset-bottom);
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] { display: none !important; }
+h1 { font-size: 26px; margin: 0 0 6px; }
+h2 { font-size: 18px; margin: 22px 0 10px; }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+.msg { min-height: 1.4em; color: var(--bad); margin: 8px 0 0; }
+
+button, select, input { font: inherit; color: inherit; }
+button {
+  min-height: var(--tap); border-radius: 14px; border: 1px solid var(--line);
+  background: var(--panel2); padding: 0 16px; cursor: pointer; touch-action: manipulation;
+}
+button:active { filter: brightness(1.25); }
+button:disabled, input:disabled, select:disabled { opacity: 0.4; cursor: not-allowed; }
+button.big { width: 100%; font-weight: 600; margin-top: 14px; }
+button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.small-btn { min-height: 44px; font-size: 15px; }
+input, select {
+  width: 100%; min-height: var(--tap); border-radius: 12px; border: 1px solid var(--line);
+  background: var(--panel); padding: 0 14px;
+}
+label { display: block; color: var(--muted); font-size: 14px; margin: 12px 0 4px; }
+.row { display: flex; gap: 12px; align-items: center; margin: 10px 0; }
+.row > label { margin: 0; flex: 0 0 auto; }
+.row > select { flex: 1; }
+input[type=range] { padding: 0; min-height: 44px; accent-color: var(--accent); }
+
+/* sign in */
+.login { max-width: 420px; margin: 0 auto; padding: 48px 16px 24px; }
+.assistant-label { font-size: 13px; color: var(--muted); margin-top: 18px; }
+
+/* top bar */
+.topbar {
+  position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding: calc(8px + env(safe-area-inset-top)) 14px 8px;
+}
+.topbar .assistant-label { margin-top: 4px; }
+.topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.church { font-weight: 700; font-size: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--muted); flex: 0 0 auto; }
+.dot.up { background: var(--ok); } .dot.down { background: var(--bad); }
+
+.lock-switch {
+  display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 16px 0 8px;
+  border-radius: 28px; font-weight: 700; background: var(--panel2); flex: 0 0 auto;
+}
+.lock-switch .knob { width: 40px; height: 40px; border-radius: 50%; background: var(--ok); }
+.lock-switch.on { background: #3a1d1d; border-color: var(--lockred); }
+.lock-switch.on .knob { background: var(--lockred); }
+.lock-switch.fixed { cursor: default; }
+
+.banner {
+  background: var(--lockred); color: #fff; font-weight: 700; text-align: center; padding: 12px 14px;
+}
+.banner.info { background: var(--panel2); color: var(--text); font-weight: 400; }
+
+/* content */
+#content { padding: 4px 14px 150px; max-width: 720px; margin: 0 auto; }
+.intro { margin: 12px 0 0; color: var(--text); }
+h2 + .muted.small { margin: -4px 0 10px; }
+
+/* suggested sets */
+.sets { display: grid; gap: 10px; }
+.set {
+  display: flex; align-items: center; gap: 14px; text-align: left; min-height: 76px; padding: 10px 12px;
+  background: var(--panel);
+}
+.strip { display: flex; flex: 0 0 auto; width: 84px; height: 48px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.strip i { flex: 1; }
+.set-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.set-name { font-weight: 600; }
+.set-mood { color: var(--muted); font-size: 14px; line-height: 1.25; }
+
+/* pick your own */
+.tray { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 12px; }
+.slot {
+  display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px; min-height: 108px;
+  border-radius: 14px; border: 1px dashed var(--line); background: var(--panel); text-align: left; font: inherit; color: inherit;
+}
+.slot i { display: block; height: 44px; border-radius: 8px; background: var(--panel2); }
+.slot span { font-size: 14px; font-weight: 600; }
+.slot small { color: var(--muted); font-size: 12px; }
+button.slot.full { border-style: solid; }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.sw { display: flex; flex-direction: column; align-items: stretch; gap: 6px; min-height: 84px; padding: 8px; background: var(--panel); }
+.sw i { display: block; height: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,.18); }
+.sw span { font-size: 13px; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }
+.mix { margin: 14px 0 0; }
+.mix summary { min-height: 48px; display: flex; align-items: center; cursor: pointer; color: var(--accent); }
+.mixer { display: flex; gap: 12px; align-items: stretch; }
+.mix-preview { flex: 0 0 84px; border-radius: 14px; border: 1px solid var(--line); }
+.mix-sliders { flex: 1; min-width: 0; }
+.mix-sliders label { margin: 0 0 4px; }
+input.hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); height: 18px; min-height: 44px; border-radius: 12px; }
+#pick-clear { margin-top: 10px; width: 100%; }
+.placement { white-space: pre-wrap; color: var(--muted); font-size: 13px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin: 12px 0 0; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin: 12px 0; }
+.card h3 { margin: 0 0 6px; font-size: 19px; }
+.card .k { color: var(--muted); font-size: 13px; margin-top: 8px; }
+.card .size-row { display: flex; align-items: center; gap: 10px; }
+.card .size-row output { min-width: 3ch; text-align: right; }
+
+.tap {
+  width: 100%; min-height: 190px; margin: 12px 0; font-size: 44px; font-weight: 800; letter-spacing: 2px;
+  border-radius: 24px; background: #2a3042; border: 2px solid var(--accent);
+}
+.tap:active { background: #3a4260; }
+.bpm-row { display: flex; align-items: center; gap: 10px; }
+.step { flex: 0 0 72px; font-size: 24px; font-weight: 700; }
+.bpm-box { flex: 1; text-align: center; }
+.bpm-box input { text-align: center; font-size: 34px; font-weight: 800; min-height: 72px; }
+.note-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+.note-btn { flex: 1 1 22%; min-width: 72px; min-height: 60px; font-size: 20px; font-weight: 700; }
+.note-btn[aria-pressed="true"] { background: var(--accent); color: #1a1405; border-color: var(--accent); }
+.beat { flex: 0 0 34px; height: 34px; border-radius: 50%; background: #3a3320; }
+.beat.flash { background: var(--accent); box-shadow: 0 0 22px var(--accent); }
+
+.history { list-style: none; padding: 0; margin: 0; }
+.history li { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.history .t { color: var(--muted); }
+.history .no { color: var(--bad); }
+
+/* result bar and tabs */
+.result {
+  position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 6;
+  padding: 14px 16px; border-radius: 14px; background: var(--panel2); border: 1px solid var(--line);
+  font-weight: 600; box-shadow: 0 6px 24px rgba(0,0,0,.5);
+}
+.result.ok { border-color: var(--ok); } .result.bad { border-color: var(--bad); } .result.warn { border-color: var(--warn); }
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; display: flex; background: var(--panel);
+  border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar button {
+  flex: 1; border: 0; border-radius: 0; min-height: 68px; background: transparent; font-size: 15px; color: var(--muted);
+}
+.tabbar button.active { color: var(--accent); font-weight: 700; box-shadow: inset 0 3px 0 var(--accent); }
+
+dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; width: min(92vw, 380px); }
+dialog::backdrop { background: rgba(0,0,0,.7); }
+dialog .row .big { margin-top: 0; }
+.topline .help-btn { margin-left: auto; }
+.help-btn { flex: 0 0 auto; min-height: 44px; padding: 0 14px; }
+.help-btn.wide { width: 100%; margin-top: 18px; }
+.logo { display: block; width: 140px; height: auto; margin: 0 0 18px; }
+.logo.small-logo { width: 96px; }
+.brand { margin: 32px 0 0; text-align: center; }
+.brand .logo { margin: 0 auto 8px; }
+.help-email { font-size: 20px; font-weight: 700; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+
+/* demo mode */
+.demo-ribbon {
+  position: sticky; top: 0; z-index: 8; background: #5b3fb0; color: #fff; text-align: center;
+  font-size: 13px; line-height: 1.3; padding: 6px 10px;
+}
+.demo-ribbon strong { background: #fff; color: #5b3fb0; border-radius: 6px; padding: 1px 7px; margin-right: 6px; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
+body.demo .topbar { top: var(--ribbon-h, 30px); }
+.demo-tag { display: inline-block; font-size: 12px; color: #cdbdff; border: 1px solid #5b3fb0; border-radius: 8px; padding: 1px 8px; margin-bottom: 6px; }
+.stage { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 8px 8px 4px; margin: 10px 0 6px; }
+.stage svg { display: block; width: 100%; height: auto; }
+.stage-edge { fill: var(--panel2); stroke: var(--line); }
+.stage-lbl { fill: var(--muted); font-size: 9.5px; }
+.stage-lbl.side { text-anchor: middle; }
+.stage-lbl.mid { text-anchor: middle; font-size: 8.5px; }
+.stage-fx { fill: var(--accent); font-size: 8.5px; }
+.stage-fix { stroke: #3a4054; stroke-width: 0.8; }
+@media (max-width: 400px) {
+  .lock-switch { font-size: 15px; padding-right: 12px; gap: 8px; }
+  .lock-switch .knob { width: 34px; height: 34px; }
+}
+
+.notice { position: fixed; inset: 0; z-index: 50; overflow-y: auto; background: var(--bg); color: var(--text);
+  padding: 48px 20px 32px; max-width: 520px; margin: 0 auto; }
+.notice[hidden] { display: none; }
+.notice ul { padding-left: 20px; line-height: 1.5; }
+.notice li { margin-bottom: 10px; }
+
+</style>
+</head>
+<body>
+
+<div id="demo-ribbon" class="demo-ribbon demo-only" hidden><strong>Demo</strong> Simulated console. Nothing here controls real lights.</div>
+
+<!-- Sign in -->
+<main id="login-view" class="login" hidden>
+  <img src="data:image/png;base64,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" class="logo" width="140" height="121" alt="S+S Productions logo">
+  <h1>Lighting Control</h1>
+  <p class="muted">Sign in to change the looks on your console.</p>
+  <div class="demo-only" hidden>
+    <button type="button" id="demo-start" class="big primary">Try the demo</button>
+    <p class="muted">No password needed. The Service Lock PIN for the demo is <strong>1234</strong>.</p>
+    <p id="demo-login-msg" class="msg" role="alert"></p>
+  </div>
+  <form id="login-form" class="live-only" autocomplete="on">
+    <label for="login-user">Name</label>
+    <input id="login-user" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+    <label for="login-pass">Password</label>
+    <input id="login-pass" name="password" type="password" autocomplete="current-password" required>
+    <button type="submit" class="big primary" id="login-btn">Sign in</button>
+    <p id="login-msg" class="msg" role="alert"></p>
+  </form>
+  <p class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</p>
+  <button type="button" class="small-btn help-btn wide">Help</button>
+</main>
+
+<!-- First sign-in notice (D-022): shown until the user taps "I understand" -->
+<main id="notice-view" class="notice" hidden>
+  <img src="data:image/png;base64,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" class="logo small-logo" width="96" height="83" alt="S+S Productions logo">
+  <h1 id="notice-heading">About your lighting assistant</h1>
+  <p>Your lighting assistant is an AI system run by S&amp;S Production Services, LLC. It turns what you ask for into cues and looks on your console.</p>
+  <ul>
+    <li>It can misunderstand a request or get a look wrong. Check every change before it's used in a service.</li>
+    <li>Use Service Lock during services; the assistant can't change the console while it's on.</li>
+    <li>The S&amp;S team set it up and support it. Tap Help any time to reach a person.</li>
+  </ul>
+  <button type="button" id="notice-ok" class="big primary">I understand</button>
+  <p id="notice-msg" class="msg" role="alert"></p>
+  <button type="button" class="small-btn help-btn wide">Help</button>
+</main>
+
+<!-- The app -->
+<div id="app-view" hidden>
+  <header class="topbar">
+    <div class="topline">
+      <div class="who">
+        <span id="dot" class="dot" title="Console status"></span>
+        <span id="church-name" class="church"></span>
+      </div>
+      <button type="button" class="small-btn help-btn">Help</button>
+      <button id="lock-switch" class="lock-switch" type="button" aria-pressed="false">
+        <span class="knob"></span><span id="lock-text">Service Lock</span>
+      </button>
+    </div>
+    <div class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</div>
+    <div id="dot-text" class="muted small"></div>
+  </header>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <main id="content">
+    <!-- Colours -->
+    <section id="tab-colours" class="tab" hidden>
+      <p class="intro">Pick a set or choose 2 or 3 colours. We place them on the stage for you. Front light isn't changed.</p>
+
+      <h2>Suggested colour sets</h2>
+      <p class="muted small">Suggestions from S&amp;S that work well together. Tap one to send it.</p>
+      <div id="set-list" class="sets"></div>
+
+      <h2>Pick your own</h2>
+      <p class="muted small">Choose 2 or 3 colours. The first one is the main colour.</p>
+      <div id="pick-tray" class="tray" aria-label="Your colours"></div>
+      <div id="swatch-grid" class="swatches" aria-label="Stage colours"></div>
+      <details class="mix">
+        <summary>Mix any colour</summary>
+        <div class="mixer">
+          <div id="mix-preview" class="mix-preview"></div>
+          <div class="mix-sliders">
+            <label>Colour <input id="mix-h" type="range" min="0" max="360" value="30" class="hue"></label>
+            <label>Strength <input id="mix-s" type="range" min="0" max="100" value="100"></label>
+            <label>Brightness <input id="mix-l" type="range" min="5" max="100" value="55"></label>
+          </div>
+        </div>
+        <button id="mix-add" type="button" class="big">Add this colour</button>
+      </details>
+      <button id="pick-send" type="button" class="big primary change">Send these colours</button>
+      <button id="pick-clear" type="button" class="small-btn">Clear</button>
+      <pre id="placement" class="placement" hidden></pre>
+    </section>
+
+    <!-- Effects -->
+    <section id="tab-effects" class="tab" hidden>
+      <p class="intro">Pick an effect. We choose which lights run it.</p>
+      <div id="effects-list"></div>
+    </section>
+
+    <!-- Tempo -->
+    <section id="tab-tempo" class="tab" hidden>
+      <div class="row">
+        <label for="tempo-effect">Effect that follows the tempo</label>
+        <select id="tempo-effect"></select>
+      </div>
+      <p id="tempo-note" class="muted"></p>
+      <button id="tap" type="button" class="tap">TAP</button>
+      <div class="bpm-row">
+        <button id="bpm-minus" type="button" class="step">-1</button>
+        <div class="bpm-box">
+          <input id="bpm" type="number" inputmode="numeric" min="40" max="200" value="120" aria-label="Tempo in beats per minute">
+          <span class="muted small">beats per minute</span>
+        </div>
+        <button id="bpm-plus" type="button" class="step">+1</button>
+        <div id="beat" class="beat" aria-hidden="true"></div>
+      </div>
+      <div id="note-row" class="note-row" role="group" aria-label="Note value"></div>
+      <p id="note-line" class="muted small"></p>
+      <button id="tempo-send" type="button" class="big primary change">Send tempo</button>
+    </section>
+
+    <!-- Chat (placeholder) -->
+    <section id="tab-chat" class="tab" hidden>
+      <h2>Chat</h2>
+      <div class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</div>
+      <p>Chat is coming. For now, use the Colours, Effects and Tempo tabs to change a look.</p>
+    </section>
+
+    <!-- More -->
+    <section id="tab-more" class="tab" hidden>
+      <h2>Usage</h2>
+      <p id="usage-text"></p>
+      <div id="unlock-note" class="muted"></div>
+      <div id="schedule-box" hidden>
+        <h2>Lock schedule</h2>
+        <p id="schedule-text" class="muted"></p>
+      </div>
+      <div id="history-box" hidden>
+        <h2>History</h2>
+        <ul id="history-list" class="history"></ul>
+      </div>
+      <h2>Account</h2>
+      <p id="me-text" class="muted"></p>
+      <button id="signout" type="button" class="big">Sign out</button>
+      <div class="brand"><img src="data:image/png;base64,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" class="logo small-logo" width="96" height="83" alt="S+S Productions logo">
+        <p class="muted small">Set up and supported by S&amp;S Production Services, LLC</p></div>
+    </section>
+  </main>
+
+  <div id="result" class="result" role="status" aria-live="polite" hidden></div>
+
+  <nav class="tabbar" aria-label="Sections">
+    <button type="button" data-tab="colours">Colours</button>
+    <button type="button" data-tab="effects">Effects</button>
+    <button type="button" data-tab="tempo">Tempo</button>
+    <button type="button" data-tab="chat">Chat</button>
+    <button type="button" data-tab="more">More</button>
+  </nav>
+</div>
+
+<!-- Help: how to reach a person at S&S. The address is in this one place (D-030). -->
+<dialog id="help-dialog">
+  <form method="dialog">
+    <h2>Help</h2>
+    <p>To reach a person at S&amp;S Production Services, LLC, email:</p>
+    <p class="help-email"><span id="help-email">events@sspro.co</span></p>
+    <p class="muted small">Say which church you're with and what you need.</p>
+    <p id="help-msg" class="muted small" role="status"></p>
+    <div class="row">
+      <button type="button" id="help-copy" class="big">Copy address</button>
+      <button type="submit" class="big primary">Close</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Unlock PIN -->
+<dialog id="pin-dialog">
+  <form method="dialog" id="pin-form">
+    <h2>Unlock for changes</h2>
+    <p class="muted">Enter the Service Lock PIN.</p>
+    <p class="muted demo-only" hidden>Demo PIN: <strong>1234</strong></p>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN">
+    <p id="pin-msg" class="msg" role="alert"></p>
+    <div class="row">
+      <button type="button" id="pin-cancel" class="big">Cancel</button>
+      <button type="submit" id="pin-ok" class="big primary">Unlock</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+window.TIER1_DEMO = true;
+window.DEMO_EFFECTS = [{"name": "Fan-in / fan-out", "what_you_see": "Lights come on (or go off) one after another across the rig instead of all at once: in, out, left to right, outside-in or random", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Wave", "what_you_see": "One movement or colour change rolls across the movers in order: outside-in, inside-out, left to right, right to left", "when_to_use_it": "Builds, choruses, transitions"}, {"name": "No-fade chase", "what_you_see": "Lights snap on and off one at a time, in sequence or random order, with no fades: a flash that is not a strobe", "when_to_use_it": "Hits and accents a listener clearly hears"}, {"name": "Bump", "what_you_see": "One instant full-intensity hit on a subset, then back", "when_to_use_it": "A single drum hit or stop"}, {"name": "Evolving full rig", "what_you_see": "Every light on, but the look keeps changing at least every 1-2 bars (positions, colour, subsets, fans)", "when_to_use_it": "Only the top 2-3 moments and the last chorus"}, {"name": "Silhouette intro", "what_you_see": "Performers seen only as shapes against back and background light; no front light", "when_to_use_it": "Intros before the singer sings"}, {"name": "Reset look", "what_you_see": "A plain, still, simple look that rests the eyes", "when_to_use_it": "After a big section, before a build"}];
+window.DEMO_COLOUR_SETS = [{"name": "Blue + Amber", "colours": ["#2f6bff", "#ffb000"], "mood": "Everyday worship: warm and cool in balance"}, {"name": "Deep Blue + Lavender", "colours": ["#1f3fbf", "#a58cff"], "mood": "Reflective moments and prayer"}, {"name": "Soft Blue + Teal", "colours": ["#4d8dff", "#1fb5b0"], "mood": "Calm: communion and slower songs"}, {"name": "Lavender + Pink", "colours": ["#b79cff", "#ff8fc8"], "mood": "Gentle worship"}, {"name": "Amber + Gold", "colours": ["#ff9a1f", "#ffd060"], "mood": "Celebration and thanksgiving"}, {"name": "Amber + Magenta", "colours": ["#ffa020", "#e0208c"], "mood": "High-energy praise"}, {"name": "Amber + Red", "colours": ["#ffa020", "#e02020"], "mood": "Pentecost and passion"}, {"name": "Warm White + Deep Blue", "colours": ["#ffe2b0", "#2040c0"], "mood": "Christmas Eve and Advent"}, {"name": "Violet + Amber", "colours": ["#7a3fd0", "#ffb040"], "mood": "Lent and Advent"}, {"name": "Gold + White", "colours": ["#ffc840", "#ffffff"], "mood": "Easter"}, {"name": "Blue + Cyan + White", "colours": ["#3060ff", "#20c8e8", "#ffffff"], "mood": "Baptism"}, {"name": "Blue + Magenta + UV", "colours": ["#3050ff", "#e0208c", "#8a2be2"], "mood": "Youth and big moments"}];
+window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one bar of 4/4", "multiplier": 0.25}, {"name": "1/2", "label": "1/2", "spoken": "half note", "multiplier": 0.5}, {"name": "1/4", "label": "1/4", "spoken": "quarter note, the beat", "multiplier": 1.0}, {"name": "1/8.", "label": "Dotted 1/8", "spoken": "dotted eighth", "multiplier": 1.3333333333333333}, {"name": "1/8", "label": "1/8", "spoken": "eighth note", "multiplier": 2.0}, {"name": "1/8T", "label": "1/8T", "spoken": "eighth note triplet", "multiplier": 3.0}, {"name": "1/16", "label": "1/16", "spoken": "sixteenth note", "multiplier": 4.0}];
+
+</script>
+<script>
+"use strict";
+// Demo mode: a simulated church and console that run entirely in this page. app.js sends every
+// /api/ call here instead of to the hub when demo mode is on (?demo=1, or the built demo page).
+// Nothing here talks to a network or to a real console. State resets when the page reloads.
+//
+// The mock keeps the hub's rules: Service Lock (manual, PIN, five wrong PINs lock unlocking for
+// five minutes), every change refused while locked, taps are free (usage stays 0 of 100), and a
+// history list. It also drives the stage preview (DemoStage at the bottom of this file).
+(function () {
+  const DEMO_PIN = "1234";
+  const LIMIT = 100;
+  const WRONG_PIN_MAX = 5, WRONG_PIN_LOCKOUT_MS = 5 * 60 * 1000;
+
+  // The endpoints that change the console. The tests check this list against the hub's own POST
+  // routes and against the paths app.js uses, so a new change endpoint cannot be forgotten here.
+  // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
+  const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
+    "/api/effect-size", "/api/tempo"];
+
+  // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
+  // take colour; the others do.
+  const GROUPS = [
+    { number: "1", label: "Front Wash", role: "front", takes_colour: false },
+    { number: "2", label: "Back Light", role: "back", takes_colour: true },
+    { number: "3", label: "Movers", role: "air", takes_colour: true },
+    { number: "4", label: "Stage Pars", role: "accent", takes_colour: true },
+    { number: "5", label: "Side Light", role: "side", takes_colour: true },
+  ];
+  const WARM_WHITE = "#ffe2b0";
+  const DEFAULT_EFFECT_ROLES = ["air"];
+  // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
+  // page (tools/build_demo.py) replaces this with the real list.
+  const FALLBACK_COLOUR_SETS = [
+    { name: "Blue + Amber", colours: ["#2F6BFF", "#FFB000"], mood: "Everyday worship: warm and cool in balance" },
+    { name: "Blue + Cyan + White", colours: ["#3060FF", "#20C8E8", "#FFFFFF"], mood: "Baptism" },
+  ];
+  const PALETTES = [
+    ["Red", "#e0262d"], ["Blue", "#2447e0"], ["Amber", "#ffa21a"], ["Lavender", "#a58cf0"],
+    ["Teal", "#14b8a6"], ["Warm White", "#ffd9a3"], ["Cool White", "#d6e8ff"], ["Magenta", "#e0239f"],
+    ["Congo Blue", "#2a1a8f"], ["Green", "#1fb34a"], ["Pink", "#ff8fb8"], ["Orange", "#ff6a13"],
+  ].map(([label, colour], i) => ({ number: String(i + 1), label, colour }));
+
+  // Used only when the page was not built with the glossary (a dev preview served by the hub).
+  // The built demo page (tools/build_demo.py) replaces this with the real Effects Glossary rows.
+  const FALLBACK_EFFECTS = [
+    { name: "Wave", what_you_see: "One movement or colour change rolls across the movers in order.", when_to_use_it: "Builds, choruses, transitions" },
+    { name: "No-fade chase", what_you_see: "Lights snap on and off one at a time, in sequence, with no fades.", when_to_use_it: "Hits and accents a listener clearly hears" },
+    { name: "Reset look", what_you_see: "A plain, still, simple look that rests the eyes.", when_to_use_it: "After a big section, before a build" },
+  ];
+
+  // What the stage preview does for each effect name. Anything else gets a gentle pulse.
+  const KIND_BY_NAME = {
+    "wave": "wave", "fan-in / fan-out": "fan", "no-fade chase": "chase", "bump": "bump",
+    "evolving full rig": "evolve", "silhouette intro": "dim", "reset look": "still",
+  };
+  // Eos BPM per musical tempo, as in the hub's effects.json. Only Wave has been "measured";
+  // every other effect is "not measured yet", like the real app.
+  const TEMPO_FACTOR = { "wave": 1.0 };       // one circle per beat (Eos BPM = tempo), verified for effect 901
+  // Note values (D-028). This is a copy of hub/tempo.py NOTES; the build replaces it with the hub's table
+  // (window.DEMO_NOTES), and tests/test_demo.py checks that the two are identical so they cannot drift.
+  const FALLBACK_NOTES = [
+    { name: "1/1", label: "1/1", spoken: "whole note, one bar of 4/4", multiplier: 0.25 },
+    { name: "1/2", label: "1/2", spoken: "half note", multiplier: 0.5 },
+    { name: "1/4", label: "1/4", spoken: "quarter note, the beat", multiplier: 1 },
+    { name: "1/8.", label: "Dotted 1/8", spoken: "dotted eighth", multiplier: 4 / 3 },
+    { name: "1/8", label: "1/8", spoken: "eighth note", multiplier: 2 },
+    { name: "1/8T", label: "1/8T", spoken: "eighth note triplet", multiplier: 3 },
+    { name: "1/16", label: "1/16", spoken: "sixteenth note", multiplier: 4 },
+  ];
+  const NOTES = (typeof window !== "undefined" && window.DEMO_NOTES) || FALLBACK_NOTES;
+  const DEFAULT_NOTE = "1/4";
+  const roundEven = (x) => { const f = Math.floor(x), d = x - f; return d < 0.5 ? f : d > 0.5 ? f + 1 : (f % 2 === 0 ? f : f + 1); };   // as Python's round()
+  const TEMPO_MIN = 40, TEMPO_MAX = 200, EOS_BPM_MIN = 1, EOS_BPM_MAX = 300;
+
+  const norm = (s) => String(s).split(/\s+/).filter(Boolean).join(" ").toLowerCase();
+  const hexToPct = (hex) => [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 1000 / 255) / 10);
+  const isHex = (v) => typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+
+  // The placement rule v1, the same as hub/colours.py: 1st colour to back and air, 2nd to side and
+  // accent, a 3rd to accent (the 2nd stays on side). Roles with no group are skipped. A group that
+  // does not take colour is never placed. Returns [[group, "#hex"], ...] in group order.
+  function place(colours, groups) {
+    const slot = { back: 0, air: 0, side: 1, accent: colours.length >= 3 ? 2 : 1 };
+    return groups.filter((g) => g.takes_colour && slot[g.role] !== undefined)
+      .map((g) => [g, colours[slot[g.role]].toLowerCase()]);
+  }
+
+  function create(opts) {
+    const now = (opts && opts.now) || (() => Date.now());
+    const effects = ((typeof window !== "undefined" && window.DEMO_EFFECTS) || FALLBACK_EFFECTS).map((e) => ({
+      name: e.name, what_you_see: e.what_you_see, when_to_use_it: e.when_to_use_it,
+      status: "Demo", demo: true, roles: DEFAULT_EFFECT_ROLES.slice(), tempo_measured: TEMPO_FACTOR[norm(e.name)] !== undefined,
+      eos_bpm_per_tempo: TEMPO_FACTOR[norm(e.name)] === undefined ? null : TEMPO_FACTOR[norm(e.name)],
+    }));
+    const st = {
+      signedIn: false, noticeAck: false, locked: true, changedBy: null, changedAt: null,
+      wrong: 0, lockedOutUntil: 0, history: [],
+      groups: {}, fxBpm: {}, fxSize: {},
+    };
+    const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
+      .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
+    for (const g of GROUPS) st.groups[g.number] = { rgb: hexToPct(WARM_WHITE), fx: null };
+    const listeners = [];
+    const changed = () => listeners.forEach((f) => f(st));
+
+    const iso = () => new Date(now()).toISOString();
+    const lockInfo = () => ({
+      locked: st.locked, reason: st.locked ? "manual" : null, override_until: null,
+      changed_by: st.changedBy, changed_at: st.changedAt,
+    });
+    function log(op, args, allowed, reason) {
+      st.history.push({ ts: iso(), user: "demo", source: "tap", op, args, allowed,
+        reason, outcome: allowed ? "done" : "refused" });
+    }
+    const ok = (data) => ({ status: 200, ok: true, data });
+    const fail = (status, detail) => ({ status, ok: false, data: { detail } });
+    const refused = (reason) => ok({ allowed: false, reason, outcome: "refused" });
+
+    const notForColour = (g) => (g.takes_colour ? null : g.label + " is not changed by colour looks");
+
+    function change(path, op, args, body) {
+      if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
+      if (path === "/api/colour-set") {
+        const placed = place(body.colours, GROUPS);
+        if (!placed.length) return refused("No lights in this church are set up to take colour");
+        for (const [g, hex] of placed) st.groups[g.number].rgb = hexToPct(hex);
+        log(op, args, true, "");
+        changed();
+        return ok({ allowed: true, reason: "", outcome: "confirmed", detail: "Sent to the stage.",
+          groups: placed.map(([g]) => ({ group: Number(g.number), label: g.label, allowed: true,
+            outcome: "confirmed", reason: "" })) });
+      }
+      const group = st.groups[String(body.group)];
+      const needGroup = path === "/api/apply-palette" || path === "/api/colour";
+      if (needGroup && !group) return refused("Group " + body.group + " is not in this church");
+      if (needGroup) {
+        const why = notForColour(GROUPS.find((x) => x.number === String(body.group)));
+        if (why) { log(op, args, false, why); return refused(why); }
+      }
+      let eff = null, extra = {};
+      if (path === "/api/apply-effect" || path === "/api/effect-size" || path === "/api/tempo") {
+        eff = effects.find((e) => norm(e.name) === norm(body.effect_name));
+        if (!eff) return refused("'" + body.effect_name + "' is not an agreed effect set up for this church");
+      }
+      if (path === "/api/apply-palette") {
+        const p = PALETTES.find((x) => x.number === String(body.cp));
+        if (!p) return refused("Palette " + body.cp + " is not in this church");
+        group.rgb = hexToPct(p.colour);
+      } else if (path === "/api/colour") {
+        group.rgb = [body.r, body.g, body.b];
+      } else if (path === "/api/apply-effect") {
+        // by role, never a chosen group; groups that do not take colour are left out
+        const targets = GROUPS.filter((g) => eff.roles.indexOf(g.role) >= 0 && g.takes_colour);
+        if (!targets.length) return refused("No lights in this church are set up for this effect");
+        for (const g of targets) st.groups[g.number].fx = { name: eff.name, kind: KIND_BY_NAME[norm(eff.name)] || "pulse" };
+        log(op, args, true, "");
+        changed();
+        return ok({ allowed: true, reason: "", outcome: "confirmed", detail: "Sent to the stage.",
+          groups: targets.map((g) => ({ group: Number(g.number), label: g.label, allowed: true,
+            outcome: "confirmed", reason: "" })) });
+      } else if (path === "/api/effect-size") {
+        st.fxSize[norm(eff.name)] = body.size;
+      } else if (path === "/api/tempo") {
+        const f = TEMPO_FACTOR[norm(eff.name)];
+        if (f === undefined) return refused("tempo not measured for this effect yet");
+        const note = NOTES.find((n) => n.name === (body.note === undefined ? DEFAULT_NOTE : body.note));
+        const bpm = roundEven(body.tempo * note.multiplier * f);
+        if (bpm < EOS_BPM_MIN || bpm > EOS_BPM_MAX) {
+          const bpmFor = (n) => roundEven(body.tempo * n.multiplier * f);
+          const fits = NOTES.filter((n) => bpmFor(n) >= EOS_BPM_MIN && bpmFor(n) <= EOS_BPM_MAX);
+          const fast = bpm > EOS_BPM_MAX;
+          const cand = fits.filter((n) => fast ? n.multiplier < note.multiplier : n.multiplier > note.multiplier);
+          cand.sort((x, y) => fast ? y.multiplier - x.multiplier : x.multiplier - y.multiplier);
+          let hint = "";
+          if (cand.length) hint = " Try a " + (fast ? "slower" : "faster") + " note, " + cand[0].label + ", which gives Eos BPM " + bpmFor(cand[0]) + ".";
+          else {
+            const eff = f * note.multiplier, lo = Math.max(TEMPO_MIN, Math.ceil(EOS_BPM_MIN / eff)), hi = Math.min(TEMPO_MAX, Math.floor(EOS_BPM_MAX / eff));
+            if (lo <= hi) hint = " Try a tempo between " + lo + " and " + hi + ".";
+          }
+          return refused("A tempo of " + body.tempo + " with note " + note.label + " needs Eos BPM " + bpm + ", but Eos accepts " +
+            EOS_BPM_MIN + " to " + EOS_BPM_MAX + "." + hint);
+        }
+        log("set_effect_rate", { rate: 100 }, true, "");     // the hub resets Rate to 100 before every BPM
+        st.fxBpm[norm(eff.name)] = bpm;
+        extra = { eos_bpm: bpm, note: note.name };
+      }
+      log(op, args, true, "");
+      changed();
+      return ok(Object.assign({ allowed: true, reason: "", outcome: "confirmed" }, extra));
+    }
+
+    // locked: like the hub, a colour set stops at the first refusal and sends nothing
+    function refuseLocked(path, body) {
+      const r = { allowed: false, reason: "Service Lock is on", outcome: "refused" };
+      if (path === "/api/colour-set") {
+        r.groups = place(body.colours, GROUPS).map(([g], i) => ({ group: Number(g.number), label: g.label,
+          allowed: false, outcome: "refused", reason: i === 0 ? "Service Lock is on" : "not sent" }));
+      }
+      return ok(r);
+    }
+
+    const num = (v, lo, hi) => typeof v === "number" && isFinite(v) && v >= lo && v <= hi;
+    const CHANGES = {
+      "/api/colour-set": { op: "set_colour_rgb", valid: (b) => Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 3 && b.colours.every(isHex) },
+      "/api/apply-palette": { op: "apply_colour_palette", valid: (b) => num(b.group, 1, 9999) && num(b.cp, 1, 9999) },
+      "/api/colour": { op: "set_colour_rgb", valid: (b) => num(b.group, 1, 9999) && num(b.r, 0, 100) && num(b.g, 0, 100) && num(b.b, 0, 100) },
+      "/api/apply-effect": { op: "apply_effect", valid: (b) => typeof b.effect_name === "string" },
+      "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && num(b.size, 0, 200) },
+      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) },
+    };
+
+    function unlock(body) {
+      const t = now();
+      if (t < st.lockedOutUntil) {
+        const mins = Math.max(1, Math.ceil((st.lockedOutUntil - t) / 60000));
+        log("service_lock_off", {}, false, "too many wrong PINs");
+        return fail(400, "too many wrong PINs; unlock refused for about " + mins + " more minute(s)");
+      }
+      if (String(body.pin) !== DEMO_PIN) {
+        st.wrong += 1;
+        if (st.wrong >= WRONG_PIN_MAX) { st.lockedOutUntil = t + WRONG_PIN_LOCKOUT_MS; st.wrong = 0; }
+        log("service_lock_off", {}, false, "wrong PIN");
+        return fail(400, "wrong PIN");
+      }
+      st.wrong = 0; st.locked = false; st.changedBy = "demo"; st.changedAt = iso();
+      log("service_lock_off", {}, true, "unlocked");
+      changed();
+      return ok({ ok: true, reason: "unlocked", lock: lockInfo() });
+    }
+
+    async function call(method, path, body) {
+      const url = String(path).split("?")[0];
+      body = body || {};
+      if (method === "POST" && url === "/api/login") {
+        if (norm(body.username || "") !== "demo") return fail(401, "That name or password is not right");
+        st.signedIn = true;
+        return ok({ username: "demo", role: "Programmer", church: "Demo Church" });
+      }
+      if (!st.signedIn) return fail(401, "Please sign in");
+      if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
+      if (method === "GET" && url === "/api/me") {
+        return ok({ username: "demo", role: "Programmer", church: "Demo Church", notice_ack_needed: !st.noticeAck,
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE,
+          can: { change: true, unlock: true, history: true, schedule: false } });
+      }
+      if (method === "GET" && url === "/api/status") {
+        return ok({ church: "Demo Church", lock: lockInfo(),
+          allowance: { used: 0, left: LIMIT, limit: LIMIT, month: new Date(now()).toISOString().slice(0, 7) },
+          console: { reachable: true, ping_ms: 2.4 } });
+      }
+      if (method === "POST" && url === "/api/acknowledge-notice") {
+        st.noticeAck = true;
+        return ok({ ok: true, notice_ack_needed: false });
+      }
+      // Service Lock ON and OFF stay open before the notice is accepted: they are safety controls.
+      if (method === "POST" && url === "/api/lock") {
+        st.locked = true; st.changedBy = "demo"; st.changedAt = iso();
+        log("service_lock_on", {}, true, "Service Lock turned on");
+        changed();
+        return ok({ ok: true, lock: lockInfo() });
+      }
+      if (method === "POST" && url === "/api/unlock") return unlock(body);
+      if (method === "GET" && url === "/api/schedule") return fail(403, "Your role cannot do that");
+      if (method === "GET" && url === "/api/groups") return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label })) });
+      if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
+      if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
+      if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
+      if (method === "GET" && url === "/api/history") {
+        const m = /limit=(\d+)/.exec(String(path));
+        const n = Math.max(1, Math.min(m ? parseInt(m[1], 10) : 50, 500));
+        return ok({ history: st.history.slice(-n).reverse() });
+      }
+      if (method === "POST" && CHANGES[url]) {
+        const c = CHANGES[url];
+        if (!st.noticeAck) return fail(403, "Please read and accept the notice first");   // as the hub does
+        if (!c.valid(body)) return { status: 422, ok: false, data: { detail: [{ msg: "not allowed" }] } };
+        const args = Object.assign({}, body);
+        return change(url, c.op, args, body);
+      }
+      return fail(404, "Not found");
+    }
+
+    return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS,
+      CHANGE_ENDPOINTS, DEMO_PIN, NOTES, fxBpm: st.fxBpm, fxSize: st.fxSize };
+  }
+
+  const api = create();
+  api.place = place;
+  api.create = create;
+  if (typeof window !== "undefined") window.DemoApi = api;
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+
+  // ---------------------------------------------------------------- stage preview
+  // A simple SVG stage: a row of fixtures per group. Each fixture is a circle showing its colour
+  // and brightness. One generic motion per effect type, kept subtle; tempo sets the speed.
+  if (typeof document === "undefined") return;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const ROWS = [["2", 8], ["3", 6], ["4", 8], ["1", 8], ["5", 6]];  // back of the stage to the front; 5 = side light
+  const ROW_Y = { "2": 30, "3": 68, "4": 106, "1": 144 };
+  const X0 = 108, X1 = 252;
+  // Side light: two short columns at the stage sides, three fixtures each.
+  const SIDE_X = [82, 278], SIDE_Y = [64, 92, 120];
+  const BASE = [26, 29, 38];
+  const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let host = null, fixtures = {}, labels = {}, phase = {}, last = 0, running = false;
+
+  function svg(tag, attrs, text) {
+    const n = document.createElementNS(SVGNS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  function build() {
+    host = document.createElement("div");
+    host.className = "stage";
+    host.setAttribute("role", "img");
+    host.setAttribute("aria-label", "Stage preview. Rows and columns of lights show the colour and effect of each group.");
+    const s = svg("svg", { viewBox: "0 0 300 200", width: "100%", focusable: "false" });
+    s.append(svg("path", { d: "M8 164 L292 164 L300 180 L0 180 Z", class: "stage-edge" }));
+    s.append(svg("text", { x: 150, y: 195, class: "stage-lbl mid" }, "Front of stage"));
+    for (const [gn, n] of ROWS) {
+      const g = GROUPS.find((x) => x.number === gn);
+      const side = g.role === "side";
+      if (side) {
+        s.append(svg("text", { x: SIDE_X[0], y: 50, class: "stage-lbl side" }, g.label));
+        s.append(svg("text", { x: 298, y: 50, class: "stage-lbl", "text-anchor": "end" }, g.label));
+        labels[gn] = svg("text", { x: 0, y: 0 }, "");           // side light takes no effect: nothing to show
+      } else {
+        s.append(svg("text", { x: 2, y: ROW_Y[gn] - 1, class: "stage-lbl" }, g.label));
+        labels[gn] = svg("text", { x: 2, y: ROW_Y[gn] + 10, class: "stage-fx" }, "");
+        s.append(labels[gn]);
+      }
+      fixtures[gn] = [];
+      for (let i = 0; i < n; i++) {
+        const cx = side ? SIDE_X[Math.floor(i / 3)] : X0 + (n === 1 ? 0 : i * (X1 - X0) / (n - 1));
+        const cy = side ? SIDE_Y[i % 3] : ROW_Y[gn];
+        const glow = svg("circle", { cx, cy, r: 15, fill: "#000", opacity: 0 });
+        const dot = svg("circle", { cx, cy, r: 9, fill: "#1a1d26", class: "stage-fix" });
+        s.append(glow, dot);
+        fixtures[gn].push({ glow, dot });
+      }
+      phase[gn] = 0;
+    }
+    host.append(s);
+  }
+
+  function period(fxName) {
+    const bpm = api.fxBpm[norm(fxName)];
+    return bpm ? Math.max(0.5, Math.min(6, 60 / bpm)) : 2;          // one circle per 60/BPM seconds, clamped for display
+  }
+
+  // 0..1 for fixture i of n at cycle position p
+  function level(kind, i, n, p) {
+    const x = n > 1 ? i / (n - 1) : 0, f = p - Math.floor(p), TAU = Math.PI * 2;
+    switch (kind) {
+      case "wave": return 0.5 + 0.5 * Math.cos(TAU * (p - x));
+      case "fan": { const u = f < 0.5 ? f * 2 : (1 - f) * 2; return Math.max(0, Math.min(1, (u - x * 0.7) / 0.25)); }
+      case "chase": return i === Math.floor(f * n) ? 1 : 0.08;
+      case "bump": return f < 0.12 ? 1 : 0.15;
+      case "evolve": return 0.5 + 0.5 * Math.sin(TAU * (p * 0.5 + i * 0.37) + Math.sin(i * 1.7));
+      case "pulse": return 0.5 + 0.5 * Math.sin(TAU * p);
+      default: return 1;
+    }
+  }
+
+  function paint(gn, t) {
+    const g = api.state.groups[gn], fx = g.fx, n = fixtures[gn].length;
+    const rgb = g.rgb.map((v) => v * 2.55);
+    const amp = fx ? Math.min(1, (api.fxSize[norm(fx.name)] === undefined ? 100 : api.fxSize[norm(fx.name)]) / 100) : 0;
+    labels[gn].textContent = fx ? fx.name : "";
+    for (let i = 0; i < n; i++) {
+      let I = 0.8;                                                  // steady look
+      if (fx) {
+        if (fx.kind === "dim") I = 0.1;
+        else if (fx.kind === "still") I = 0.5;
+        else I = 0.8 * (1 - 0.9 * amp * (1 - level(fx.kind, i, n, phase[gn])));
+      }
+      const c = rgb.map((v, k) => Math.round(BASE[k] + (v - BASE[k]) * I));
+      const f = fixtures[gn][i];
+      f.dot.setAttribute("fill", "rgb(" + c.join(",") + ")");
+      f.glow.setAttribute("fill", "rgb(" + rgb.map(Math.round).join(",") + ")");
+      f.glow.setAttribute("opacity", (I * 0.28).toFixed(3));
+    }
+  }
+
+  function frame(ts) {
+    if (!running) return;
+    const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0;
+    last = ts;
+    if (host && host.isConnected && !document.hidden) {
+      for (const [gn] of ROWS) {
+        const fx = api.state.groups[gn].fx;
+        if (fx && !reduced) phase[gn] += dt / period(fx.name);
+        paint(gn, ts);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (running) return;
+    running = true; last = 0;
+    requestAnimationFrame(frame);
+  }
+
+  // Put the stage at the top of the Colours, Effects or Tempo tab; take it out of the others.
+  function placeStage(tab) {
+    if (!host) build();
+    const sec = document.getElementById("tab-" + tab);
+    if (tab === "colours" || tab === "effects" || tab === "tempo") {
+      sec.insertBefore(host, sec.firstChild);
+      start();
+      for (const [gn] of ROWS) paint(gn, 0);
+    } else if (host.parentNode) {
+      host.parentNode.removeChild(host);
+    }
+  }
+
+  api.onChange(() => { if (host) for (const [gn] of ROWS) paint(gn, 0); });
+  window.DemoStage = { place: placeStage, level, period };
+})();
+
+</script>
+<script>
+"use strict";
+// Lighting Control phone app. Vanilla JS, no build. Every console change is a POST to the hub;
+// the hub decides (Service Lock, role, allowlist). This page only asks.
+
+const $ = (id) => document.getElementById(id);
+const state = {
+  me: null, status: null, sets: [], effects: [],
+  tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
+};
+
+// 16 common stage colours for "Pick your own" (name, #rrggbb). Plain data: S&S can change the list.
+const STAGE_COLOURS = [
+  ["Red", "#e02020"], ["Orange", "#ff6a13"], ["Amber", "#ffa020"], ["Gold", "#ffd060"],
+  ["Green", "#1fb34a"], ["Teal", "#1fb5b0"], ["Cyan", "#20c8e8"], ["Sky Blue", "#4d8dff"],
+  ["Blue", "#2f6bff"], ["Deep Blue", "#1f3fbf"], ["Violet", "#7a3fd0"], ["Lavender", "#b79cff"],
+  ["Magenta", "#e0208c"], ["Pink", "#ff8fc8"], ["Warm White", "#ffe2b0"], ["White", "#ffffff"],
+];
+const PICK_NAMES = ["Main", "Second", "Third"];
+
+// Demo mode: ?demo=1, or the built demo page. Every /api/ call then goes to the in-browser mock
+// (demo-api.js) instead of the hub, through send() below. Nothing else in this file knows.
+const DEMO = window.TIER1_DEMO === true || new URLSearchParams(location.search).get("demo") === "1";
+
+const NOTICE_FIRST = "Please read and accept the notice first";
+
+// ---------- helpers
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  for (const c of kids) if (c != null) n.append(c);
+  return n;
+}
+
+// The only place a request leaves this page: to the hub, or to the demo mock.
+async function send(method, path, body) {
+  if (DEMO) return window.DemoApi.call(method, path, body);
+  const opts = { method, headers: { "X-Requested-With": "tier1" }, credentials: "same-origin" };
+  if (body !== undefined) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
+  let res;
+  try { res = await fetch(path, opts); } catch (e) { throw new Error("Cannot reach the hub. Check your connection."); }
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* no body */ }
+  return { status: res.status, ok: res.ok, data };
+}
+
+async function api(method, path, body) {
+  const res = await send(method, path, body);
+  const data = res.data;
+  if (res.status === 401 && path !== "/api/login") { showLogin(); throw new Error("Please sign in"); }
+  if (res.status === 403 && data && data.detail === NOTICE_FIRST) showNotice();   // the notice changed while signed in
+  if (!res.ok) {
+    let msg = data && data.detail;
+    if (Array.isArray(msg)) msg = "That value is not allowed.";
+    throw new Error(msg || ("Something went wrong (" + res.status + ")"));
+  }
+  return data;
+}
+
+let resultTimer = null;
+function showResult(text, kind) {
+  const r = $("result");
+  r.textContent = text; r.className = "result " + kind; r.hidden = false;
+  clearTimeout(resultTimer);
+  resultTimer = setTimeout(() => { r.hidden = true; }, kind === "ok" ? 4000 : 9000);
+}
+
+function describe(r) {
+  if (!r.allowed) return ["Not applied: " + r.reason + ".", "bad"];
+  if (r.outcome === "confirmed") return ["Applied.", "ok"];
+  if (r.outcome === "unconfirmed") return ["Sent, but the console did not answer back. Check the console to be sure.", "warn"];
+  if (r.outcome === "needs_confirm") return ["The console is asking to confirm. Nothing was changed.", "warn"];
+  return ["The console reported a problem: " + r.reason + ".", "bad"];
+}
+
+// A change: POST, then show what happened.
+async function change(path, body, okText) {
+  if (isLocked() || !canChange()) return null;
+  try {
+    const r = await api("POST", path, body);
+    let [text, kind] = describe(r);
+    if (okText && kind === "ok") text = okText;
+    showResult(text, kind);
+    refreshStatus();
+    return r;
+  } catch (e) {
+    showResult(e.message, "bad");
+    return null;
+  }
+}
+
+const canChange = () => !!(state.me && state.me.can.change);
+const isLocked = () => !state.status || state.status.lock.locked;
+
+// ---------- sign in / out
+function showLogin() {
+  state.me = null; stopPolling();
+  $("app-view").hidden = true; $("notice-view").hidden = true; $("login-view").hidden = false;
+  $("login-pass").value = "";
+}
+
+// First sign-in notice (D-022): nothing else is shown until "I understand" is tapped.
+function showNotice() {
+  stopPolling();
+  $("login-view").hidden = true; $("app-view").hidden = true; $("notice-view").hidden = false;
+  $("notice-msg").textContent = "";
+  $("notice-ok").focus();
+}
+$("notice-ok").addEventListener("click", async () => {
+  $("notice-msg").textContent = ""; $("notice-ok").disabled = true;
+  try { await api("POST", "/api/acknowledge-notice", {}); await enterApp(); }
+  catch (e) { $("notice-msg").textContent = e.message; }
+  $("notice-ok").disabled = false;
+});
+
+$("login-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("login-msg").textContent = ""; $("login-btn").disabled = true;
+  try {
+    await api("POST", "/api/login", { username: $("login-user").value, password: $("login-pass").value });
+    await enterApp();
+  } catch (e) { $("login-msg").textContent = e.message; }
+  $("login-btn").disabled = false;
+});
+
+$("signout").addEventListener("click", async () => {
+  try { await api("POST", "/api/logout", {}); } catch (e) { /* already signed out */ }
+  showLogin();
+});
+
+async function enterApp() {
+  state.me = await api("GET", "/api/me");
+  if (state.me.notice_ack_needed) { showNotice(); return; }
+  renderNotes();
+  $("notice-view").hidden = true;
+  $("login-view").hidden = true; $("app-view").hidden = false;
+  $("church-name").textContent = state.me.church;
+  document.title = state.me.church + " lighting";
+  $("me-text").textContent = "Signed in as " + state.me.username + " (" + state.me.role + ").";
+  $("history-box").hidden = !state.me.can.history;
+  $("schedule-box").hidden = !state.me.can.schedule;
+  await refreshStatus();
+  selectTab(state.tab);
+  loadLists();
+  startPolling();
+}
+
+// ---------- status and lock
+let pollTimer = null;
+function startPolling() { stopPolling(); pollTimer = setInterval(() => { if (!document.hidden) refreshStatus(); }, 10000); }
+function stopPolling() { clearInterval(pollTimer); pollTimer = null; }
+
+async function refreshStatus() {
+  try { state.status = await api("GET", "/api/status"); } catch (e) { return; }
+  renderStatus();
+}
+
+function renderStatus() {
+  const s = state.status, lk = s.lock;
+  const dot = $("dot");
+  dot.className = "dot " + (s.console.reachable ? "up" : "down");
+  $("dot-text").textContent = DEMO ? "Simulated console"
+    : s.console.reachable ? "Console connected (" + Math.round(s.console.ping_ms) + " ms)"
+    : "Console not answering";
+  const sw = $("lock-switch");
+  sw.classList.toggle("on", lk.locked);
+  sw.setAttribute("aria-pressed", String(lk.locked));
+    $("lock-text").textContent = lk.locked ? "Locked" : "Service Lock off";
+  const b = $("banner");
+  if (lk.locked) {
+    const why = lk.reason === "scheduled" ? " (scheduled)" : lk.reason === "unreadable" ? " (lock file unreadable)" : "";
+    b.textContent = "Locked for service" + why; b.className = "banner"; b.hidden = false;
+  } else if (!canChange()) {
+    b.textContent = "Your role can look and lock, but not change the lights."; b.className = "banner info"; b.hidden = false;
+  } else { b.hidden = true; }
+  $("usage-text").textContent = s.allowance.used + " of " + s.allowance.limit +
+    " look requests used this month. Buttons in this app are free and are not counted.";
+  $("unlock-note").textContent = lk.locked ? "To unlock, tap the lock at the top and enter the Service Lock PIN." : "";
+  applyDisabled();
+  if (state.me.can.schedule) loadSchedule();
+}
+
+function applyDisabled() {
+  const off = isLocked() || !canChange();
+  document.querySelectorAll(".change").forEach((b) => { b.disabled = off; });
+  document.querySelectorAll("#set-list button, #effects-list .change").forEach((b) => { b.disabled = off; });
+  $("pick-send").disabled = off || state.picked.length < 2;
+  updateTempoControls();
+}
+
+$("lock-switch").addEventListener("click", async () => {
+  if (!state.status) return;
+  if (!state.status.lock.locked) {
+    try { await api("POST", "/api/lock", {}); showResult("Service Lock is on.", "ok"); }
+    catch (e) { showResult(e.message, "bad"); }
+    refreshStatus();
+  } else {
+    $("pin").value = ""; $("pin-msg").textContent = ""; $("pin-dialog").showModal(); $("pin").focus();
+  }
+});
+$("pin-cancel").addEventListener("click", () => $("pin-dialog").close());
+$("pin-form").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("pin-msg").textContent = "";
+  try {
+    await api("POST", "/api/unlock", { pin: $("pin").value });
+    $("pin").value = ""; $("pin-dialog").close();
+    showResult("Service Lock is off. Changes are allowed.", "ok");
+    refreshStatus();
+  } catch (e) { $("pin-msg").textContent = e.message; $("pin").value = ""; }
+});
+
+// ---------- lists
+async function loadLists() {
+  try {
+    const [c, e] = await Promise.all([api("GET", "/api/colour-sets"), api("GET", "/api/effects")]);
+    state.sets = c.sets; state.effects = e.effects;
+  } catch (err) { showResult(err.message, "bad"); }
+  renderSets(); renderPicker(); renderEffects(); renderTempoChoices();
+}
+
+// ---------- colour sets and picking your own (D-027): the hub places the colours, not the user
+function setStrip(colours, cls) {
+  const strip = el("span", { class: cls || "strip", "aria-hidden": "true" });
+  for (const c of colours) strip.append(el("i", { style: "background:" + c }));
+  return strip;
+}
+
+async function sendColours(colours) {
+  const r = await change("/api/colour-set", { colours }, "Sent to the stage.");
+  const box = $("placement");
+  box.hidden = !(r && r.detail && state.me.role === "Admin");
+  if (!box.hidden) box.textContent = r.detail;
+  return r;
+}
+
+function renderSets() {
+  const list = $("set-list"); list.replaceChildren();
+  if (!state.sets.length) list.append(el("p", { class: "muted", text: "No colour sets yet. Ask the S&S team." }));
+  for (const s of state.sets) {
+    const b = el("button", { type: "button", class: "set change" },
+      setStrip(s.colours),
+      el("span", { class: "set-text" }, el("span", { class: "set-name", text: s.name }),
+        el("span", { class: "set-mood", text: s.mood })));
+    b.addEventListener("click", () => sendColours(s.colours));
+    list.append(b);
+  }
+  applyDisabled();
+}
+
+function colourName(hex) {
+  const f = STAGE_COLOURS.find((c) => c[1] === hex);
+  return f ? f[0] : "Custom colour";
+}
+
+function renderPicker() {
+  const grid = $("swatch-grid"); grid.replaceChildren();
+  for (const [name, hex] of STAGE_COLOURS) {
+    const b = el("button", { type: "button", class: "sw", "aria-label": "Add " + name });
+    b.append(el("i", { style: "background:" + hex }), el("span", { text: name }));
+    b.addEventListener("click", () => addPick(hex));
+    grid.append(b);
+  }
+  const tray = $("pick-tray"); tray.replaceChildren();
+  for (let i = 0; i < 3; i++) {
+    const hex = state.picked[i];
+    if (hex) {
+      const b = el("button", { type: "button", class: "slot full", "aria-label": "Remove " + colourName(hex) });
+      b.append(el("i", { style: "background:" + hex }), el("span", { text: PICK_NAMES[i] }), el("small", { text: colourName(hex) }));
+      b.addEventListener("click", () => { state.picked.splice(i, 1); renderPicker(); });
+      tray.append(b);
+    } else {
+      const optional = i === 2;
+      tray.append(el("div", { class: "slot" }, el("i", {}), el("span", { text: PICK_NAMES[i] }),
+        el("small", { text: optional ? "optional" : "choose one" })));
+    }
+  }
+  $("pick-clear").hidden = !state.picked.length;
+  applyDisabled();
+}
+
+function addPick(hex) {
+  if (state.picked.length >= 3) { showResult("You have 3 colours. Tap one to take it out first.", "warn"); return; }
+  state.picked.push(hex); renderPicker();
+}
+$("pick-clear").addEventListener("click", () => { state.picked = []; renderPicker(); });
+$("pick-send").addEventListener("click", () => { if (state.picked.length >= 2) sendColours(state.picked.slice()); });
+
+function hslHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+  const f = (n) => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)))));
+  return "#" + [f(0), f(8), f(4)].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+function mixHex() { return hslHex(Number($("mix-h").value), Number($("mix-s").value), Number($("mix-l").value)); }
+function updateMix() { $("mix-preview").style.background = mixHex(); }
+["mix-h", "mix-s", "mix-l"].forEach((id) => $(id).addEventListener("input", updateMix));
+$("mix-add").addEventListener("click", () => addPick(mixHex()));
+
+// ---------- effects
+function renderEffects() {
+  const box = $("effects-list"); box.replaceChildren();
+  if (!state.effects.length) {
+    box.append(el("p", { class: "muted", text: "No effects are set up for this church yet. Ask the S&S team." }));
+    return;
+  }
+  for (const e of state.effects) {
+    const out = el("output", { text: "100" });
+    const size = el("input", { type: "range", min: "0", max: "200", value: "100", "aria-label": "Size for " + e.name });
+    size.addEventListener("input", () => { out.textContent = size.value; });
+    size.addEventListener("change", () => change("/api/effect-size", { effect_name: e.name, size: parseInt(size.value, 10) }));
+    size.classList.add("change");
+    const apply = el("button", { type: "button", class: "big primary change", text: "Apply effect" });
+    apply.addEventListener("click", () => change("/api/apply-effect", { effect_name: e.name }));
+    box.append(el("div", { class: "card" },
+      el("h3", { text: e.name }),
+      e.demo ? el("div", { class: "demo-tag", text: "Demo effect" }) : null,
+      el("div", { text: e.what_you_see }),
+      el("div", { class: "k", text: "When to use it" }),
+      el("div", { text: e.when_to_use_it }),
+      apply,
+      el("div", { class: "k", text: "Size (after the effect is running)" }),
+      el("div", { class: "size-row" }, size, out)));
+  }
+  applyDisabled();
+}
+
+// ---------- tempo
+function renderTempoChoices() {
+  const sel = $("tempo-effect"); sel.replaceChildren();
+  if (!state.effects.length) sel.append(el("option", { value: "", text: "No effects set up" }));
+  for (const e of state.effects) sel.append(el("option", { value: e.name, text: e.name + (e.tempo_measured ? "" : " (not measured yet)") }));
+  if (state.effects.some((e) => e.name === state.tempoEffect)) sel.value = state.tempoEffect;
+  else state.tempoEffect = state.effects.length ? state.effects[0].name : "";
+  if (state.tempoEffect) sel.value = state.tempoEffect;
+  updateTempoControls();
+}
+$("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); });
+
+function currentEffect() { return state.effects.find((e) => e.name === state.tempoEffect) || null; }
+function updateTempoControls() {
+  const e = currentEffect(), note = $("tempo-note");
+  if (!e) note.textContent = "Pick an effect to follow the tempo.";
+  else if (!e.tempo_measured) note.textContent = "Tempo is not measured yet for this effect, so it cannot follow a tempo.";
+  else note.textContent = "";
+  updateNoteLine();
+  $("tempo-send").disabled = isLocked() || !canChange() || !e || !e.tempo_measured;
+}
+
+// ---- note value (D-028). The table comes from the hub (/api/me), so the app never carries its own copy.
+function renderNotes() {
+  const row = $("note-row"); row.replaceChildren();
+  const notes = state.me.notes || [];
+  if (!notes.some((n) => n.name === state.note)) state.note = state.me.default_note || "1/4";
+  for (const n of notes) {
+    const b = el("button", { type: "button", class: "note-btn", text: n.name, "aria-label": n.spoken,
+      "aria-pressed": n.name === state.note ? "true" : "false", title: n.label });
+    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); });
+    row.append(b);
+  }
+  updateNoteLine();
+}
+function currentNote() { return (state.me.notes || []).find((n) => n.name === state.note) || null; }
+function updateNoteLine() {
+  const n = currentNote(), line = $("note-line");
+  if (!n) { line.textContent = ""; return; }
+  const label = n.label.charAt(0).toLowerCase() + n.label.slice(1);
+  const e = currentEffect();
+  const bpm = Math.round(getBpm() * n.multiplier * (e && e.eos_bpm_per_tempo ? e.eos_bpm_per_tempo : 1));
+  line.textContent = "Effect cycle: every " + label + " note (" + bpm + " per minute on the console)";
+}
+
+function getBpm() { return Math.max(40, Math.min(200, Math.round(Number($("bpm").value) || 120))); }
+function setBpm(n) { $("bpm").value = String(Math.max(40, Math.min(200, Math.round(n)))); restartBeat(); updateNoteLine(); }
+$("bpm-minus").addEventListener("click", () => setBpm(getBpm() - 1));
+$("bpm-plus").addEventListener("click", () => setBpm(getBpm() + 1));
+$("bpm").addEventListener("change", () => setBpm(getBpm()));
+
+$("tap").addEventListener("pointerdown", (ev) => {
+  ev.preventDefault();
+  const now = performance.now();
+  if (state.taps.length && now - state.taps[state.taps.length - 1] > 2000) state.taps = [];   // idle for 2 s: start over
+  state.taps.push(now);
+  if (state.taps.length > 8) state.taps.shift();
+  if (state.taps.length >= 2) {
+    const span = state.taps[state.taps.length - 1] - state.taps[0];
+    setBpm(60000 / (span / (state.taps.length - 1)));
+  }
+  flash();
+});
+
+let beatTimer = null;
+function flash() { const b = $("beat"); b.classList.add("flash"); setTimeout(() => b.classList.remove("flash"), 90); }
+function restartBeat() {
+  clearInterval(beatTimer);
+  if (state.tab !== "tempo") return;
+  beatTimer = setInterval(flash, 60000 / getBpm());
+}
+
+$("tempo-send").addEventListener("click", () => {
+  const e = currentEffect();
+  if (!e) return;
+  change("/api/tempo", { effect_name: e.name, tempo: getBpm(), note: state.note });
+});
+
+// ---------- more
+async function loadHistory() {
+  if (!state.me.can.history) return;
+  const ul = $("history-list"); ul.replaceChildren();
+  try {
+    const h = await api("GET", "/api/history?limit=30");
+    if (!h.history.length) ul.append(el("li", { class: "muted", text: "Nothing yet." }));
+    for (const r of h.history) {
+      const when = new Date(r.ts).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" });
+      ul.append(el("li", {},
+        el("span", { class: "t", text: when + " · " + r.user + " · " }),
+        el("span", { text: r.op.replace(/_/g, " ") + " " }),
+        el("span", { class: r.allowed ? "" : "no", text: r.allowed ? "(" + r.outcome + ")" : "(refused: " + r.reason + ")" })));
+    }
+  } catch (e) { ul.append(el("li", { class: "no", text: e.message })); }
+}
+
+async function loadSchedule() {
+  try {
+    const s = await api("GET", "/api/schedule");
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    $("schedule-text").textContent = s.windows.length
+      ? s.windows.map((w) => days[w.weekday] + " " + w.start + " to " + w.end).join(", ") + " (" + s.timezone + ")"
+      : "No scheduled lock. Ask the S&S team to set one.";
+  } catch (e) { /* leave as is */ }
+}
+
+// ---------- help (D-030): open from any screen, address shown as text to select or copy
+document.querySelectorAll(".help-btn").forEach((b) => b.addEventListener("click", () => {
+  $("help-msg").textContent = ""; $("help-dialog").showModal();
+}));
+$("help-copy").addEventListener("click", async () => {
+  const addr = $("help-email").textContent;
+  try { await navigator.clipboard.writeText(addr); $("help-msg").textContent = "Copied."; }
+  catch (e) {
+    const r = document.createRange(); r.selectNodeContents($("help-email"));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    $("help-msg").textContent = "Selected. Copy it from here.";
+  }
+});
+
+// ---------- tabs
+function selectTab(name) {
+  state.tab = name;
+  document.querySelectorAll(".tab").forEach((s) => { s.hidden = s.id !== "tab-" + name; });
+  document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
+  if (name === "more") { loadHistory(); if (state.me.can.schedule) loadSchedule(); }
+  if (DEMO) window.DemoStage.place(name);
+  restartBeat();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll(".tabbar button").forEach((b) => b.addEventListener("click", () => selectTab(b.dataset.tab)));
+
+// ---------- start
+updateMix();
+if (DEMO) {
+  document.body.classList.add("demo");
+  document.querySelectorAll(".demo-only").forEach((n) => { n.hidden = false; });
+  document.querySelectorAll(".live-only").forEach((n) => { n.hidden = true; });
+  const sizeRibbon = () => document.documentElement.style.setProperty("--ribbon-h", $("demo-ribbon").offsetHeight + "px");
+  sizeRibbon(); window.addEventListener("resize", sizeRibbon);
+  $("demo-start").addEventListener("click", async () => {
+    $("demo-login-msg").textContent = "";
+    try { await api("POST", "/api/login", { username: "demo", password: "" }); await enterApp(); }
+    catch (e) { $("demo-login-msg").textContent = e.message; }
+  });
+} else if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
+document.addEventListener("visibilitychange", () => { if (!document.hidden && state.me) refreshStatus(); });
+api("GET", "/api/me").then(enterApp).catch(showLogin);
+
+</script>
+</body>
+</html>
