@@ -207,6 +207,11 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 .notice ul { padding-left: 20px; line-height: 1.5; }
 .notice li { margin-bottom: 10px; }
 
+/* 3D venue view (demo, D-029) */
+.venue canvas { display: block; border-radius: 10px; touch-action: pan-y; cursor: grab; }
+.venue-cap { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); padding: 6px 2px 2px; }
+.venue-reset { min-height: 36px; font-size: 13px; padding: 0 10px; flex: 0 0 auto; }
+
 </style>
 </head>
 <body>
@@ -243,7 +248,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   <ul>
     <li>It can misunderstand a request or get a look wrong. Check every change before it's used in a service.</li>
     <li>Use Service Lock during services; the assistant can't change the console while it's on.</li>
-    <li>The S&amp;S team set it up and support it. Tap Help any time to reach a person.</li>
+    <li id="notice-help">The S&amp;S team set it up and support it. Tap Help any time to reach a person.</li>
   </ul>
   <button type="button" id="notice-ok" class="big primary">I understand</button>
   <p id="notice-msg" class="msg" role="alert"></p>
@@ -369,10 +374,10 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 <!-- Help: how to reach a person at S&S. The address is in this one place (D-030). -->
 <dialog id="help-dialog">
   <form method="dialog">
-    <h2>Help</h2>
-    <p>To reach a person at S&amp;S Production Services, LLC, email:</p>
+    <h2 id="help-title">Help</h2>
+    <p id="help-lead">To reach a person at S&amp;S Production Services, LLC, email:</p>
     <p class="help-email"><span id="help-email">events@sspro.co</span></p>
-    <p class="muted small">Say which church you're with and what you need.</p>
+    <p id="help-tail" class="muted small">Say which church you're with and what you need.</p>
     <p id="help-msg" class="muted small" role="status"></p>
     <div class="row">
       <button type="button" id="help-copy" class="big">Copy address</button>
@@ -424,14 +429,17 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
     "/api/effect-size", "/api/tempo"];
 
   // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
-  // take colour; the others do.
-  const GROUPS = [
+  // take colour; the others do. A built demo for another church (tools/build_demo.py --church) replaces
+  // these with window.DEMO_CHURCH: {name, groups: [{number, label, role, takes_colour, channels}]}.
+  const DEFAULT_GROUPS = [
     { number: "1", label: "Front Wash", role: "front", takes_colour: false },
     { number: "2", label: "Back Light", role: "back", takes_colour: true },
     { number: "3", label: "Movers", role: "air", takes_colour: true },
     { number: "4", label: "Stage Pars", role: "accent", takes_colour: true },
     { number: "5", label: "Side Light", role: "side", takes_colour: true },
   ];
+  const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS };
+  const GROUPS = CHURCH.groups;
   const WARM_WHITE = "#ffe2b0";
   const DEFAULT_EFFECT_ROLES = ["air"];
   // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
@@ -640,17 +648,17 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "POST" && url === "/api/login") {
         if (norm(body.username || "") !== "demo") return fail(401, "That name or password is not right");
         st.signedIn = true;
-        return ok({ username: "demo", role: "Programmer", church: "Demo Church" });
+        return ok({ username: "demo", role: "Programmer", church: CHURCH.name });
       }
       if (!st.signedIn) return fail(401, "Please sign in");
       if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
       if (method === "GET" && url === "/api/me") {
-        return ok({ username: "demo", role: "Programmer", church: "Demo Church", notice_ack_needed: !st.noticeAck,
+        return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
           notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE,
           can: { change: true, unlock: true, history: true, schedule: false } });
       }
       if (method === "GET" && url === "/api/status") {
-        return ok({ church: "Demo Church", lock: lockInfo(),
+        return ok({ church: CHURCH.name, lock: lockInfo(),
           allowance: { used: 0, left: LIMIT, limit: LIMIT, month: new Date(now()).toISOString().slice(0, 7) },
           console: { reachable: true, ping_ms: 2.4 } });
       }
@@ -686,7 +694,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return fail(404, "Not found");
     }
 
-    return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS,
+    return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS, church: CHURCH,
       CHANGE_ENDPOINTS, DEMO_PIN, NOTES, fxBpm: st.fxBpm, fxSize: st.fxSize };
   }
 
@@ -701,8 +709,17 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // and brightness. One generic motion per effect type, kept subtle; tempo sets the speed.
   if (typeof document === "undefined") return;
   const SVGNS = "http://www.w3.org/2000/svg";
-  const ROWS = [["2", 8], ["3", 6], ["4", 8], ["1", 8], ["5", 6]];  // back of the stage to the front; 5 = side light
-  const ROW_Y = { "2": 30, "3": 68, "4": 106, "1": 144 };
+  // One row per group, from the back of the stage to the front; side light as two short columns.
+  // A group with channels shows up to 8 of them; otherwise a set number per role.
+  const ROW_ORDER = ["back", "air", "accent", "other", "front", "side"];
+  const ROLE_COUNT = { back: 8, air: 6, accent: 8, other: 8, front: 8, side: 6 };
+  const count = (g) => g.channels ? Math.max(1, Math.min(g.role === "side" ? 6 : 8,
+    g.channels.reduce((s, [a, b]) => s + b - a + 1, 0))) : ROLE_COUNT[g.role] || 8;
+  const ROWS = GROUPS.slice().sort((a, b) => ROW_ORDER.indexOf(a.role) - ROW_ORDER.indexOf(b.role))
+    .map((g) => [g.number, count(g)]);
+  const ROW_Y = {};
+  const rowGroups = ROWS.filter(([gn]) => GROUPS.find((g) => g.number === gn).role !== "side");
+  rowGroups.forEach(([gn], i) => { ROW_Y[gn] = rowGroups.length > 1 ? 30 + i * 114 / (rowGroups.length - 1) : 90; });
   const X0 = 108, X1 = 252;
   // Side light: two short columns at the stage sides, three fixtures each.
   const SIDE_X = [82, 278], SIDE_Y = [64, 92, 120];
@@ -740,8 +757,9 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       }
       fixtures[gn] = [];
       for (let i = 0; i < n; i++) {
-        const cx = side ? SIDE_X[Math.floor(i / 3)] : X0 + (n === 1 ? 0 : i * (X1 - X0) / (n - 1));
-        const cy = side ? SIDE_Y[i % 3] : ROW_Y[gn];
+        const half = Math.ceil(n / 2);                                  // side: half each side, up to 3
+        const cx = side ? SIDE_X[i < half ? 0 : 1] : X0 + (n === 1 ? 0 : i * (X1 - X0) / (n - 1));
+        const cy = side ? SIDE_Y[i % half] : ROW_Y[gn];
         const glow = svg("circle", { cx, cy, r: 15, fill: "#000", opacity: 0 });
         const dot = svg("circle", { cx, cy, r: 9, fill: "#1a1d26", class: "stage-fix" });
         s.append(glow, dot);
@@ -825,7 +843,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   }
 
   api.onChange(() => { if (host) for (const [gn] of ROWS) paint(gn, 0); });
-  window.DemoStage = { place: placeStage, level, period };
+  window.DemoStage = { place: placeStage, level, period, norm };
 })();
 
 </script>
@@ -1298,6 +1316,12 @@ if (DEMO) {
   document.body.classList.add("demo");
   document.querySelectorAll(".demo-only").forEach((n) => { n.hidden = false; });
   document.querySelectorAll(".live-only").forEach((n) => { n.hidden = true; });
+  // The demo is for people deciding whether they want this (D-034): "Learn more" instead of "Help".
+  document.querySelectorAll(".help-btn").forEach((b) => { b.textContent = "Learn more"; });
+  $("help-title").textContent = "Learn more";
+  $("help-lead").textContent = "Want this for your church, or have a question? Email S&S Production Services, LLC:";
+  $("help-tail").textContent = "Tell us your church's name and what console you use.";
+  $("notice-help").textContent = "The S&S team set it up and support it. Tap Learn more any time to reach a person.";
   const sizeRibbon = () => document.documentElement.style.setProperty("--ribbon-h", $("demo-ribbon").offsetHeight + "px");
   sizeRibbon(); window.addEventListener("resize", sizeRibbon);
   $("demo-start").addEventListener("click", async () => {
