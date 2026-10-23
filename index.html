@@ -212,6 +212,29 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 .venue-cap { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); padding: 6px 2px 2px; }
 .venue-reset { min-height: 36px; font-size: 13px; padding: 0 10px; flex: 0 0 auto; }
 
+/* effects: sections, directions, running (D-035) */
+.fx-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fx-head h2 { margin-bottom: 6px; }
+.stop-btn { flex: 0 0 auto; min-height: 40px; font-size: 14px; padding: 0 12px; }
+.dir-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+.dir-btn { min-height: 44px; font-size: 14px; padding: 0 12px; flex: 1 1 auto; }
+.dir-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.card.running { border-color: var(--accent); }
+.run-tag { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--accent-text); background: var(--accent); border-radius: 8px; padding: 1px 8px; vertical-align: middle; }
+/* lights in the scene (D-035) */
+.lg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lg-head h3 { margin: 0; }
+.group-switch { min-height: 44px; min-width: 96px; font-size: 14px; font-weight: 700; }
+.group-switch.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chip { min-height: 44px; min-width: 52px; padding: 0 8px; font-size: 14px; color: var(--muted); }
+.chip.on { color: var(--text); border-color: var(--accent); }
+.stage.tappable { outline: 2px dashed var(--line); outline-offset: 2px; }
+.stage.tappable .stage-fix { cursor: pointer; }
+/* six tabs fit a 320-375 px phone (D-035) */
+.tabbar button { flex: 1 1 0; min-width: 0; padding: 0 2px; font-size: 14px; }
+@media (max-width: 360px) { .tabbar button { font-size: 13px; } }
+
 </style>
 </head>
 <body>
@@ -275,31 +298,37 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   <div id="banner" class="banner" hidden></div>
 
   <main id="content">
-    <!-- Colours -->
-    <section id="tab-colours" class="tab" hidden>
-      <p class="intro">Pick a set or choose 2 or 3 colours. We place them on the stage for you. Front light isn't changed.</p>
+    <!-- Lights in the scene (D-035; shown only when the server offers it) -->
+    <section id="tab-lights" class="tab" hidden>
+      <p class="intro">Choose which lights are part of your looks. A light that is off here is never changed by Colors or Effects. Tap a light in the picture, or use the switches below.</p>
+      <div id="lights-list"></div>
+    </section>
 
-      <h2>Suggested colour sets</h2>
-      <p class="muted small">Suggestions from S&amp;S that work well together. Tap one to send it.</p>
+    <!-- Colors -->
+    <section id="tab-colours" class="tab" hidden>
+      <p class="intro">Pick a set or choose 2 or 3 colors. We place them on the stage for you. Front light isn't changed.</p>
+
+      <h2>Suggested color sets</h2>
+      <p id="sets-hint" class="muted small">Suggestions from S&amp;S that work well together. Tap one to send it.</p>
       <div id="set-list" class="sets"></div>
 
       <h2>Pick your own</h2>
-      <p class="muted small">Choose 2 or 3 colours. The first one is the main colour.</p>
-      <div id="pick-tray" class="tray" aria-label="Your colours"></div>
-      <div id="swatch-grid" class="swatches" aria-label="Stage colours"></div>
+      <p class="muted small">Choose 2 or 3 colors. The first one is the main color.</p>
+      <div id="pick-tray" class="tray" aria-label="Your colors"></div>
+      <div id="swatch-grid" class="swatches" aria-label="Stage colors"></div>
       <details class="mix">
-        <summary>Mix any colour</summary>
+        <summary>Mix any color</summary>
         <div class="mixer">
           <div id="mix-preview" class="mix-preview"></div>
           <div class="mix-sliders">
-            <label>Colour <input id="mix-h" type="range" min="0" max="360" value="30" class="hue"></label>
+            <label>Color <input id="mix-h" type="range" min="0" max="360" value="30" class="hue"></label>
             <label>Strength <input id="mix-s" type="range" min="0" max="100" value="100"></label>
             <label>Brightness <input id="mix-l" type="range" min="5" max="100" value="55"></label>
           </div>
         </div>
-        <button id="mix-add" type="button" class="big">Add this colour</button>
+        <button id="mix-add" type="button" class="big">Add this color</button>
       </details>
-      <button id="pick-send" type="button" class="big primary change">Send these colours</button>
+      <button id="pick-send" type="button" class="big primary change">Send these colors</button>
       <button id="pick-clear" type="button" class="small-btn">Clear</button>
       <pre id="placement" class="placement" hidden></pre>
     </section>
@@ -307,6 +336,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
     <!-- Effects -->
     <section id="tab-effects" class="tab" hidden>
       <p class="intro">Pick an effect. We choose which lights run it.</p>
+      <div id="effects-top"></div>
       <div id="effects-list"></div>
     </section>
 
@@ -336,7 +366,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
     <section id="tab-chat" class="tab" hidden>
       <h2>Chat</h2>
       <div class="assistant-label">Lighting assistant · AI · by S&amp;S Production Services, LLC</div>
-      <p>Chat is coming. For now, use the Colours, Effects and Tempo tabs to change a look.</p>
+      <p>Chat is coming. For now, use the Colors, Effects and Tempo tabs to change a look.</p>
     </section>
 
     <!-- More -->
@@ -363,7 +393,8 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   <div id="result" class="result" role="status" aria-live="polite" hidden></div>
 
   <nav class="tabbar" aria-label="Sections">
-    <button type="button" data-tab="colours">Colours</button>
+    <button type="button" data-tab="lights" hidden>Lights</button>
+    <button type="button" data-tab="colours">Colors</button>
     <button type="button" data-tab="effects">Effects</button>
     <button type="button" data-tab="tempo">Tempo</button>
     <button type="button" data-tab="chat">Chat</button>
@@ -403,7 +434,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 
 <script>
 window.TIER1_DEMO = true;
-window.DEMO_EFFECTS = [{"name": "Fan-in / fan-out", "what_you_see": "Lights come on (or go off) one after another across the rig instead of all at once: in, out, left to right, outside-in or random", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Wave", "what_you_see": "One movement or colour change rolls across the movers in order: outside-in, inside-out, left to right, right to left", "when_to_use_it": "Builds, choruses, transitions"}, {"name": "No-fade chase", "what_you_see": "Lights snap on and off one at a time, in sequence or random order, with no fades: a flash that is not a strobe", "when_to_use_it": "Hits and accents a listener clearly hears"}, {"name": "Bump", "what_you_see": "One instant full-intensity hit on a subset, then back", "when_to_use_it": "A single drum hit or stop"}, {"name": "Evolving full rig", "what_you_see": "Every light on, but the look keeps changing at least every 1-2 bars (positions, colour, subsets, fans)", "when_to_use_it": "Only the top 2-3 moments and the last chorus"}, {"name": "Silhouette intro", "what_you_see": "Performers seen only as shapes against back and background light; no front light", "when_to_use_it": "Intros before the singer sings"}, {"name": "Reset look", "what_you_see": "A plain, still, simple look that rests the eyes", "when_to_use_it": "After a big section, before a build"}];
+window.DEMO_EFFECTS = [{"name": "Fan in", "what_you_see": "Lights come on one after another from the outside of the rig toward the center (outside-in). Cory, 2026-10-23: \"Fan in would be the lights light from the outside in.\"", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Fan out", "what_you_see": "Lights come on one after another from the center toward the outside of the rig (inside-out). Cory, 2026-10-23: \"Fan out would be the lights light from the inside out.\"", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Wave", "what_you_see": "One movement or color change rolls across the movers in order: outside-in, inside-out, left to right, right to left", "when_to_use_it": "Builds, choruses, transitions"}, {"name": "No-fade chase", "what_you_see": "Lights snap on and off one at a time, in sequence or random order, with no fades: a flash that is not a strobe", "when_to_use_it": "Hits and accents a listener clearly hears"}, {"name": "Bump", "what_you_see": "One instant full-intensity hit on a subset, then back", "when_to_use_it": "A single drum hit or stop"}, {"name": "Evolving full rig", "what_you_see": "Every light on, but the look keeps changing at least every 1-2 bars (positions, color, subsets, fans)", "when_to_use_it": "Only the top 2-3 moments and the last chorus"}, {"name": "Silhouette intro", "what_you_see": "Performers seen only as shapes against back and background light; no front light", "when_to_use_it": "Intros before the singer sings"}, {"name": "Reset look", "what_you_see": "A plain, still, simple look that rests the eyes", "when_to_use_it": "After a big section, before a build"}];
 window.DEMO_COLOUR_SETS = [{"name": "Blue + Amber", "colours": ["#2f6bff", "#ffb000"], "mood": "Everyday worship: warm and cool in balance"}, {"name": "Deep Blue + Lavender", "colours": ["#1f3fbf", "#a58cff"], "mood": "Reflective moments and prayer"}, {"name": "Soft Blue + Teal", "colours": ["#4d8dff", "#1fb5b0"], "mood": "Calm: communion and slower songs"}, {"name": "Lavender + Pink", "colours": ["#b79cff", "#ff8fc8"], "mood": "Gentle worship"}, {"name": "Amber + Gold", "colours": ["#ff9a1f", "#ffd060"], "mood": "Celebration and thanksgiving"}, {"name": "Amber + Magenta", "colours": ["#ffa020", "#e0208c"], "mood": "High-energy praise"}, {"name": "Amber + Red", "colours": ["#ffa020", "#e02020"], "mood": "Pentecost and passion"}, {"name": "Warm White + Deep Blue", "colours": ["#ffe2b0", "#2040c0"], "mood": "Christmas Eve and Advent"}, {"name": "Violet + Amber", "colours": ["#7a3fd0", "#ffb040"], "mood": "Lent and Advent"}, {"name": "Gold + White", "colours": ["#ffc840", "#ffffff"], "mood": "Easter"}, {"name": "Blue + Cyan + White", "colours": ["#3060ff", "#20c8e8", "#ffffff"], "mood": "Baptism"}, {"name": "Blue + Magenta + UV", "colours": ["#3050ff", "#e0208c", "#8a2be2"], "mood": "Youth and big moments"}];
 window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one bar of 4/4", "multiplier": 0.25}, {"name": "1/2", "label": "1/2", "spoken": "half note", "multiplier": 0.5}, {"name": "1/4", "label": "1/4", "spoken": "quarter note, the beat", "multiplier": 1.0}, {"name": "1/8.", "label": "Dotted 1/8", "spoken": "dotted eighth", "multiplier": 1.3333333333333333}, {"name": "1/8", "label": "1/8", "spoken": "eighth note", "multiplier": 2.0}, {"name": "1/8T", "label": "1/8T", "spoken": "eighth note triplet", "multiplier": 3.0}, {"name": "1/16", "label": "1/16", "spoken": "sixteenth note", "multiplier": 4.0}];
 
@@ -415,8 +446,13 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
 // Nothing here talks to a network or to a real console. State resets when the page reloads.
 //
 // The mock keeps the hub's rules: Service Lock (manual, PIN, five wrong PINs lock unlocking for
-// five minutes), every change refused while locked, taps are free (usage stays 0 of 100), and a
-// history list. It also drives the stage preview (DemoStage at the bottom of this file).
+// five minutes), every change refused while locked, taps are free (usage stays 0), and a history
+// list. It also drives the stage preview (DemoStage at the bottom of this file).
+//
+// The demo also tries out what the hub does not do yet (D-035): lights left out of the scene, color
+// sets that change on each tap, separate color and movement effects with a direction, and Clear
+// effects. /api/me "features" tells app.js to show those controls; the hub sends no features, so the
+// real app does not show them until each one is built and checked on offline Eos.
 (function () {
   const DEMO_PIN = "1234";
   const LIMIT = 100;
@@ -427,21 +463,24 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
   const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
     "/api/effect-size", "/api/tempo"];
+  // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
+  // /api/me lists the matching feature. Service Lock refuses them like any other change.
+  const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
+  const FEATURES = { lights: true, color_variants: true, fx_directions: true, movement_fx: true, clear_fx: true };
 
   // Group roles (D-027), as in the hub's church.json: staff never pick a group. Front light does not
-  // take colour; the others do. A built demo for another church (tools/build_demo.py --church) replaces
-  // these with window.DEMO_CHURCH: {name, groups: [{number, label, role, takes_colour, channels}]}.
+  // take color; the others do. A built demo for another church (tools/build_demo.py --church) replaces
+  // these with window.DEMO_CHURCH: {name, groups: [{number, label, role, takes_colour, moves, channels}], off}.
   const DEFAULT_GROUPS = [
-    { number: "1", label: "Front Wash", role: "front", takes_colour: false },
-    { number: "2", label: "Back Light", role: "back", takes_colour: true },
-    { number: "3", label: "Movers", role: "air", takes_colour: true },
-    { number: "4", label: "Stage Pars", role: "accent", takes_colour: true },
-    { number: "5", label: "Side Light", role: "side", takes_colour: true },
+    { number: "1", label: "Front Wash", role: "front", takes_colour: false, channels: [[1, 8]] },
+    { number: "2", label: "Back Light", role: "back", takes_colour: true, channels: [[11, 18]] },
+    { number: "3", label: "Movers", role: "air", takes_colour: true, moves: true, channels: [[301, 306]] },
+    { number: "4", label: "Stage Pars", role: "accent", takes_colour: true, channels: [[21, 28]] },
+    { number: "5", label: "Side Light", role: "side", takes_colour: true, channels: [[31, 36]] },
   ];
-  const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS };
+  const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS, off: [] };
   const GROUPS = CHURCH.groups;
   const WARM_WHITE = "#ffe2b0";
-  const DEFAULT_EFFECT_ROLES = ["air"];
   // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
   // page (tools/build_demo.py) replaces this with the real list.
   const FALLBACK_COLOUR_SETS = [
@@ -457,19 +496,38 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // Used only when the page was not built with the glossary (a dev preview served by the hub).
   // The built demo page (tools/build_demo.py) replaces this with the real Effects Glossary rows.
   const FALLBACK_EFFECTS = [
-    { name: "Wave", what_you_see: "One movement or colour change rolls across the movers in order.", when_to_use_it: "Builds, choruses, transitions" },
+    { name: "Fan in", what_you_see: "Lights come on one after another from the outside in.", when_to_use_it: "Any intensity change" },
+    { name: "Fan out", what_you_see: "Lights come on one after another from the inside out.", when_to_use_it: "Any intensity change" },
+    { name: "Wave", what_you_see: "One movement or color change rolls across the movers in order.", when_to_use_it: "Builds, choruses, transitions" },
     { name: "No-fade chase", what_you_see: "Lights snap on and off one at a time, in sequence, with no fades.", when_to_use_it: "Hits and accents a listener clearly hears" },
-    { name: "Reset look", what_you_see: "A plain, still, simple look that rests the eyes.", when_to_use_it: "After a big section, before a build" },
   ];
 
-  // What the stage preview does for each effect name. Anything else gets a gentle pulse.
-  const KIND_BY_NAME = {
-    "wave": "wave", "fan-in / fan-out": "fan", "no-fade chase": "chase", "bump": "bump",
-    "evolving full rig": "evolve", "silhouette intro": "dim", "reset look": "still",
+  // Directions an effect can run in, as the house sees the stage.
+  const DIRECTIONS = [["ltr", "Left to right"], ["rtl", "Right to left"], ["out-in", "Outside in"],
+    ["in-out", "Inside out"], ["random", "Random"]];
+  const ALL_DIRS = DIRECTIONS.map((d) => d[0]);
+  // What each glossary name does in the demo. Color and intensity effects run on the lights that take
+  // color; movement effects run only on lights that move. Fan in and Fan out are fixed directions (Cory,
+  // 2026-10-23: fan in = outside in, fan out = inside out). A glossary name not listed gets a pulse.
+  const COLOUR_FX = {
+    "fan in": { kind: "fan", fixed: "out-in" },
+    "fan out": { kind: "fan", fixed: "in-out" },
+    "wave": { kind: "cwave", dirs: ALL_DIRS },
+    "no-fade chase": { kind: "chase", dirs: ALL_DIRS },
+    "bump": { kind: "bump" },
+    "evolving full rig": { kind: "evolve" },
+    "silhouette intro": { kind: "dim" },
+    "reset look": { kind: "still" },
   };
-  // Eos BPM per musical tempo, as in the hub's effects.json. Only Wave has been "measured";
-  // every other effect is "not measured yet", like the real app.
-  const TEMPO_FACTOR = { "wave": 1.0 };       // one circle per beat (Eos BPM = tempo), verified for effect 901
+  // Movement effects. "Wave" is the glossary's Wave in its movement form; "Circle" is a name proposed in
+  // the demo for the console's stock circle (Eos effect 901), not yet in the glossary.
+  const MOVEMENT_FX = [
+    { name: "Wave", kind: "mwave", dirs: ALL_DIRS, what_you_see: "The movers swing one after another, so the movement rolls across the rig", when_to_use_it: "Builds, choruses, transitions" },
+    { name: "Circle", kind: "circle", dirs: ALL_DIRS, proposed: true, what_you_see: "The movers trace circles; with a direction they follow one another", when_to_use_it: "Choruses and anything above a verse" },
+  ];
+  // Eos BPM per musical tempo, as in the hub's effects.json. Only these have been "measured"; every
+  // other effect says "not measured yet", like the real app.
+  const TEMPO_FACTOR = { "movement:wave": 1.0, "movement:circle": 1.0, "color:wave": 1.0 };   // verified for effect 901
   // Note values (D-028). This is a copy of hub/tempo.py NOTES; the build replaces it with the hub's table
   // (window.DEMO_NOTES), and tests/test_demo.py checks that the two are identical so they cannot drift.
   const FALLBACK_NOTES = [
@@ -489,31 +547,80 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   const norm = (s) => String(s).split(/\s+/).filter(Boolean).join(" ").toLowerCase();
   const hexToPct = (hex) => [1, 3, 5].map((i) => Math.round(parseInt(hex.slice(i, i + 2), 16) * 1000 / 255) / 10);
   const isHex = (v) => typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v);
+  const chanList = (g) => (g.channels || []).flatMap(([a, b]) => Array.from({ length: b - a + 1 }, (_, k) => a + k));
+  const inRanges = (ch, ranges) => (ranges || []).some(([a, b]) => ch >= a && ch <= b);
 
-  // The placement rule v1, the same as hub/colours.py: 1st colour to back and air, 2nd to side and
+  // Left to right as the house sees it: by rig position when the page has a rig (the house looks
+  // toward +x, so its left is +y), else by channel number.
+  const RIG = (typeof window !== "undefined" && window.DEMO_RIG) || null;
+  const POS = {};
+  if (RIG) for (const f of RIG.fixtures) POS[f.channel] = f.xyz;
+  const acrossOrder = (chs) => chs.slice().sort((a, b) => (POS[a] && POS[b] ? (POS[b][1] - POS[a][1]) || (POS[b][2] - POS[a][2]) : 0) || a - b);
+
+  // A repeatable 0..1 number for (seed, i).
+  function rand(seed, i) {
+    let h = (seed * 374761393 + i * 668265263) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  }
+  // Where fixture i of n sits in the effect's order, 0 (first) to 1 (last).
+  function orderPos(i, n, dir, seed) {
+    const x = n > 1 ? i / (n - 1) : 0;
+    switch (dir) {
+      case "rtl": return 1 - x;
+      case "out-in": return 1 - Math.abs(2 * x - 1);
+      case "in-out": return Math.abs(2 * x - 1);
+      case "random": return rand(seed, i);
+      default: return x;
+    }
+  }
+
+  // The placement rule v1, the same as hub/colours.py: 1st color to back and air, 2nd to side and
   // accent, a 3rd to accent (the 2nd stays on side). Roles with no group are skipped. A group that
-  // does not take colour is never placed. Returns [[group, "#hex"], ...] in group order.
+  // does not take color is never placed. Returns [[group, "#hex"], ...] in group order.
   function place(colours, groups) {
     const slot = { back: 0, air: 0, side: 1, accent: colours.length >= 3 ? 2 : 1 };
     return groups.filter((g) => g.takes_colour && slot[g.role] !== undefined)
       .map((g) => [g, colours[slot[g.role]].toLowerCase()]);
   }
+  // Tapping the same set again changes the mix (D-035): the rule, the colors moved round the groups,
+  // the colors alternating light by light in each group, then a random mix; then back to the rule.
+  function variantsFor(n) {
+    const v = [{ kind: "rule", label: "Main color on the back light and movers" }];
+    for (let r = 1; r < n; r++) v.push({ kind: "rotate", by: r, label: "Colors moved to different groups" });
+    v.push({ kind: "split", label: "Colors alternate light by light" });
+    v.push({ kind: "random", label: "Random mix" });
+    return v;
+  }
 
   function create(opts) {
     const now = (opts && opts.now) || (() => Date.now());
-    const effects = ((typeof window !== "undefined" && window.DEMO_EFFECTS) || FALLBACK_EFFECTS).map((e) => ({
-      name: e.name, what_you_see: e.what_you_see, when_to_use_it: e.when_to_use_it,
-      status: "Demo", demo: true, roles: DEFAULT_EFFECT_ROLES.slice(), tempo_measured: TEMPO_FACTOR[norm(e.name)] !== undefined,
-      eos_bpm_per_tempo: TEMPO_FACTOR[norm(e.name)] === undefined ? null : TEMPO_FACTOR[norm(e.name)],
-    }));
+    const fromGlossary = ((typeof window !== "undefined" && window.DEMO_EFFECTS) || FALLBACK_EFFECTS);
+    const mk = (category, e, info) => {
+      const id = category + ":" + norm(e.name);
+      return { id, name: e.name, category, what_you_see: e.what_you_see, when_to_use_it: e.when_to_use_it,
+        status: "Demo", demo: true, kind: info.kind, fixed: info.fixed || null, proposed: !!info.proposed,
+        directions: info.dirs ? DIRECTIONS.filter((d) => info.dirs.indexOf(d[0]) >= 0) : null,
+        tempo_measured: TEMPO_FACTOR[id] !== undefined,
+        eos_bpm_per_tempo: TEMPO_FACTOR[id] === undefined ? null : TEMPO_FACTOR[id] };
+    };
+    const effects = fromGlossary.map((e) => mk("color", e, COLOUR_FX[norm(e.name)] || { kind: "pulse", dirs: ALL_DIRS }))
+      .concat(MOVEMENT_FX.map((m) => {
+        const g = fromGlossary.find((e) => norm(e.name) === norm(m.name));      // the glossary's words when it has the name
+        return mk("movement", Object.assign({}, m, g ? { when_to_use_it: g.when_to_use_it } : {}), m);
+      }));
     const st = {
       signedIn: false, noticeAck: false, locked: true, changedBy: null, changedAt: null,
       wrong: 0, lockedOutUntil: 0, history: [],
-      groups: {}, fxBpm: {}, fxSize: {},
+      groups: {}, chan: {}, fx: { color: null, movement: null }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
+      lastColours: [WARM_WHITE],
     };
     const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
       .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
-    for (const g of GROUPS) st.groups[g.number] = { rgb: hexToPct(WARM_WHITE), fx: null };
+    for (const g of GROUPS) {
+      st.groups[g.number] = { rgb: hexToPct(WARM_WHITE), fx: null };
+      for (const ch of chanList(g)) st.chan[ch] = { rgb: hexToPct(WARM_WHITE), on: !inRanges(ch, CHURCH.off), group: g.number };
+    }
     const listeners = [];
     const changed = () => listeners.forEach((f) => f(st));
 
@@ -529,53 +636,127 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
     const ok = (data) => ({ status: 200, ok: true, data });
     const fail = (status, detail) => ({ status, ok: false, data: { detail } });
     const refused = (reason) => ok({ allowed: false, reason, outcome: "refused" });
+    const confirmed = (detail, extra) => ok(Object.assign({ allowed: true, reason: "", outcome: "confirmed", detail }, extra || {}));
 
-    const notForColour = (g) => (g.takes_colour ? null : g.label + " is not changed by colour looks");
+    const notForColour = (g) => (g.takes_colour ? null : g.label + " is not changed by color looks");
+    const lit = (g) => chanList(g).filter((ch) => st.chan[ch].on);          // the group's lights in the scene
+
+    function findEffect(body) {
+      const cat = body.category === "movement" ? "movement" : "color";
+      return effects.find((e) => e.id === cat + ":" + norm(body.effect_name)) ||
+        (body.category ? null : effects.find((e) => norm(e.name) === norm(body.effect_name)));
+    }
+
+    function applyColours(colours, key) {
+      const vs = variantsFor(colours.length), n = st.taps[key] || 0, v = vs[n % vs.length];
+      st.taps[key] = n + 1;
+      const seed = ++st.seed;
+      const shown = [];
+      const setGroup = (g, chs) => {
+        for (const ch of chs) {
+          const hex = chs.hexFor(ch);
+          st.chan[ch].rgb = hexToPct(hex);
+        }
+        if (chs.length) st.groups[g.number].rgb = st.chan[chs[0]].rgb.slice();
+        shown.push(g);
+      };
+      if (v.kind === "rule" || v.kind === "rotate") {
+        const rot = v.kind === "rotate" ? colours.slice(v.by).concat(colours.slice(0, v.by)) : colours;
+        for (const [g, hex] of place(rot, GROUPS)) { const chs = lit(g); chs.hexFor = () => hex; setGroup(g, chs); }
+      } else {
+        for (const [g] of place(colours, GROUPS)) {
+          const chs = acrossOrder(lit(g));
+          chs.hexFor = v.kind === "split" ? (ch) => colours[chs.indexOf(ch) % colours.length]
+            : (ch) => colours[Math.floor(rand(seed, ch) * colours.length)];
+          setGroup(g, chs);
+        }
+      }
+      st.lastColours = colours.slice();
+      return { variant: v.kind, detail: v.label + ".", groups: shown };
+    }
+
+    function applyEffect(eff, body) {
+      const cat = eff.category;
+      const groups = GROUPS.filter((g) => cat === "movement" ? g.moves : g.takes_colour);
+      const chans = acrossOrder([].concat(...groups.map(lit)));
+      if (!chans.length) return null;
+      const dir = eff.fixed || (eff.directions && eff.directions.some((d) => d[0] === body.direction) ? body.direction : "ltr");
+      const seed = ++st.seed;
+      const pos = {};
+      chans.forEach((ch, i) => { pos[ch] = orderPos(i, chans.length, dir, seed); });
+      st.fx[cat] = { id: eff.id, name: eff.name, kind: eff.kind, dir, chans, pos, n: chans.length, started: now() };
+      for (const g of GROUPS) {                                   // the group view of the same thing
+        if (st.groups[g.number].fx && st.groups[g.number].fx.category === cat) st.groups[g.number].fx = null;
+      }
+      for (const g of groups) if (lit(g).length) st.groups[g.number].fx = { name: eff.name, kind: eff.kind, category: cat };
+      return { dir, groups: groups.filter((g) => lit(g).length) };
+    }
 
     function change(path, op, args, body) {
       if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
       if (path === "/api/colour-set") {
-        const placed = place(body.colours, GROUPS);
-        if (!placed.length) return refused("No lights in this church are set up to take colour");
-        for (const [g, hex] of placed) st.groups[g.number].rgb = hexToPct(hex);
+        if (!place(body.colours, GROUPS).some(([g]) => lit(g).length)) return refused("No lights in this church are set up to take color");
+        const r = applyColours(body.colours.map((h) => h.toLowerCase()), body.colours.join(",").toLowerCase());
         log(op, args, true, "");
         changed();
-        return ok({ allowed: true, reason: "", outcome: "confirmed", detail: "Sent to the stage.",
-          groups: placed.map(([g]) => ({ group: Number(g.number), label: g.label, allowed: true,
-            outcome: "confirmed", reason: "" })) });
+        return confirmed(r.detail, { variant: r.variant,
+          groups: r.groups.map((g) => ({ group: Number(g.number), label: g.label, allowed: true, outcome: "confirmed", reason: "" })) });
+      }
+      if (path === "/api/clear-effects") {
+        const cats = body.category === "color" || body.category === "movement" ? [body.category] : ["color", "movement"];
+        for (const c of cats) st.fx[c] = null;
+        for (const g of GROUPS) if (st.groups[g.number].fx && cats.indexOf(st.groups[g.number].fx.category) >= 0) st.groups[g.number].fx = null;
+        log(op, args, true, "");
+        changed();
+        return confirmed(cats.length === 2 ? "Effects cleared." : (cats[0] === "color" ? "Color effect stopped." : "Movement stopped."));
+      }
+      if (path === "/api/lights") {
+        const chans = (body.channels || []).filter((ch) => st.chan[ch]);
+        if (!chans.length) return refused("Those lights are not in this church");
+        for (const ch of chans) st.chan[ch].on = !!body.on;
+        for (const c of ["color", "movement"]) {           // a light taken out stops running effects
+          const fx = st.fx[c];
+          if (fx && !body.on) fx.chans = fx.chans.filter((ch) => chans.indexOf(ch) < 0);
+        }
+        log(op, args, true, "");
+        changed();
+        return confirmed(body.on ? "Back in the scene." : "Left out of the scene. Colors and effects won't change it.");
       }
       const group = st.groups[String(body.group)];
       const needGroup = path === "/api/apply-palette" || path === "/api/colour";
       if (needGroup && !group) return refused("Group " + body.group + " is not in this church");
       if (needGroup) {
-        const why = notForColour(GROUPS.find((x) => x.number === String(body.group)));
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        const why = notForColour(g);
         if (why) { log(op, args, false, why); return refused(why); }
       }
       let eff = null, extra = {};
       if (path === "/api/apply-effect" || path === "/api/effect-size" || path === "/api/tempo") {
-        eff = effects.find((e) => norm(e.name) === norm(body.effect_name));
+        eff = findEffect(body);
         if (!eff) return refused("'" + body.effect_name + "' is not an agreed effect set up for this church");
       }
       if (path === "/api/apply-palette") {
         const p = PALETTES.find((x) => x.number === String(body.cp));
         if (!p) return refused("Palette " + body.cp + " is not in this church");
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        for (const ch of lit(g)) st.chan[ch].rgb = hexToPct(p.colour);
         group.rgb = hexToPct(p.colour);
       } else if (path === "/api/colour") {
+        const g = GROUPS.find((x) => x.number === String(body.group));
+        for (const ch of lit(g)) st.chan[ch].rgb = [body.r, body.g, body.b];
         group.rgb = [body.r, body.g, body.b];
       } else if (path === "/api/apply-effect") {
-        // by role, never a chosen group; groups that do not take colour are left out
-        const targets = GROUPS.filter((g) => eff.roles.indexOf(g.role) >= 0 && g.takes_colour);
-        if (!targets.length) return refused("No lights in this church are set up for this effect");
-        for (const g of targets) st.groups[g.number].fx = { name: eff.name, kind: KIND_BY_NAME[norm(eff.name)] || "pulse" };
+        const r = applyEffect(eff, body);
+        if (!r) return refused(eff.category === "movement" ? "No lights in this scene can move" : "No lights in this church are set up for this effect");
         log(op, args, true, "");
         changed();
-        return ok({ allowed: true, reason: "", outcome: "confirmed", detail: "Sent to the stage.",
-          groups: targets.map((g) => ({ group: Number(g.number), label: g.label, allowed: true,
-            outcome: "confirmed", reason: "" })) });
+        const dirLabel = (DIRECTIONS.find((d) => d[0] === r.dir) || [0, ""])[1];
+        return confirmed("Sent to the stage" + (eff.kind === "bump" || eff.kind === "dim" || eff.kind === "still" || eff.kind === "evolve" ? "." : ", " + dirLabel.toLowerCase() + "."),
+          { direction: r.dir, groups: r.groups.map((g) => ({ group: Number(g.number), label: g.label, allowed: true, outcome: "confirmed", reason: "" })) });
       } else if (path === "/api/effect-size") {
-        st.fxSize[norm(eff.name)] = body.size;
+        st.fxSize[eff.id] = body.size;
       } else if (path === "/api/tempo") {
-        const f = TEMPO_FACTOR[norm(eff.name)];
+        const f = TEMPO_FACTOR[eff.id];
         if (f === undefined) return refused("tempo not measured for this effect yet");
         const note = NOTES.find((n) => n.name === (body.note === undefined ? DEFAULT_NOTE : body.note));
         const bpm = roundEven(body.tempo * note.multiplier * f);
@@ -588,14 +769,14 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
           let hint = "";
           if (cand.length) hint = " Try a " + (fast ? "slower" : "faster") + " note, " + cand[0].label + ", which gives Eos BPM " + bpmFor(cand[0]) + ".";
           else {
-            const eff = f * note.multiplier, lo = Math.max(TEMPO_MIN, Math.ceil(EOS_BPM_MIN / eff)), hi = Math.min(TEMPO_MAX, Math.floor(EOS_BPM_MAX / eff));
+            const e2 = f * note.multiplier, lo = Math.max(TEMPO_MIN, Math.ceil(EOS_BPM_MIN / e2)), hi = Math.min(TEMPO_MAX, Math.floor(EOS_BPM_MAX / e2));
             if (lo <= hi) hint = " Try a tempo between " + lo + " and " + hi + ".";
           }
           return refused("A tempo of " + body.tempo + " with note " + note.label + " needs Eos BPM " + bpm + ", but Eos accepts " +
             EOS_BPM_MIN + " to " + EOS_BPM_MAX + "." + hint);
         }
         log("set_effect_rate", { rate: 100 }, true, "");     // the hub resets Rate to 100 before every BPM
-        st.fxBpm[norm(eff.name)] = bpm;
+        st.fxBpm[eff.id] = bpm;
         extra = { eos_bpm: bpm, note: note.name };
       }
       log(op, args, true, "");
@@ -603,7 +784,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return ok(Object.assign({ allowed: true, reason: "", outcome: "confirmed" }, extra));
     }
 
-    // locked: like the hub, a colour set stops at the first refusal and sends nothing
+    // locked: like the hub, a color set stops at the first refusal and sends nothing
     function refuseLocked(path, body) {
       const r = { allowed: false, reason: "Service Lock is on", outcome: "refused" };
       if (path === "/api/colour-set") {
@@ -614,13 +795,16 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
     }
 
     const num = (v, lo, hi) => typeof v === "number" && isFinite(v) && v >= lo && v <= hi;
+    const cat = (b) => b.category === undefined || b.category === "color" || b.category === "movement";
     const CHANGES = {
       "/api/colour-set": { op: "set_colour_rgb", valid: (b) => Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 3 && b.colours.every(isHex) },
       "/api/apply-palette": { op: "apply_colour_palette", valid: (b) => num(b.group, 1, 9999) && num(b.cp, 1, 9999) },
       "/api/colour": { op: "set_colour_rgb", valid: (b) => num(b.group, 1, 9999) && num(b.r, 0, 100) && num(b.g, 0, 100) && num(b.b, 0, 100) },
-      "/api/apply-effect": { op: "apply_effect", valid: (b) => typeof b.effect_name === "string" },
-      "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && num(b.size, 0, 200) },
-      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) },
+      "/api/apply-effect": { op: "apply_effect", valid: (b) => typeof b.effect_name === "string" && cat(b) && (b.direction === undefined || ALL_DIRS.indexOf(b.direction) >= 0) },
+      "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
+      "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) },
+      "/api/clear-effects": { op: "clear_effects", valid: (b) => b.category === undefined || b.category === "color" || b.category === "movement" },
+      "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
     };
 
     function unlock(body) {
@@ -642,6 +826,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return ok({ ok: true, reason: "unlocked", lock: lockInfo() });
     }
 
+    const running = () => ({ color: st.fx.color && st.fx.color.id, movement: st.fx.movement && st.fx.movement.id });
+
     async function call(method, path, body) {
       const url = String(path).split("?")[0];
       body = body || {};
@@ -654,11 +840,11 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
       if (method === "GET" && url === "/api/me") {
         return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
-          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE,
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, features: Object.assign({}, FEATURES),
           can: { change: true, unlock: true, history: true, schedule: false } });
       }
       if (method === "GET" && url === "/api/status") {
-        return ok({ church: CHURCH.name, lock: lockInfo(),
+        return ok({ church: CHURCH.name, lock: lockInfo(), effects: running(),
           allowance: { used: 0, left: LIMIT, limit: LIMIT, month: new Date(now()).toISOString().slice(0, 7) },
           console: { reachable: true, ping_ms: 2.4 } });
       }
@@ -676,6 +862,10 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "POST" && url === "/api/unlock") return unlock(body);
       if (method === "GET" && url === "/api/schedule") return fail(403, "Your role cannot do that");
       if (method === "GET" && url === "/api/groups") return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label })) });
+      if (method === "GET" && url === "/api/lights") {
+        return ok({ groups: GROUPS.map((g) => ({ number: g.number, label: g.label, role: g.role,
+          lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on })) })) });
+      }
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
       if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
       if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
@@ -694,8 +884,61 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return fail(404, "Not found");
     }
 
+    // ---- what a visualiser draws for one fixture right now
+    function period(id) {
+      const bpm = st.fxBpm[id];
+      return bpm ? Math.max(0.25, Math.min(8, 60 / bpm)) : 2;
+    }
+    const phaseOf = (fx, t) => (t - fx.started) / 1000 / period(fx.id);
+    const frac = (x) => x - Math.floor(x);
+    // intensity 0..1 for a color/intensity effect at order position d and cycle position p
+    function level(kind, d, p, n) {
+      const f = frac(p), TAU = Math.PI * 2, clamp = (x) => Math.max(0, Math.min(1, x));
+      switch (kind) {
+        case "fan": return f < 0.5 ? clamp((f * 2 - d * 0.85) / 0.15) : 1 - clamp(((f - 0.5) * 2 - d * 0.85) / 0.15);
+        case "cwave": return 1;
+        case "chase": { const steps = Math.max(1, n); return Math.floor(f * steps) === Math.round(d * (steps - 1)) ? 1 : 0.06; }
+        case "bump": return f < 0.12 ? 1 : 0.15;
+        case "evolve": return 0.5 + 0.5 * Math.sin(TAU * (p * 0.5 + d * 2.3) + Math.sin(d * 9.1));
+        case "pulse": return 0.5 + 0.5 * Math.sin(TAU * (p - d));
+        case "dim": return 0.1;
+        case "still": return 0.5;
+        default: return 1;
+      }
+    }
+    // the fixture's look: on, rgb 0-255, intensity 0..1, and movement offsets (pan, tilt in degrees)
+    function look(ch, t, still) {
+      const c = st.chan[ch];
+      if (!c) return null;
+      t = t === undefined ? now() : t;
+      const out = { on: c.on, rgb: c.rgb.map((v) => v * 2.55), I: c.on ? 0.85 : 0, pan: 0, tilt: 0, color: null, movement: null };
+      if (!c.on) return out;
+      const cf = st.fx.color;
+      if (cf && cf.pos[ch] !== undefined && cf.chans.indexOf(ch) >= 0) {
+        const p = still ? 0 : phaseOf(cf, t), amp = Math.min(1, (st.fxSize[cf.id] === undefined ? 100 : st.fxSize[cf.id]) / 100);
+        out.color = cf.name;
+        if (cf.kind === "cwave" && st.lastColours.length > 1) {
+          const cols = st.lastColours.map(hexToPct), x = frac(p - cf.pos[ch]) * cols.length, k = Math.floor(x), u = x - k;
+          const a = cols[k % cols.length], b = cols[(k + 1) % cols.length];
+          out.rgb = a.map((v, i) => (v + (b[i] - v) * u) * 2.55);
+        } else {
+          out.I = 0.85 * (1 - 0.92 * amp * (1 - level(cf.kind, cf.pos[ch], p, cf.n)));
+        }
+      }
+      const mf = st.fx.movement;
+      if (mf && mf.pos[ch] !== undefined && mf.chans.indexOf(ch) >= 0) {
+        const p = still ? 0 : phaseOf(mf, t), d = mf.pos[ch], TAU = Math.PI * 2;
+        const amp = Math.min(2, (st.fxSize[mf.id] === undefined ? 100 : st.fxSize[mf.id]) / 100);
+        out.movement = mf.name;
+        if (mf.kind === "mwave") { out.pan = Math.sin(TAU * (p - d)) * 28 * amp; out.tilt = Math.cos(TAU * (p - d)) * 6 * amp; }
+        else { out.pan = Math.sin(TAU * (p - d * 0.5)) * 18 * amp; out.tilt = Math.cos(TAU * (p - d * 0.5)) * 12 * amp; }
+      }
+      return out;
+    }
+
     return { call, state: st, place, onChange: (f) => listeners.push(f), effects, groups: GROUPS, church: CHURCH,
-      CHANGE_ENDPOINTS, DEMO_PIN, NOTES, fxBpm: st.fxBpm, fxSize: st.fxSize };
+      CHANGE_ENDPOINTS, DEMO_ONLY_CHANGES, DEMO_PIN, NOTES, DIRECTIONS, fxBpm: st.fxBpm, fxSize: st.fxSize,
+      look, level, orderPos, acrossOrder, chanList, variantsFor };
   }
 
   const api = create();
@@ -705,28 +948,25 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 
   // ---------------------------------------------------------------- stage preview
-  // A simple SVG stage: a row of fixtures per group. Each fixture is a circle showing its colour
-  // and brightness. One generic motion per effect type, kept subtle; tempo sets the speed.
+  // A simple SVG stage: a row of fixtures per group. Each fixture is a circle showing its color and
+  // brightness. On the Lights tab, tap a light to leave it out of the scene or put it back.
   if (typeof document === "undefined") return;
   const SVGNS = "http://www.w3.org/2000/svg";
   // One row per group, from the back of the stage to the front; side light as two short columns.
-  // A group with channels shows up to 8 of them; otherwise a set number per role.
+  // A group shows up to 8 of its lights (side light up to 6).
   const ROW_ORDER = ["back", "air", "accent", "other", "front", "side"];
-  const ROLE_COUNT = { back: 8, air: 6, accent: 8, other: 8, front: 8, side: 6 };
-  const count = (g) => g.channels ? Math.max(1, Math.min(g.role === "side" ? 6 : 8,
-    g.channels.reduce((s, [a, b]) => s + b - a + 1, 0))) : ROLE_COUNT[g.role] || 8;
-  const ROWS = GROUPS.slice().sort((a, b) => ROW_ORDER.indexOf(a.role) - ROW_ORDER.indexOf(b.role))
-    .map((g) => [g.number, count(g)]);
+  const shownChans = (g) => api.acrossOrder(api.chanList(g)).slice(0, g.role === "side" ? 6 : 8);
+  const ROWS = GROUPS.slice().sort((a, b) => ROW_ORDER.indexOf(a.role) - ROW_ORDER.indexOf(b.role));
   const ROW_Y = {};
-  const rowGroups = ROWS.filter(([gn]) => GROUPS.find((g) => g.number === gn).role !== "side");
-  rowGroups.forEach(([gn], i) => { ROW_Y[gn] = rowGroups.length > 1 ? 30 + i * 114 / (rowGroups.length - 1) : 90; });
+  const rowGroups = ROWS.filter((g) => g.role !== "side");
+  rowGroups.forEach((g, i) => { ROW_Y[g.number] = rowGroups.length > 1 ? 30 + i * 114 / (rowGroups.length - 1) : 90; });
   const X0 = 108, X1 = 252;
-  // Side light: two short columns at the stage sides, three fixtures each.
+  // Side light: two short columns at the stage sides, up to three fixtures each.
   const SIDE_X = [82, 278], SIDE_Y = [64, 92, 120];
   const BASE = [26, 29, 38];
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  let host = null, fixtures = {}, labels = {}, phase = {}, last = 0, running = false;
+  let host = null, dots = [], labels = {}, running = false, tab = "";
 
   function svg(tag, attrs, text) {
     const n = document.createElementNS(SVGNS, tag);
@@ -739,111 +979,73 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
     host = document.createElement("div");
     host.className = "stage";
     host.setAttribute("role", "img");
-    host.setAttribute("aria-label", "Stage preview. Rows and columns of lights show the colour and effect of each group.");
+    host.setAttribute("aria-label", "Stage preview. Rows and columns of lights show the color and effect of each group.");
     const s = svg("svg", { viewBox: "0 0 300 200", width: "100%", focusable: "false" });
     s.append(svg("path", { d: "M8 164 L292 164 L300 180 L0 180 Z", class: "stage-edge" }));
     s.append(svg("text", { x: 150, y: 195, class: "stage-lbl mid" }, "Front of stage"));
-    for (const [gn, n] of ROWS) {
-      const g = GROUPS.find((x) => x.number === gn);
-      const side = g.role === "side";
+    for (const g of ROWS) {
+      const side = g.role === "side", chans = shownChans(g), n = chans.length;
       if (side) {
         s.append(svg("text", { x: SIDE_X[0], y: 50, class: "stage-lbl side" }, g.label));
         s.append(svg("text", { x: 298, y: 50, class: "stage-lbl", "text-anchor": "end" }, g.label));
-        labels[gn] = svg("text", { x: 0, y: 0 }, "");           // side light takes no effect: nothing to show
       } else {
-        s.append(svg("text", { x: 2, y: ROW_Y[gn] - 1, class: "stage-lbl" }, g.label));
-        labels[gn] = svg("text", { x: 2, y: ROW_Y[gn] + 10, class: "stage-fx" }, "");
-        s.append(labels[gn]);
+        s.append(svg("text", { x: 2, y: ROW_Y[g.number] - 1, class: "stage-lbl" }, g.label));
+        labels[g.number] = svg("text", { x: 2, y: ROW_Y[g.number] + 10, class: "stage-fx" }, "");
+        s.append(labels[g.number]);
       }
-      fixtures[gn] = [];
-      for (let i = 0; i < n; i++) {
+      chans.forEach((ch, i) => {
         const half = Math.ceil(n / 2);                                  // side: half each side, up to 3
         const cx = side ? SIDE_X[i < half ? 0 : 1] : X0 + (n === 1 ? 0 : i * (X1 - X0) / (n - 1));
-        const cy = side ? SIDE_Y[i % half] : ROW_Y[gn];
+        const cy = side ? SIDE_Y[i % half] : ROW_Y[g.number];
         const glow = svg("circle", { cx, cy, r: 15, fill: "#000", opacity: 0 });
         const dot = svg("circle", { cx, cy, r: 9, fill: "#1a1d26", class: "stage-fix" });
+        dot.addEventListener("click", () => { if (tab === "lights") window.dispatchEvent(new CustomEvent("demo-fixture-tap", { detail: { channel: ch } })); });
         s.append(glow, dot);
-        fixtures[gn].push({ glow, dot });
-      }
-      phase[gn] = 0;
+        dots.push({ ch, glow, dot });
+      });
     }
     host.append(s);
   }
 
-  function period(fxName) {
-    const bpm = api.fxBpm[norm(fxName)];
-    return bpm ? Math.max(0.5, Math.min(6, 60 / bpm)) : 2;          // one circle per 60/BPM seconds, clamped for display
-  }
-
-  // 0..1 for fixture i of n at cycle position p
-  function level(kind, i, n, p) {
-    const x = n > 1 ? i / (n - 1) : 0, f = p - Math.floor(p), TAU = Math.PI * 2;
-    switch (kind) {
-      case "wave": return 0.5 + 0.5 * Math.cos(TAU * (p - x));
-      case "fan": { const u = f < 0.5 ? f * 2 : (1 - f) * 2; return Math.max(0, Math.min(1, (u - x * 0.7) / 0.25)); }
-      case "chase": return i === Math.floor(f * n) ? 1 : 0.08;
-      case "bump": return f < 0.12 ? 1 : 0.15;
-      case "evolve": return 0.5 + 0.5 * Math.sin(TAU * (p * 0.5 + i * 0.37) + Math.sin(i * 1.7));
-      case "pulse": return 0.5 + 0.5 * Math.sin(TAU * p);
-      default: return 1;
+  function paint(t) {
+    for (const g of rowGroups) {
+      const fx = api.state.groups[g.number].fx;
+      if (labels[g.number]) labels[g.number].textContent = fx ? fx.name : "";
+    }
+    for (const d of dots) {
+      const L = api.look(d.ch, t, reduced);
+      const off = !L.on;
+      const c = L.rgb.map((v, k) => Math.round(BASE[k] + (v - BASE[k]) * L.I));
+      d.dot.setAttribute("fill", off ? "#14161c" : "rgb(" + c.join(",") + ")");
+      d.dot.setAttribute("stroke-dasharray", off ? "2 2" : "");
+      d.glow.setAttribute("fill", "rgb(" + L.rgb.map(Math.round).join(",") + ")");
+      d.glow.setAttribute("opacity", (L.I * 0.28).toFixed(3));
     }
   }
 
-  function paint(gn, t) {
-    const g = api.state.groups[gn], fx = g.fx, n = fixtures[gn].length;
-    const rgb = g.rgb.map((v) => v * 2.55);
-    const amp = fx ? Math.min(1, (api.fxSize[norm(fx.name)] === undefined ? 100 : api.fxSize[norm(fx.name)]) / 100) : 0;
-    labels[gn].textContent = fx ? fx.name : "";
-    for (let i = 0; i < n; i++) {
-      let I = 0.8;                                                  // steady look
-      if (fx) {
-        if (fx.kind === "dim") I = 0.1;
-        else if (fx.kind === "still") I = 0.5;
-        else I = 0.8 * (1 - 0.9 * amp * (1 - level(fx.kind, i, n, phase[gn])));
-      }
-      const c = rgb.map((v, k) => Math.round(BASE[k] + (v - BASE[k]) * I));
-      const f = fixtures[gn][i];
-      f.dot.setAttribute("fill", "rgb(" + c.join(",") + ")");
-      f.glow.setAttribute("fill", "rgb(" + rgb.map(Math.round).join(",") + ")");
-      f.glow.setAttribute("opacity", (I * 0.28).toFixed(3));
-    }
-  }
-
-  function frame(ts) {
+  function frame() {
     if (!running) return;
-    const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0;
-    last = ts;
-    if (host && host.isConnected && !document.hidden) {
-      for (const [gn] of ROWS) {
-        const fx = api.state.groups[gn].fx;
-        if (fx && !reduced) phase[gn] += dt / period(fx.name);
-        paint(gn, ts);
-      }
-    }
+    if (host && host.isConnected && !document.hidden) paint(Date.now());
     requestAnimationFrame(frame);
   }
 
-  function start() {
-    if (running) return;
-    running = true; last = 0;
-    requestAnimationFrame(frame);
-  }
-
-  // Put the stage at the top of the Colours, Effects or Tempo tab; take it out of the others.
-  function placeStage(tab) {
+  // Put the stage at the top of the Lights, Colors, Effects or Tempo tab; take it out of the others.
+  function placeStage(name) {
+    tab = name;
     if (!host) build();
-    const sec = document.getElementById("tab-" + tab);
-    if (tab === "colours" || tab === "effects" || tab === "tempo") {
+    const sec = document.getElementById("tab-" + name);
+    if (name === "lights" || name === "colours" || name === "effects" || name === "tempo") {
       sec.insertBefore(host, sec.firstChild);
-      start();
-      for (const [gn] of ROWS) paint(gn, 0);
+      host.classList.toggle("tappable", name === "lights");
+      if (!running) { running = true; requestAnimationFrame(frame); }
+      paint(Date.now());
     } else if (host.parentNode) {
       host.parentNode.removeChild(host);
     }
   }
 
-  api.onChange(() => { if (host) for (const [gn] of ROWS) paint(gn, 0); });
-  window.DemoStage = { place: placeStage, level, period, norm };
+  api.onChange(() => { if (host) paint(Date.now()); });
+  window.DemoStage = { place: placeStage, norm };
 })();
 
 </script>
@@ -856,7 +1058,9 @@ const $ = (id) => document.getElementById(id);
 const state = {
   me: null, status: null, sets: [], effects: [],
   tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
+  features: {}, fxDir: {}, running: {}, lights: [],
 };
+const feature = (name) => !!state.features[name];
 
 // 16 common stage colours for "Pick your own" (name, #rrggbb). Plain data: S&S can change the list.
 const STAGE_COLOURS = [
@@ -933,7 +1137,7 @@ async function change(path, body, okText) {
   try {
     const r = await api("POST", path, body);
     let [text, kind] = describe(r);
-    if (okText && kind === "ok") text = okText;
+    if (kind === "ok") text = okText || r.detail || text;
     showResult(text, kind);
     refreshStatus();
     return r;
@@ -985,6 +1189,12 @@ $("signout").addEventListener("click", async () => {
 async function enterApp() {
   state.me = await api("GET", "/api/me");
   if (state.me.notice_ack_needed) { showNotice(); return; }
+  state.features = state.me.features || {};
+  document.querySelector('.tabbar [data-tab="lights"]').hidden = !feature("lights");
+  if (state.tab === "lights" && !feature("lights")) state.tab = "colours";
+  $("sets-hint").textContent = feature("color_variants")
+    ? "Suggestions from S&S that work well together. Tap one to send it; tap it again for a different mix."
+    : "Suggestions from S&S that work well together. Tap one to send it.";
   renderNotes();
   $("notice-view").hidden = true;
   $("login-view").hidden = true; $("app-view").hidden = false;
@@ -1027,8 +1237,11 @@ function renderStatus() {
   } else if (!canChange()) {
     b.textContent = "Your role can look and lock, but not change the lights."; b.className = "banner info"; b.hidden = false;
   } else { b.hidden = true; }
-  $("usage-text").textContent = s.allowance.used + " of " + s.allowance.limit +
-    " look requests used this month. Buttons in this app are free and are not counted.";
+  const used = s.allowance.used;
+  $("usage-text").textContent = used + " look request" + (used === 1 ? "" : "s") +
+    " used this month. Buttons in this app are free and are not counted.";
+  state.running = s.effects || {};
+  markRunning();
   $("unlock-note").textContent = lk.locked ? "To unlock, tap the lock at the top and enter the Service Lock PIN." : "";
   applyDisabled();
   if (state.me.can.schedule) loadSchedule();
@@ -1081,7 +1294,7 @@ function setStrip(colours, cls) {
 }
 
 async function sendColours(colours) {
-  const r = await change("/api/colour-set", { colours }, "Sent to the stage.");
+  const r = await change("/api/colour-set", { colours }, feature("color_variants") ? null : "Sent to the stage.");
   const box = $("placement");
   box.hidden = !(r && r.detail && state.me.role === "Admin");
   if (!box.hidden) box.textContent = r.detail;
@@ -1090,7 +1303,7 @@ async function sendColours(colours) {
 
 function renderSets() {
   const list = $("set-list"); list.replaceChildren();
-  if (!state.sets.length) list.append(el("p", { class: "muted", text: "No colour sets yet. Ask the S&S team." }));
+  if (!state.sets.length) list.append(el("p", { class: "muted", text: "No color sets yet. Ask the S&S team." }));
   for (const s of state.sets) {
     const b = el("button", { type: "button", class: "set change" },
       setStrip(s.colours),
@@ -1104,7 +1317,7 @@ function renderSets() {
 
 function colourName(hex) {
   const f = STAGE_COLOURS.find((c) => c[1] === hex);
-  return f ? f[0] : "Custom colour";
+  return f ? f[0] : "Custom color";
 }
 
 function renderPicker() {
@@ -1134,7 +1347,7 @@ function renderPicker() {
 }
 
 function addPick(hex) {
-  if (state.picked.length >= 3) { showResult("You have 3 colours. Tap one to take it out first.", "warn"); return; }
+  if (state.picked.length >= 3) { showResult("You have 3 colors. Tap one to take it out first.", "warn"); return; }
   state.picked.push(hex); renderPicker();
 }
 $("pick-clear").addEventListener("click", () => { state.picked = []; renderPicker(); });
@@ -1152,46 +1365,141 @@ function updateMix() { $("mix-preview").style.background = mixHex(); }
 $("mix-add").addEventListener("click", () => addPick(mixHex()));
 
 // ---------- effects
+// An effect is known by its id where the server gives one (the demo: "color:wave", "movement:wave"),
+// else by its name; category and direction are sent only when the server offers them (D-035).
+const fxId = (e) => e.id || e.name;
+const fxBody = (e, extra) => Object.assign({ effect_name: e.name }, e.category ? { category: e.category } : {}, extra || {});
+
+function markRunning() {
+  document.querySelectorAll("#effects-list .card").forEach((c) => {
+    const on = state.running.color === c.dataset.fx || state.running.movement === c.dataset.fx;
+    c.classList.toggle("running", on);
+    const tag = c.querySelector(".run-tag");
+    if (tag) tag.hidden = !on;
+  });
+}
+
 function renderEffects() {
+  const top = $("effects-top"); top.replaceChildren();
   const box = $("effects-list"); box.replaceChildren();
   if (!state.effects.length) {
     box.append(el("p", { class: "muted", text: "No effects are set up for this church yet. Ask the S&S team." }));
     return;
   }
-  for (const e of state.effects) {
+  if (feature("clear_fx")) {
+    const clear = el("button", { type: "button", class: "big change", text: "Clear effects" });
+    clear.addEventListener("click", () => change("/api/clear-effects", {}));
+    top.append(clear);
+  }
+  const split = feature("movement_fx") && state.effects.some((e) => e.category === "movement");
+  const sections = split ? [["color", "Color and intensity"], ["movement", "Movement"]] : [[null, null]];
+  for (const [cat, title] of sections) {
+    if (title) {
+      const stop = el("button", { type: "button", class: "small-btn change stop-btn", text: cat === "color" ? "Stop color effect" : "Stop movement" });
+      stop.addEventListener("click", () => change("/api/clear-effects", { category: cat }));
+      box.append(el("div", { class: "fx-head" }, el("h2", { text: title }), feature("clear_fx") ? stop : null));
+      if (cat === "movement") box.append(el("p", { class: "muted small", text: "Only lights that move run these. Color stays as it is." }));
+    }
+    for (const e of state.effects.filter((x) => !cat || x.category === cat)) renderEffectCard(box, e);
+  }
+  applyDisabled();
+  markRunning();
+}
+
+function renderEffectCard(box, e) {
+  {
     const out = el("output", { text: "100" });
     const size = el("input", { type: "range", min: "0", max: "200", value: "100", "aria-label": "Size for " + e.name });
     size.addEventListener("input", () => { out.textContent = size.value; });
-    size.addEventListener("change", () => change("/api/effect-size", { effect_name: e.name, size: parseInt(size.value, 10) }));
+    size.addEventListener("change", () => change("/api/effect-size", fxBody(e, { size: parseInt(size.value, 10) })));
     size.classList.add("change");
+    let dirRow = null;
+    if (feature("fx_directions") && e.directions && e.directions.length) {
+      const id = fxId(e);
+      if (!state.fxDir[id]) state.fxDir[id] = e.directions[0][0];
+      dirRow = el("div", { class: "dir-row", role: "group", "aria-label": "Direction for " + e.name });
+      for (const [value, label] of e.directions) {
+        const b = el("button", { type: "button", class: "dir-btn", text: label, "aria-pressed": String(state.fxDir[id] === value) });
+        b.addEventListener("click", () => {
+          state.fxDir[id] = value;
+          dirRow.querySelectorAll(".dir-btn").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          if (state.running.color === id || state.running.movement === id) change("/api/apply-effect", fxBody(e, { direction: value }));
+        });
+        dirRow.append(b);
+      }
+    }
     const apply = el("button", { type: "button", class: "big primary change", text: "Apply effect" });
-    apply.addEventListener("click", () => change("/api/apply-effect", { effect_name: e.name }));
-    box.append(el("div", { class: "card" },
-      el("h3", { text: e.name }),
-      e.demo ? el("div", { class: "demo-tag", text: "Demo effect" }) : null,
+    apply.addEventListener("click", () => change("/api/apply-effect",
+      fxBody(e, dirRow ? { direction: state.fxDir[fxId(e)] } : {})));
+    const card = el("div", { class: "card" },
+      el("h3", {}, e.name, el("span", { class: "run-tag", text: "Running", hidden: "" })),
+      e.demo ? el("div", { class: "demo-tag", text: e.proposed ? "Demo effect · name proposed" : "Demo effect" }) : null,
       el("div", { text: e.what_you_see }),
       el("div", { class: "k", text: "When to use it" }),
       el("div", { text: e.when_to_use_it }),
+      dirRow ? el("div", { class: "k", text: "Direction" }) : null,
+      dirRow,
       apply,
       el("div", { class: "k", text: "Size (after the effect is running)" }),
-      el("div", { class: "size-row" }, size, out)));
+      el("div", { class: "size-row" }, size, out));
+    card.dataset.fx = fxId(e);
+    box.append(card);
+  }
+}
+
+// ---------- lights in the scene (D-035)
+async function loadLights() {
+  if (!feature("lights")) return;
+  try { state.lights = (await api("GET", "/api/lights")).groups; } catch (e) { showResult(e.message, "bad"); return; }
+  renderLights();
+}
+
+async function setLights(channels, on) {
+  const r = await change("/api/lights", { channels, on });
+  if (r) loadLights();
+}
+
+function renderLights() {
+  const box = $("lights-list"); box.replaceChildren();
+  for (const g of state.lights) {
+    if (!g.lights.length) continue;
+    const onCount = g.lights.filter((l) => l.on).length, allOn = onCount === g.lights.length;
+    const sw = el("button", { type: "button", class: "group-switch change" + (onCount ? " on" : ""), "aria-pressed": String(onCount > 0),
+      text: onCount === 0 ? "Off" : allOn ? "On" : onCount + " of " + g.lights.length + " on" });
+    sw.addEventListener("click", () => setLights(g.lights.map((l) => l.channel), onCount === 0));
+    const chips = el("div", { class: "chips" });
+    for (const l of g.lights) {
+      const c = el("button", { type: "button", class: "chip change" + (l.on ? " on" : ""), "aria-pressed": String(l.on),
+        "aria-label": g.label + " light " + l.channel + (l.on ? ", in the scene" : ", left out"), text: String(l.channel) });
+      c.addEventListener("click", () => setLights([l.channel], !l.on));
+      chips.append(c);
+    }
+    box.append(el("div", { class: "card light-group" },
+      el("div", { class: "lg-head" }, el("h3", { text: g.label }), sw), chips));
   }
   applyDisabled();
 }
+window.addEventListener("demo-fixture-tap", (ev) => {
+  if (state.tab !== "lights" || isLocked() || !canChange()) return;
+  const ch = ev.detail.channel;
+  const l = [].concat(...state.lights.map((g) => g.lights)).find((x) => x.channel === ch);
+  if (l) setLights([ch], !l.on);
+});
 
 // ---------- tempo
 function renderTempoChoices() {
   const sel = $("tempo-effect"); sel.replaceChildren();
   if (!state.effects.length) sel.append(el("option", { value: "", text: "No effects set up" }));
-  for (const e of state.effects) sel.append(el("option", { value: e.name, text: e.name + (e.tempo_measured ? "" : " (not measured yet)") }));
-  if (state.effects.some((e) => e.name === state.tempoEffect)) sel.value = state.tempoEffect;
-  else state.tempoEffect = state.effects.length ? state.effects[0].name : "";
+  const catLabel = (e) => e.category === "movement" ? " (movement)" : e.category === "color" && state.effects.some((x) => x.category === "movement") ? " (color)" : "";
+  for (const e of state.effects) sel.append(el("option", { value: fxId(e), text: e.name + catLabel(e) + (e.tempo_measured ? "" : " (not measured yet)") }));
+  if (state.effects.some((e) => fxId(e) === state.tempoEffect)) sel.value = state.tempoEffect;
+  else state.tempoEffect = (state.effects.find((e) => e.tempo_measured) ? fxId(state.effects.find((e) => e.tempo_measured)) : state.effects.length ? fxId(state.effects[0]) : "");
   if (state.tempoEffect) sel.value = state.tempoEffect;
   updateTempoControls();
 }
 $("tempo-effect").addEventListener("change", (ev) => { state.tempoEffect = ev.target.value; updateTempoControls(); });
 
-function currentEffect() { return state.effects.find((e) => e.name === state.tempoEffect) || null; }
+function currentEffect() { return state.effects.find((e) => fxId(e) === state.tempoEffect) || null; }
 function updateTempoControls() {
   const e = currentEffect(), note = $("tempo-note");
   if (!e) note.textContent = "Pick an effect to follow the tempo.";
@@ -1209,7 +1517,7 @@ function renderNotes() {
   for (const n of notes) {
     const b = el("button", { type: "button", class: "note-btn", text: n.name, "aria-label": n.spoken,
       "aria-pressed": n.name === state.note ? "true" : "false", title: n.label });
-    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); });
+    b.addEventListener("click", () => { state.note = n.name; renderNotes(); updateNoteLine(); restartBeat(); });
     row.append(b);
   }
   updateNoteLine();
@@ -1248,13 +1556,14 @@ function flash() { const b = $("beat"); b.classList.add("flash"); setTimeout(() 
 function restartBeat() {
   clearInterval(beatTimer);
   if (state.tab !== "tempo") return;
-  beatTimer = setInterval(flash, 60000 / getBpm());
+  const n = state.me && currentNote();
+  beatTimer = setInterval(flash, 60000 / (getBpm() * (n ? n.multiplier : 1)));   // flashes once per chosen note
 }
 
 $("tempo-send").addEventListener("click", () => {
   const e = currentEffect();
   if (!e) return;
-  change("/api/tempo", { effect_name: e.name, tempo: getBpm(), note: state.note });
+  change("/api/tempo", fxBody(e, { tempo: getBpm(), note: state.note }));
 });
 
 // ---------- more
@@ -1304,6 +1613,7 @@ function selectTab(name) {
   document.querySelectorAll(".tab").forEach((s) => { s.hidden = s.id !== "tab-" + name; });
   document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   if (name === "more") { loadHistory(); if (state.me.can.schedule) loadSchedule(); }
+  if (name === "lights") loadLights();
   if (DEMO) window.DemoStage.place(name);
   restartBeat();
   window.scrollTo(0, 0);
