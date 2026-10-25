@@ -191,6 +191,11 @@ dialog .row .big { margin-top: 0; }
 .cue-row .name { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .cue-row .num { color: var(--muted); font-size: 13px; }
 .cue-row .small-btn { padding: 0 18px; }
+.slot-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.slot-actions .small-btn { padding: 0 16px; }
+.sunday-preview { white-space: pre-line; font-weight: 400; }
+#sunday-dialog select { width: 100%; box-sizing: border-box; margin: 6px 0; }
+#sunday-dialog .seg { margin-top: 4px; }
 .topline .help-btn { margin-left: auto; }
 .help-btn { flex: 0 0 auto; min-height: 44px; padding: 0 14px; }
 .help-btn.wide { width: 100%; margin-top: 18px; }
@@ -253,7 +258,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 .stage.tappable .stage-fix { cursor: pointer; }
 /* six tabs fit a 320-375 px phone (D-035) */
 .tabbar button { flex: 1 1 0; min-width: 0; padding: 0 2px; font-size: 14px; }
-@media (max-width: 360px) { .tabbar button { font-size: 13px; } }
+@media (max-width: 420px) { .tabbar button { font-size: 13px; } }       /* seven tabs when Sunday is on */
 /* Effects: Color / Movement switch and card label (D-035) */
 .seg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 12px 0 4px; }
 .seg-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 64px; font-weight: 700; }
@@ -427,6 +432,14 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
       <div id="cues-list"></div>
     </section>
 
+    <!-- Sunday: the standing outline of the Sunday cue list, edited part by part (shown only when the church has it set up and the role can change) -->
+    <section id="tab-sunday" class="tab" hidden>
+      <p class="intro">The Sunday cue list, part by part in service order. Pick what goes in each part. You see what will change first, and nothing is sent until you confirm.</p>
+      <p id="sunday-msg" class="muted" role="status"></p>
+      <button id="sunday-setup" type="button" class="big change" hidden>Set up outline</button>
+      <div id="sunday-list"></div>
+    </section>
+
     <!-- Chat (placeholder) -->
     <section id="tab-chat" class="tab" hidden>
       <h2>Chat</h2>
@@ -463,6 +476,7 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
     <button type="button" data-tab="effects">Effects</button>
     <button type="button" data-tab="tempo">Tempo</button>
     <button type="button" data-tab="cues" hidden>Cues</button>
+    <button type="button" data-tab="sunday" hidden>Sunday</button>
     <button type="button" data-tab="chat">Chat</button>
     <button type="button" data-tab="more">More</button>
   </nav>
@@ -501,6 +515,24 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
     <div class="row">
       <button type="button" id="save-cancel" class="big">Cancel</button>
       <button type="button" id="save-go" class="big primary change">Show where it goes</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Sunday: Set, Add, Clear or Set up outline -->
+<dialog id="sunday-dialog">
+  <form method="dialog" id="sunday-form">
+    <h2 id="sunday-title">Sunday</h2>
+    <div id="sunday-pick" hidden>
+      <div id="sunday-lib" class="seg" role="group" aria-label="Take it from"></div>
+      <label for="sunday-item">Which one</label>
+      <select id="sunday-item"></select>
+    </div>
+    <p id="sunday-preview" class="save-preview sunday-preview" role="status"></p>
+    <p id="sunday-dmsg" class="msg" role="alert"></p>
+    <div class="row">
+      <button type="button" id="sunday-cancel" class="big">Cancel</button>
+      <button type="button" id="sunday-go" class="big primary change">Show what will change</button>
     </div>
   </form>
 </dialog>
@@ -554,7 +586,8 @@ window.DEMO_VISUALISER = "venue";
   // routes and against the paths app.js uses, so a new change endpoint cannot be forgotten here.
   // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
   const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
-    "/api/effect-size", "/api/tempo", "/api/look/new", "/api/save/preview", "/api/save", "/api/cues/play"];
+    "/api/effect-size", "/api/tempo", "/api/look/new", "/api/save/preview", "/api/save", "/api/cues/play",
+    "/api/sunday/preview", "/api/sunday/apply"];
   // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
   // /api/me lists the matching feature. Service Lock refuses them like any other change.
   const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
@@ -579,6 +612,12 @@ window.DEMO_VISUALISER = "venue";
   const LIST_LABELS = { stills: "LC Stills", movement: "LC Movement", songs: "LC Songs" };
   const SAVE_LIBS = [["stills", "Stills"], ["movement", "Movement"], ["songs", "Songs"]];
   const SONG_BLOCK = 100, MAX_CUES_PER_SONG = 99;
+  // Build Sunday (D-049): the church's Sunday list (cue_lists "sunday") and its outline (sunday_slots). A built demo for
+  // another church carries its own in window.DEMO_CHURCH; one with cue_lists but no sunday has no Sunday tab.
+  const SUNDAY = CHURCH.cue_lists ? (CHURCH.sunday || null) : 50;
+  const SLOT_NAMES = CHURCH.sunday_slots || ["Walk-in", "Song 1", "Song 2", "Preaching", "Walk-out"];
+  const SUNDAY_ON = SUNDAY !== null && SLOT_NAMES.length > 0;
+  const SLOT_NOT_FOUND = "That part of the service is not in this church's outline";
   // What the simulated console already holds, so the Save sheet has something to show.
   const SEED_SAVED = {
     stills: [[1, "Soft Blue", ""], [2, "Warm Amber", ""]],
@@ -733,7 +772,15 @@ window.DEMO_VISUALISER = "venue";
       lastColours: [WARM_WHITE],
       look: false, previews: {}, tokenSeq: 0,
       saved: Object.fromEntries(SAVE_LIBS.map(([k]) => [k, SEED_SAVED[k].map(([cue, label, scene]) => ({ cue, label, scene }))])),
+      sunday: [], sunPreviews: {},
     };
+    // The Sunday list starts as a set-up outline: an empty placeholder in every part, and Song 1 already holding a song.
+    SLOT_NAMES.forEach((name, i) => st.sunday.push({ cue: (i + 1) * 100, label: "EMPTY " + name, scene: name }));
+    if (SUNDAY_ON && SLOT_NAMES.length > 1) {
+      st.sunday = st.sunday.filter((c) => c.cue !== 200);
+      st.sunday.push({ cue: 200, label: "Verse 1", scene: "Song 1 - Way Maker" }, { cue: 201, label: "Chorus", scene: "" },
+        { cue: 202, label: "Bridge", scene: "" });
+    }
     const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
       .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
     for (const g of GROUPS) {
@@ -911,12 +958,126 @@ window.DEMO_VISUALISER = "venue";
       return confirmed("Played " + (row.label ? row.label + ", " : "") + "cue " + CUE_LISTS[body.library] + "/" + row.cue + ".");
     }
 
+    // ---- Build Sunday: the hub's rules on a made-up console (hub/app.py sunday_*). Slot k owns cues k x 100 .. k x 100 + 99.
+    const slotRange = (k) => [k * SONG_BLOCK, k * SONG_BLOCK + SONG_BLOCK - 1];
+    const slotCues = (k) => st.sunday.filter((c) => c.cue >= slotRange(k)[0] && c.cue <= slotRange(k)[1]).sort(byCue);
+    const slotState = (cues) => !cues.length ? "empty"
+      : (cues.length === 1 && cues[0].label.indexOf("EMPTY ") === 0 ? "placeholder" : "filled");
+    const slotSig = (k) => JSON.stringify(slotCues(k));
+    function slotView(k) {
+      const cues = slotCues(k), state = slotState(cues);
+      const top = cues.reduce((m, c) => Math.max(m, Math.floor(c.cue)), slotRange(k)[0] - 1);
+      return { slot: k, name: SLOT_NAMES[k - 1], state, cues: cues.map(cueItem), scene: cues.length ? cues[0].scene : "",
+        room: state === "filled" ? Math.max(0, slotRange(k)[1] - top) : SONG_BLOCK };
+    }
+    function sundayInfo() {
+      const slots = SLOT_NAMES.map((n, i) => slotView(i + 1));
+      const inSlots = (c) => c.cue >= SONG_BLOCK && c.cue < (SLOT_NAMES.length + 1) * SONG_BLOCK;
+      return { enabled: true, list: SUNDAY, ok: true, problem: "", exists: true, slots,
+        other: st.sunday.filter((c) => !inSlots(c)).sort(byCue).map(cueItem),
+        libraries: cuesInfo().libraries, needs_setup: slots.some((x) => x.state === "empty"), can_setup: false };
+    }
+    function sundayItem(body) {          // the library item a request names, read now (songs are whole)
+      if (!SAVE_LIBS.some(([k]) => k === body.library)) return { error: "Unknown place to take it from" };
+      const rows = st.saved[body.library].slice().sort(byCue);
+      if (body.library === "songs") {
+        const song = songsIn().find((x) => x.number === body.song);
+        if (body.song === undefined || body.song === null) return { error: "Pick a song" };
+        if (!song) return { error: "That song is not in the songs list" };
+        const cues = rows.filter((c) => Math.floor(c.cue / SONG_BLOCK) === song.number);
+        return { library: "songs", name: song.name, cues };
+      }
+      if (body.cue === undefined || body.cue === null) return { error: "Pick a cue" };
+      const row = rows.find((c) => c.cue === Number(body.cue));
+      if (!row) return { error: "There is no cue " + body.cue + " in the " + body.library + " list" };
+      return { library: body.library, name: row.label || "Cue " + row.cue, cues: [row] };
+    }
+    const sceneText = (slot, item) => { const t = slot + " - " + item.replace(/_/g, " ").trim(); return t.length > 32 ? t.slice(0, 32).trim() : t; };
+
+    function sundayPlan(action, k, item) {
+      const cues = slotCues(k), state = slotState(cues), name = SLOT_NAMES[k - 1], [first, last] = slotRange(k);
+      if (action === "clear") {
+        if (state !== "filled") return { error: state === "placeholder" ? name + " is already empty" : name + " has no cues yet. Ask an admin to set up the outline" };
+        return { action, k, remove: cues.map((c) => String(c.cue)), summary: "Empty " + name + ": remove its cues and leave one empty placeholder at cue " + first };
+      }
+      if (!item) return { error: "Pick what to put in it" };
+      const eff = action === "set" || state !== "filled" ? "set" : "add";
+      const remove = eff === "set" ? cues.map((c) => String(c.cue)) : [];
+      const start = eff === "set" ? first : Math.floor(Math.max.apply(null, cues.map((c) => c.cue))) + 1;
+      const n = item.cues.length, end = start + n - 1;
+      if (end > last) return { error: name + " is full: it holds cues " + first + " to " + last + " and this would need " + start + " to " + end };
+      const many = n > 1, lib = CUE_LISTS[item.library];
+      const src = lib + "/" + item.cues[0].cue + (many ? " to " + lib + "/" + item.cues[n - 1].cue : "");
+      const where = SUNDAY + "/" + start + (many ? " to " + SUNDAY + "/" + end : "");
+      const adds = item.name + " (" + n + " cue" + (many ? "s" : "") + "): library cue" + (many ? "s " : " ") + src + (many ? " go" : " goes") + " to Sunday cue" + (many ? "s " : " ") + where;
+      return { action: eff, k, remove, start, n, scene: eff === "set" ? sceneText(name, item.name) : null, adds,
+        summary: (eff === "set" ? "Replace the contents of " : "Add to ") + name + ": " + adds };
+    }
+
+    function sundayPreview(body) {
+      if (!SUNDAY_ON) return refused("Build Sunday is not set up for this church");
+      if (["set", "add", "clear"].indexOf(body.action) < 0) return refused("Unknown action");
+      if (!body.slot || body.slot < 1 || body.slot > SLOT_NAMES.length) return refused(SLOT_NOT_FOUND);
+      let item = null;
+      if (body.action !== "clear") {
+        item = sundayItem(body);
+        if (item.error) return refused(item.error);
+      }
+      const plan = sundayPlan(body.action, body.slot, item);
+      if (plan.error) return refused(plan.error);
+      const text = (plan.scene || plan.adds || "") + " " + SLOT_NAMES[body.slot - 1];
+      const hit = NAME_BLOCKED.exec(text);
+      if (hit) return refused("The word '" + hit[2] + "' cannot be used in a name. Please pick another");
+      const token = "demo-s" + (++st.tokenSeq);
+      st.sunPreviews = { [token]: { body, slotSig: slotSig(body.slot), srcSig: item ? JSON.stringify(item.cues) : null } };
+      return ok({ allowed: true, reason: "", outcome: "preview", action: plan.action, slot: body.slot, slot_name: SLOT_NAMES[body.slot - 1],
+        list: SUNDAY, summary: plan.summary, removes: plan.remove, adds: plan.adds || "", steps: 0, later: 0, token });
+    }
+
+    function sundayApply(body) {
+      if (!SUNDAY_ON) return refused("Build Sunday is not set up for this church");
+      const p = st.sunPreviews[body.token];
+      delete st.sunPreviews[body.token];                     // one use only
+      if (!p) return refused("That preview has expired. Preview it again");
+      const b = p.body, k = b.slot;
+      let item = null;
+      if (b.action !== "clear") {
+        item = sundayItem(b);
+        if (item.error) return refused(item.error);
+        const now = JSON.stringify(item.cues);
+        if (now !== p.srcSig) return refused("What you chose has changed since the preview. Preview it again");
+      }
+      if (slotSig(k) !== p.slotSig) return refused("Someone changed this part since the preview. Preview it again");
+      const plan = sundayPlan(b.action, k, item);
+      if (plan.error) return refused(plan.error);
+      const ops = [], [first, last] = slotRange(k), name = SLOT_NAMES[k - 1], L = SUNDAY;
+      if (plan.remove.length) {
+        st.sunday = st.sunday.filter((c) => c.cue < first || c.cue > last);
+        ops.push(["delete_cue_block", { cue_list: L, first, last }], ["confirm", {}]);
+      }
+      if (plan.action === "clear") {
+        st.sunday.push({ cue: first, label: "EMPTY " + name, scene: name });
+        ops.push(["release_manual", {}], ["record_placeholder_cue", { cue_list: L, cue: first }], ["label_cue", { cue_list: L, cue: first }], ["scene_cue", { cue_list: L, cue: first }]);
+      } else {
+        item.cues.forEach((c, i) => st.sunday.push({ cue: plan.start + i, label: c.label, scene: i === 0 && plan.scene ? plan.scene : (i === 0 ? c.scene : "") }));
+        ops.push([item.cues.length > 1 ? "copy_cue_range" : "copy_cue", { cue_list: L, cue: plan.start }]);
+        if (plan.scene) ops.push(["scene_cue", { cue_list: L, cue: plan.start }]);
+      }
+      for (const [o, a] of ops) log(o, a, true, "");
+      changed();
+      const view = slotView(k);
+      return confirmed(name + " now holds: " + (view.cues.map((c) => (c.cue + " " + c.label).trim()).join(", ")) + ".",
+        { steps_done: ops.map((x) => x[0]), slot: view });
+    }
+
     function change(path, op, args, body) {
       if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
       if (path === "/api/look/new") { st.look = true; log(op, args, true, ""); changed(); return confirmed("New look started."); }
       if (path === "/api/save/preview") return savePreview(body);
       if (path === "/api/save") return saveNow(body, op);
       if (path === "/api/cues/play") return playCue(body, op);
+      if (path === "/api/sunday/preview") return sundayPreview(body);
+      if (path === "/api/sunday/apply") return sundayApply(body);
       if (path === "/api/colour-set") {
         if (!place(body.colours, GROUPS).some(([g]) => lit(g).length)) return refused("No lights in this church are set up to take color");
         const r = applyColours(body.colours.map((h) => h.toLowerCase()), body.colours.join(",").toLowerCase());
@@ -1043,6 +1204,12 @@ window.DEMO_VISUALISER = "venue";
         && b.label.length <= 100 && (b.song === undefined || b.song === null || (typeof b.song === "string" && b.song.length <= 100)) },
       "/api/save": { op: "record_only_cue", valid: (b) => typeof b.token === "string" && b.token.length <= 100 },
       "/api/cues/play": { op: "go_to_cue", valid: (b) => SAVE_LIBS.some(([k]) => k === b.library) && typeof b.cue === "string" && /^\d{1,5}(\.\d{1,3})?$/.test(b.cue) },
+      "/api/sunday/preview": { op: "sunday_preview", valid: (b) => ["set", "add", "clear", "setup"].indexOf(b.action) >= 0
+        && (b.slot === undefined || b.slot === null || (Number.isInteger(b.slot) && b.slot >= 1 && b.slot <= 99))
+        && (b.library === undefined || b.library === null || (typeof b.library === "string" && b.library.length <= 20))
+        && (b.cue === undefined || b.cue === null || (typeof b.cue === "string" && /^\d{1,5}(\.\d{1,3})?$/.test(b.cue)))
+        && (b.song === undefined || b.song === null || (Number.isInteger(b.song) && b.song >= 1 && b.song <= 999)) },
+      "/api/sunday/apply": { op: "sunday_apply", valid: (b) => typeof b.token === "string" && b.token.length <= 100 },
       "/api/clear-effects": { op: "clear_effects", valid: cat },
       "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
     };
@@ -1081,7 +1248,7 @@ window.DEMO_VISUALISER = "venue";
       if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
       if (method === "GET" && url === "/api/me") {
         return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
-          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, save_enabled: true, cues_enabled: true, features: Object.assign({}, FEATURES),
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, save_enabled: true, cues_enabled: true, sunday_enabled: SUNDAY_ON, features: Object.assign({}, FEATURES),
           can: { change: true, unlock: true, history: true, schedule: false } });
       }
       if (method === "GET" && url === "/api/status") {
@@ -1110,6 +1277,7 @@ window.DEMO_VISUALISER = "venue";
       }
       if (method === "GET" && url === "/api/save/info") return ok(saveInfo());
       if (method === "GET" && url === "/api/cues") return ok(cuesInfo());
+      if (method === "GET" && url === "/api/sunday") return ok(SUNDAY_ON ? sundayInfo() : { enabled: false });
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
       if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
       if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
@@ -1122,6 +1290,7 @@ window.DEMO_VISUALISER = "venue";
         const c = CHANGES[url];
         if (!st.noticeAck) return fail(403, "Please read and accept the notice first");   // as the hub does
         if (!c.valid(body)) return { status: 422, ok: false, data: { detail: [{ msg: "not allowed" }] } };
+        if (url === "/api/sunday/preview" && body.action === "setup") return fail(403, "Your role cannot do that");   // Admin only on the hub
         const args = Object.assign({}, body);
         return change(url, c.op, args, body);
       }
@@ -1655,6 +1824,7 @@ const state = {
   tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
   features: {}, fxDir: {}, running: {}, lights: [], fxColours: null, fxGroups: {},
   lookActive: false, save: { info: null, lib: "stills", token: null }, cues: { played: "" },
+  sunday: { info: null, action: null, slot: null, lib: "stills", token: null },
 };
 const feature = (name) => !!state.features[name];
 
@@ -1805,6 +1975,8 @@ async function enterApp() {
   $("look-bar").hidden = !state.me.save_enabled;
   document.querySelector('.tabbar [data-tab="cues"]').hidden = !state.me.cues_enabled;
   if (state.tab === "cues" && !state.me.cues_enabled) state.tab = "colours";
+  document.querySelector('.tabbar [data-tab="sunday"]').hidden = !state.me.sunday_enabled;
+  if (state.tab === "sunday" && !state.me.sunday_enabled) state.tab = "colours";
   $("history-box").hidden = !state.me.can.history;
   $("schedule-box").hidden = !state.me.can.schedule;
   await refreshStatus();
@@ -1853,7 +2025,7 @@ function renderStatus() {
 
 function applyDisabled() {
   const off = isLocked() || !canChange();
-  document.querySelectorAll(".change").forEach((b) => { b.disabled = off; });
+  document.querySelectorAll(".change").forEach((b) => { b.disabled = off || b.dataset.off === "1"; });
   document.querySelectorAll("#set-list button, #effects-list .change").forEach((b) => { b.disabled = off; });
   $("pick-send").disabled = off || state.picked.length < 2;
   updateTempoControls();
@@ -2531,6 +2703,120 @@ function cueRow(library, c) {
     el("div", { class: "name" }, el("div", { text: c.label || "Cue " + c.cue }), el("div", { class: "num", text: "Cue " + c.cue })), b);
 }
 
+// ---------- Sunday: the standing outline of the Sunday cue list (docs/SAVE_DESIGN.md, "Phase 2"). The hub reads the
+// console, shows exactly what a change would do, and checks it again before it sends anything.
+async function loadSunday() {
+  const box = $("sunday-list"); box.replaceChildren();
+  $("sunday-msg").textContent = ""; $("sunday-setup").hidden = true;
+  let info;
+  try { info = await api("GET", "/api/sunday"); } catch (e) { box.append(el("p", { class: "no", text: e.message })); return; }
+  if (!info.enabled) return;
+  state.sunday.info = info;
+  if (!info.ok) { $("sunday-msg").textContent = "Not available: " + info.problem + "."; return; }
+  if (info.needs_setup) {
+    if (info.can_setup) $("sunday-setup").hidden = false;
+    $("sunday-msg").textContent = (info.exists ? "Some parts have no cues yet. " : "The Sunday list is not made yet. ") +
+      (info.can_setup ? "Tap Set up outline." : "An admin needs to set up the outline.");
+  }
+  for (const s of info.slots) box.append(slotCard(s, info));
+  if (info.other.length) {
+    box.append(el("div", { class: "card" }, el("h3", { text: "Other cues in this list" }),
+      el("p", { class: "muted small", text: "These are outside the parts above. The app only shows them." }),
+      ...info.other.map((c) => el("div", { class: "cue-row" }, el("div", { class: "name" },
+        el("div", { text: c.label || "Cue " + c.cue }), el("div", { class: "num", text: "Cue " + c.cue }))))));
+  }
+  applyDisabled();
+}
+
+function slotCard(s, info) {
+  const rows = s.state === "filled"
+    ? s.cues.map((c) => el("div", { class: "cue-row" }, el("div", { class: "name" },
+        el("div", { text: c.label || "Cue " + c.cue }), el("div", { class: "num", text: "Cue " + c.cue }))))
+    : [el("p", { class: "muted", text: "Empty" })];
+  const btn = (action, text, off) => {
+    const b = el("button", { type: "button", class: "small-btn change", text, "aria-label": text + " " + s.name });
+    if (off || !info.exists) b.dataset.off = "1";
+    b.addEventListener("click", () => openSunday(action, s.slot));
+    return b;
+  };
+  const acts = el("div", { class: "slot-actions" }, btn("set", "Set"), btn("add", "Add", s.state === "filled" && s.room < 1));
+  if (s.state === "filled") acts.append(btn("clear", "Clear"));
+  return el("div", { class: "card" }, el("h3", { text: s.name }), ...rows, acts);
+}
+
+// applyDisabled() re-enables .change buttons every few seconds, so "nothing to pick" is kept in data-off, not disabled.
+function sundayGoOff(off) { $("sunday-go").dataset.off = off ? "1" : ""; applyDisabled(); }
+const sundayPick = () => state.sunday.action === "set" || state.sunday.action === "add";
+function sundayReset() {
+  state.sunday.token = null;
+  $("sunday-preview").textContent = ""; $("sunday-dmsg").textContent = "";
+  $("sunday-go").textContent = "Show what will change";
+}
+
+function renderSundayItems() {
+  const info = state.sunday.info, box = $("sunday-lib"), sel = $("sunday-item"); box.replaceChildren(); sel.replaceChildren();
+  const libs = info.libraries.filter((l) => l.ok);
+  if (!libs.some((l) => l.key === state.sunday.lib)) state.sunday.lib = libs.length ? libs[0].key : "";
+  for (const lib of info.libraries) {
+    const n = lib.ok ? (lib.key === "songs" ? lib.songs.length : lib.cues.length) : 0;
+    const b = el("button", { type: "button", class: "seg-btn", "aria-pressed": String(state.sunday.lib === lib.key) },
+      el("span", { text: lib.name }),
+      el("small", { text: !lib.ok ? "not available" : n + (lib.key === "songs" ? " song" : " cue") + (n === 1 ? "" : "s") }));
+    b.disabled = !lib.ok;
+    b.addEventListener("click", () => { state.sunday.lib = lib.key; sundayReset(); renderSundayItems(); });
+    box.append(b);
+  }
+  const cur = libs.find((l) => l.key === state.sunday.lib);
+  if (cur && cur.key === "songs") {
+    for (const s of cur.songs) sel.append(el("option", { value: String(s.number), text: s.name + " (" + s.cues.length + " cue" + (s.cues.length === 1 ? "" : "s") + ")" }));
+  } else if (cur) {
+    for (const c of cur.cues) sel.append(el("option", { value: c.cue, text: (c.label || "Cue " + c.cue) + " (cue " + c.cue + ")" }));
+  }
+  if (!sel.options.length) sel.append(el("option", { value: "", text: "Nothing saved here yet" }));
+  sundayGoOff(!sel.value);
+}
+
+function openSunday(action, slot) {
+  if (isLocked() || !canChange()) { showResult("Unlock the Service Lock to change the Sunday list.", "warn"); return; }
+  const s = state.sunday, info = s.info, name = slot ? info.slots[slot - 1].name : "";
+  s.action = action; s.slot = slot; sundayReset();
+  $("sunday-title").textContent = { set: "Set " + name, add: "Add to " + name, clear: "Clear " + name, setup: "Set up outline" }[action];
+  $("sunday-pick").hidden = !sundayPick();
+  sundayGoOff(false);
+  if (sundayPick()) renderSundayItems();
+  $("sunday-dialog").showModal();
+}
+$("sunday-setup").addEventListener("click", () => openSunday("setup", null));
+$("sunday-cancel").addEventListener("click", () => $("sunday-dialog").close());
+$("sunday-item").addEventListener("change", () => { sundayReset(); sundayGoOff(!$("sunday-item").value); });
+
+$("sunday-go").addEventListener("click", async () => {
+  const s = state.sunday;
+  if (s.token) {                                             // second tap: confirm what the preview showed
+    const r = await change("/api/sunday/apply", { token: s.token });
+    if (r && r.allowed && r.outcome === "confirmed") { $("sunday-dialog").close(); loadSunday(); return; }
+    $("sunday-dmsg").textContent = r ? r.reason + "." : "Not changed.";
+    sundayReset(); loadSunday();
+    return;
+  }
+  const body = { action: s.action };
+  if (s.slot) body.slot = s.slot;
+  if (sundayPick()) {
+    body.library = s.lib;
+    if (s.lib === "songs") body.song = Number($("sunday-item").value); else body.cue = $("sunday-item").value;
+  }
+  $("sunday-dmsg").textContent = "";
+  const r = await change("/api/sunday/preview", body);
+  if (r && r.allowed) {
+    s.token = r.token;
+    const lines = [r.summary + "."];
+    lines.push(r.removes.length ? "Removes cues: " + r.removes.join(", ") + "." : "Nothing is removed.");
+    if (s.action === "clear" || s.action === "setup") lines.push("This also lets go of anything set by hand on the console and not saved.");
+    $("sunday-preview").textContent = lines.join("\n");
+    $("sunday-go").textContent = "Confirm";
+  } else $("sunday-dmsg").textContent = r ? r.reason + "." : "Unlock the Service Lock to change the Sunday list.";
+});
+
 // ---------- help (D-030): open from any screen, address shown as text to select or copy
 document.querySelectorAll(".help-btn").forEach((b) => b.addEventListener("click", () => {
   $("help-msg").textContent = ""; $("help-dialog").showModal();
@@ -2551,6 +2837,7 @@ function selectTab(name) {
   document.querySelectorAll(".tab").forEach((s) => { s.hidden = s.id !== "tab-" + name; });
   document.querySelectorAll(".tabbar button").forEach((b) => b.classList.toggle("active", b.dataset.tab === name));
   if (name === "cues") loadCues();
+  if (name === "sunday") loadSunday();
   if (name === "more") { loadHistory(); if (state.me.can.schedule) loadSchedule(); }
   if (name === "lights" || (name === "effects" && feature("lights"))) loadLights().then(() => { if (name === "effects") renderEffects(); });
   if (DEMO) window.DemoStage.place(name);
