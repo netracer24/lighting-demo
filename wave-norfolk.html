@@ -182,6 +182,11 @@ input.hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0
 dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; width: min(92vw, 380px); }
 dialog::backdrop { background: rgba(0,0,0,.7); }
 dialog .row .big { margin-top: 0; }
+.look-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px max(16px, env(safe-area-inset-left, 0px)); }
+.look-bar .small-btn { padding: 0 16px; }
+#save-dialog input, #save-dialog select { width: 100%; box-sizing: border-box; margin: 6px 0; }
+#save-dialog .seg { margin-top: 4px; }
+.save-preview { font-weight: 700; min-height: 1.4em; }
 .topline .help-btn { margin-left: auto; }
 .help-btn { flex: 0 0 auto; min-height: 44px; padding: 0 14px; }
 .help-btn.wide { width: 100%; margin-top: 18px; }
@@ -337,6 +342,13 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 
   <div id="banner" class="banner" hidden></div>
 
+  <!-- New look and Save (D-048): shown only when the church has cue lists set up -->
+  <div id="look-bar" class="look-bar" hidden>
+    <button type="button" id="look-new" class="small-btn change">New look</button>
+    <button type="button" id="look-save" class="small-btn change">Save</button>
+    <span id="look-note" class="muted small"></span>
+  </div>
+
   <main id="content">
     <!-- Lights in the scene (D-035; shown only when the server offers it) -->
     <section id="tab-lights" class="tab" hidden>
@@ -460,12 +472,35 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   </form>
 </dialog>
 
+<!-- Save this look -->
+<dialog id="save-dialog">
+  <form method="dialog" id="save-form">
+    <h2>Save this look</h2>
+    <p class="muted small">It is saved as a new cue in its own cue list. Nothing already saved is changed.</p>
+    <div id="save-lib" class="seg" role="group" aria-label="Where to save"></div>
+    <label for="save-label">Name for this look</label>
+    <input id="save-label" maxlength="32" autocomplete="off" spellcheck="false">
+    <div id="save-song-box" hidden>
+      <label for="save-song">Song</label>
+      <select id="save-song"></select>
+      <input id="save-song-new" maxlength="32" autocomplete="off" spellcheck="false" placeholder="Name of the new song" hidden>
+    </div>
+    <p id="save-preview" class="save-preview" role="status"></p>
+    <p id="save-msg" class="msg" role="alert"></p>
+    <div class="row">
+      <button type="button" id="save-cancel" class="big">Cancel</button>
+      <button type="button" id="save-go" class="big primary change">Show where it goes</button>
+    </div>
+  </form>
+</dialog>
+
 <!-- Unlock PIN -->
 <dialog id="pin-dialog">
   <form method="dialog" id="pin-form">
     <h2>Unlock for changes</h2>
     <p class="muted">Enter the Service Lock PIN.</p>
     <p class="muted demo-only" hidden>Demo PIN: <strong>1234</strong></p>
+    <p class="muted" id="pin-hint" hidden></p>
     <input id="pin" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN">
     <p id="pin-msg" class="msg" role="alert"></p>
     <div class="row">
@@ -480,7 +515,7 @@ window.TIER1_DEMO = true;
 window.DEMO_EFFECTS = [{"name": "Fan in", "what_you_see": "Lights come on one after another from the outside of the rig toward the center (outside-in).", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Fan out", "what_you_see": "Lights come on one after another from the center toward the outside of the rig (inside-out).", "when_to_use_it": "Any intensity change by default; slow (1-2 s) in soft parts, quick in busy parts"}, {"name": "Wave", "what_you_see": "One movement or color change rolls across the movers in order: outside-in, inside-out, left to right, right to left", "when_to_use_it": "Builds, choruses, transitions"}, {"name": "No-fade chase", "what_you_see": "Lights snap on and off one at a time, in sequence or random order, with no fades: a flash that is not a strobe", "when_to_use_it": "Hits and accents a listener clearly hears"}, {"name": "Bump", "what_you_see": "One instant full-intensity hit on a subset, then back", "when_to_use_it": "A single drum hit or stop"}, {"name": "Evolving full rig", "what_you_see": "Every light on, but the look keeps changing at least every 1-2 bars (positions, color, subsets, fans)", "when_to_use_it": "Only the top 2-3 moments and the last chorus"}, {"name": "Silhouette intro", "what_you_see": "Performers seen only as shapes against back and background light; no front light", "when_to_use_it": "Intros before the singer sings"}, {"name": "Reset look", "what_you_see": "A plain, still, simple look that rests the eyes", "when_to_use_it": "After a big section, before a build"}];
 window.DEMO_COLOUR_SETS = [{"name": "Blue + Amber", "colours": ["#2f6bff", "#ffb000"], "mood": "Everyday worship: warm and cool in balance"}, {"name": "Deep Blue + Lavender", "colours": ["#1f3fbf", "#a58cff"], "mood": "Reflective moments and prayer"}, {"name": "Soft Blue + Teal", "colours": ["#4d8dff", "#1fb5b0"], "mood": "Calm: communion and slower songs"}, {"name": "Lavender + Pink", "colours": ["#b79cff", "#ff8fc8"], "mood": "Gentle worship"}, {"name": "Amber + Gold", "colours": ["#ff9a1f", "#ffd060"], "mood": "Celebration and thanksgiving"}, {"name": "Amber + Magenta", "colours": ["#ffa020", "#e0208c"], "mood": "High-energy praise"}, {"name": "Amber + Red", "colours": ["#ffa020", "#e02020"], "mood": "Pentecost and passion"}, {"name": "Warm White + Deep Blue", "colours": ["#ffe2b0", "#2040c0"], "mood": "Christmas Eve and Advent"}, {"name": "Violet + Amber", "colours": ["#7a3fd0", "#ffb040"], "mood": "Lent and Advent"}, {"name": "Gold + White", "colours": ["#ffc840", "#ffffff"], "mood": "Easter"}, {"name": "Blue + Cyan + White", "colours": ["#3060ff", "#20c8e8", "#ffffff"], "mood": "Baptism"}, {"name": "Blue + Magenta + UV", "colours": ["#3050ff", "#e0208c", "#8a2be2"], "mood": "Youth and big moments"}];
 window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one bar of 4/4", "multiplier": 0.25}, {"name": "1/2", "label": "1/2", "spoken": "half note", "multiplier": 0.5}, {"name": "1/4", "label": "1/4", "spoken": "quarter note, the beat", "multiplier": 1.0}, {"name": "1/8.", "label": "Dotted 1/8", "spoken": "dotted eighth", "multiplier": 1.3333333333333333}, {"name": "1/8", "label": "1/8", "spoken": "eighth note", "multiplier": 2.0}, {"name": "1/8T", "label": "1/8T", "spoken": "eighth note triplet", "multiplier": 3.0}, {"name": "1/16", "label": "1/16", "spoken": "sixteenth note", "multiplier": 4.0}];
-window.DEMO_CHURCH = {"name":"Wave Norfolk","groups":[{"number":"1","label":"Stage Movers","role":"air","takes_colour":true,"moves":true,"area":"stage","channels":[[301,302]]},{"number":"2","label":"Moving Bars","role":"accent","takes_colour":true,"moves":true,"area":"stage","channels":[[201,209]]},{"number":"3","label":"Wall Pixel Bars","role":"accent","takes_colour":true,"moves":false,"area":"stage","channels":[[401,424]]},{"number":"4","label":"Front Movers","role":"air","takes_colour":true,"moves":true,"area":"front","channels":[[303,304]]},{"number":"5","label":"Side Wash","role":"side","takes_colour":true,"moves":false,"area":"front","channels":[[21,24]]},{"number":"6","label":"Front Light","role":"front","takes_colour":false,"moves":false,"area":"front","channels":[[1,8]]},{"number":"7","label":"House Lights","role":"other","takes_colour":false,"moves":false,"area":"house","channels":[[101,115]]}],"off":[[1,8]]};
+window.DEMO_CHURCH = {"name":"Wave Norfolk","groups":[{"number":"1","label":"Stage Movers","role":"air","takes_colour":true,"moves":true,"area":"stage","channels":[[301,302]]},{"number":"2","label":"Moving Bars","role":"accent","takes_colour":true,"moves":true,"area":"stage","channels":[[201,209]]},{"number":"3","label":"Wall Pixel Bars","role":"accent","takes_colour":true,"moves":false,"area":"stage","channels":[[401,424]]},{"number":"4","label":"Front Movers","role":"air","takes_colour":true,"moves":true,"area":"front","channels":[[303,304]]},{"number":"5","label":"Side Wash","role":"side","takes_colour":true,"moves":false,"area":"front","channels":[[21,24]]},{"number":"6","label":"Front Light","role":"front","takes_colour":false,"moves":false,"area":"front","channels":[[1,8]]},{"number":"7","label":"House Lights","role":"other","takes_colour":false,"moves":false,"area":"house","channels":[[101,115]]}],"off":[[1,8]],"cue_lists":{"stills":51,"movement":52,"songs":53}};
 window.DEMO_RIG = {"schema":1,"church":"Wave Norfolk","source":{"file":"Wave Norfolk_2026-10-22_pantilt.mvr","sha256":"f03391f9907a18a2d5c00494e93d8830d533648c88eee95a56394393678ec72f","mvr_version":"1.6","provider":"Vectorworks 32.0.0.882075"},"units":"metres, Z up, MVR axes","room":[{"name":"Floor","class":"Shell-Floor","kind":"floor","min":[-0.305,-0.305,-0.152],"max":[15.215,22.784,0.0]},{"name":"Wall-North","class":"Shell-Walls","kind":"wall","min":[-0.305,22.479,0.0],"max":[15.215,22.784,4.14]},{"name":"Wall-South","class":"Shell-Walls","kind":"wall","min":[-0.305,-0.305,0.0],"max":[15.215,0.0,4.14]},{"name":"Wall-East","class":"Shell-Walls","kind":"wall","min":[14.91,0.0,0.0],"max":[15.215,22.479,4.14]},{"name":"Wall-West","class":"Shell-Walls","kind":"wall","min":[-0.305,0.0,0.0],"max":[0.0,22.479,4.14]},{"name":"Ceiling","class":"Shell-Ceiling","kind":"ceiling","min":[0.0,0.0,4.089],"max":[14.91,22.479,4.14]},{"name":"Platform","class":"Stage-Platform","kind":"stage","min":[11.252,6.477,0.0],"max":[14.91,16.535,0.483]},{"name":"Platform Stair Step 1","class":"Stage-Platform","kind":"stage","min":[13.691,16.942,0.0],"max":[14.91,17.145,0.161]},{"name":"Platform Stair Step 2","class":"Stage-Platform","kind":"stage","min":[13.691,16.739,0.0],"max":[14.91,16.942,0.322]},{"name":"Platform Stair Step 3","class":"Stage-Platform","kind":"stage","min":[13.691,16.535,0.0],"max":[14.91,16.739,0.483]},{"name":"FOH Booth","class":"FOH-Booth","kind":"booth","min":[0.279,9.881,0.0],"max":[1.803,13.64,0.457]},{"name":"FOH Booth Knee Wall East","class":"FOH-Booth","kind":"booth","min":[1.702,9.881,0.457],"max":[1.803,13.64,1.524]},{"name":"FOH Booth Knee Wall North","class":"FOH-Booth","kind":"booth","min":[0.279,13.538,0.457],"max":[1.803,13.64,1.524]},{"name":"FOH Booth Knee Wall South","class":"FOH-Booth","kind":"booth","min":[0.279,9.881,0.457],"max":[1.803,9.982,1.524]},{"name":"Platform Nosing","class":"Stage-Platform-Trim","kind":"stage","min":[11.252,7.239,0.444],"max":[11.29,15.773,0.485]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.0,4.051],"max":[0.019,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.591,0.0,4.051],"max":[0.629,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[1.2,0.0,4.051],"max":[1.238,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[1.81,0.0,4.051],"max":[1.848,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[2.419,0.0,4.051],"max":[2.457,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[3.029,0.0,4.051],"max":[3.067,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[3.639,0.0,4.051],"max":[3.677,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[4.248,0.0,4.051],"max":[4.286,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[4.858,0.0,4.051],"max":[4.896,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[5.467,0.0,4.051],"max":[5.505,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[6.077,0.0,4.051],"max":[6.115,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[6.687,0.0,4.051],"max":[6.725,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[7.296,0.0,4.051],"max":[7.334,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[7.906,0.0,4.051],"max":[7.944,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[8.515,0.0,4.051],"max":[8.553,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[9.125,0.0,4.051],"max":[9.163,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[9.735,0.0,4.051],"max":[9.773,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[10.344,0.0,4.051],"max":[10.382,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[10.954,0.0,4.051],"max":[10.992,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[11.563,0.0,4.051],"max":[11.601,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[12.173,0.0,4.051],"max":[12.211,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[12.783,0.0,4.051],"max":[12.821,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[13.392,0.0,4.051],"max":[13.43,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[14.002,0.0,4.051],"max":[14.04,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[14.611,0.0,4.051],"max":[14.649,22.479,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.0,4.051],"max":[14.91,0.019,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,0.591,4.051],"max":[14.91,0.629,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,1.2,4.051],"max":[14.91,1.238,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,1.81,4.051],"max":[14.91,1.848,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,2.419,4.051],"max":[14.91,2.457,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,3.029,4.051],"max":[14.91,3.067,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,3.639,4.051],"max":[14.91,3.677,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,4.248,4.051],"max":[14.91,4.286,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,4.858,4.051],"max":[14.91,4.896,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,5.467,4.051],"max":[14.91,5.505,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,6.077,4.051],"max":[14.91,6.115,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,6.687,4.051],"max":[14.91,6.725,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,7.296,4.051],"max":[14.91,7.334,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,7.906,4.051],"max":[14.91,7.944,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,8.515,4.051],"max":[14.91,8.553,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,9.125,4.051],"max":[14.91,9.163,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,9.735,4.051],"max":[14.91,9.773,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,10.344,4.051],"max":[14.91,10.382,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,10.954,4.051],"max":[14.91,10.992,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,11.563,4.051],"max":[14.91,11.601,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,12.173,4.051],"max":[14.91,12.211,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,12.783,4.051],"max":[14.91,12.821,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,13.392,4.051],"max":[14.91,13.43,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,14.002,4.051],"max":[14.91,14.04,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,14.611,4.051],"max":[14.91,14.649,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,15.221,4.051],"max":[14.91,15.259,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,15.831,4.051],"max":[14.91,15.869,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,16.44,4.051],"max":[14.91,16.478,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,17.05,4.051],"max":[14.91,17.088,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,17.659,4.051],"max":[14.91,17.697,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,18.269,4.051],"max":[14.91,18.307,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,18.879,4.051],"max":[14.91,18.917,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,19.488,4.051],"max":[14.91,19.526,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,20.098,4.051],"max":[14.91,20.136,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,20.707,4.051],"max":[14.91,20.745,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,21.317,4.051],"max":[14.91,21.355,4.089]},{"name":"Geometry","class":"Shell-Ceiling-Grid","kind":"grid","min":[0.0,21.927,4.051],"max":[14.91,21.965,4.089]},{"name":"Screen Frame South","class":"Video-Screen","kind":"screen","min":[14.808,9.22,1.092],"max":[14.91,9.271,3.658]},{"name":"Screen Frame North","class":"Video-Screen","kind":"screen","min":[14.808,13.741,1.092],"max":[14.91,13.792,3.658]},{"name":"Screen Frame Top","class":"Video-Screen","kind":"screen","min":[14.808,9.271,3.607],"max":[14.91,13.741,3.658]},{"name":"Screen Frame Bottom","class":"Video-Screen","kind":"screen","min":[14.808,9.271,1.092],"max":[14.91,13.741,1.143]},{"name":"Screen","class":"Video-Screen","kind":"screen","min":[14.808,9.271,1.143],"max":[14.91,13.741,3.607]},{"name":"Monitor North Frame W","class":"Video-Monitors","kind":"screen","min":[14.834,17.729,1.664],"max":[14.91,17.755,2.299]},{"name":"Monitor North Frame E","class":"Video-Monitors","kind":"screen","min":[14.834,18.821,1.664],"max":[14.91,18.847,2.299]},{"name":"Monitor North Frame Top","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,2.273],"max":[14.91,18.821,2.299]},{"name":"Monitor North Frame Bottom","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,1.664],"max":[14.91,18.821,1.689]},{"name":"Monitor North","class":"Video-Monitors","kind":"screen","min":[14.834,17.755,1.689],"max":[14.91,18.821,2.273]},{"name":"Monitor South Frame W","class":"Video-Monitors","kind":"screen","min":[14.834,4.166,1.664],"max":[14.91,4.191,2.299]},{"name":"Monitor South Frame E","class":"Video-Monitors","kind":"screen","min":[14.834,5.258,1.664],"max":[14.91,5.283,2.299]},{"name":"Monitor South Frame Top","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,2.273],"max":[14.91,5.258,2.299]},{"name":"Monitor South Frame Bottom","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,1.664],"max":[14.91,5.258,1.689]},{"name":"Monitor South","class":"Video-Monitors","kind":"screen","min":[14.834,4.191,1.689],"max":[14.91,5.258,2.273]},{"name":"Column 1 (north)","class":"Structure-Columns","kind":"column","min":[7.417,15.875,0.0],"max":[7.569,16.027,4.089]},{"name":"Column 2","class":"Structure-Columns","kind":"column","min":[7.417,10.795,0.0],"max":[7.569,10.947,4.089]},{"name":"Column 3 (south)","class":"Structure-Columns","kind":"column","min":[7.417,5.385,0.0],"max":[7.569,5.537,4.089]},{"name":"Mid-House Pipe","class":"Lighting-Positions","kind":"pipe","min":[7.469,3.81,3.71],"max":[7.517,18.669,3.758]},{"name":"Speaker North (model unknown)","class":"Audio-Speakers","kind":"speaker","min":[13.826,16.891,2.94],"max":[14.368,17.247,3.811]},{"name":"Speaker South (model unknown)","class":"Audio-Speakers","kind":"speaker","min":[13.826,5.766,2.94],"max":[14.368,6.121,3.811]}],"fixtures":[{"channel":1,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,16.764,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":2,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,14.554,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":3,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,12.344,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":4,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,10.135,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":5,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,7.925,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":6,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"Mid-House Pipe","class":"Lighting-Devices","xyz":[7.493,5.715,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":7,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"House Side Pipe","class":"Lighting-Devices","xyz":[4.572,13.208,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":8,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"House Side Pipe","class":"Lighting-Devices","xyz":[4.572,9.271,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"front"},{"channel":11,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,7.112,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":12,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,8.636,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":13,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,10.16,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":14,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,11.684,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":15,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,13.208,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":16,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,14.732,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":17,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,16.256,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":18,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[17.272,17.78,0.213],"aim":[0.1821,-0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"other"},{"channel":21,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[8.413,19.208,3.708],"aim":[0.6566,-0.7209,-0.2217],"axis":[-0.7393,-0.6734,0.0],"unlocated":false,"role":"side"},{"channel":22,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[7.335,18.13,3.708],"aim":[0.7292,-0.6384,-0.2463],"axis":[-0.6587,-0.7524,0.0],"unlocated":false,"role":"side"},{"channel":23,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[7.335,4.349,3.708],"aim":[0.7292,0.6384,-0.2463],"axis":[0.6587,-0.7524,0.0],"unlocated":false,"role":"side"},{"channel":24,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[8.413,3.271,3.708],"aim":[0.6566,0.7209,-0.2217],"axis":[0.7393,-0.6734,0.0],"unlocated":false,"role":"side"},{"channel":31,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,1.016,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":32,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,2.54,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":33,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,4.064,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":34,"name":"K9 Lighting Pup","type":"K9@K9 Pup LED Can.gdtf","position":"Stage Deck Upstage","class":"Unlocated-Gear","xyz":[17.272,5.588,0.213],"aim":[0.1821,0.0,0.9833],"axis":[0.0,-1.0,0.0],"unlocated":true,"role":"back"},{"channel":43,"name":"Generic Dimmer","type":"Custom@Light_Instr_Generic_MR16_LED.gdtf","position":"UNLOCATED","class":"Unlocated-Gear","xyz":[19.05,8.636,0.253],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":true,"role":"other"},{"channel":101,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,19.304,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":102,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,17.0,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":103,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,14.696,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":104,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,12.392,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":105,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,10.087,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":106,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,7.783,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":107,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,5.479,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":108,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Back Row","class":"Lighting-Pixel","xyz":[2.134,3.175,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":109,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,17.78,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":110,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,15.727,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":111,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,13.674,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":112,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,11.62,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":113,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,9.567,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":114,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,7.514,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":115,"name":"Chauvet DJ COLORband PiX ILS","type":"Chauvet DJ@Chauvet DJ COLORband PiX ILS.gdtf","position":"Ceiling Front Row","class":"Lighting-Pixel","xyz":[8.128,5.461,4.064],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,1.0,0.0],"unlocated":false,"role":"other"},{"channel":201,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,15.977,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":202,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,14.859,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":203,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,13.741,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":204,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,12.624,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":205,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,11.506,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":206,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,10.389,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":207,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,9.271,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":208,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,8.153,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":209,"name":"Chauvet DJ COLORband PiX-M USB","type":"Chauvet DJ@COLORband PiX-M USB.gdtf","position":"East Wall Above Screen","class":"Lighting-Pixel","xyz":[14.732,7.036,3.962],"aim":[-0.0,-0.0,-1.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":301,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"Upstage Corner SR (house-left)","class":"Lighting-Devices","xyz":[14.605,17.78,4.013],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":302,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"Upstage Corner SL (house-right)","class":"Lighting-Devices","xyz":[14.605,5.207,4.013],"aim":[-0.0,-0.0,-1.0],"axis":[1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":303,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"House-Left Outside Pipe","class":"Lighting-Devices","xyz":[7.874,18.669,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[-1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":304,"name":"Martin RUSH MH 2 Wash","type":"Martin Professional@Rush MH 2 Wash.gdtf","position":"House-Right Outside Pipe","class":"Lighting-Devices","xyz":[7.874,3.81,3.708],"aim":[-0.0,-0.0,-1.0],"axis":[-1.0,0.0,0.0],"unlocated":false,"role":"air"},{"channel":401,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":402,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":403,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":404,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":405,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":406,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":407,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":408,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":409,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":410,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,16.599,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":411,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,15.596,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":412,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe North","class":"Lighting-Pixel","xyz":[14.821,14.592,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":413,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":414,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":415,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,3.295],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":416,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":417,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":418,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,2.686],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":419,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":420,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":421,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,2.076],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":422,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,8.42,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":423,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,7.417,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"},{"channel":424,"name":"Elation Pixel Bar 40","type":"Elation@Elation PIXEL BAR 40.gdtf","position":"East Wall Stripe South","class":"Lighting-Pixel","xyz":[14.821,6.413,1.467],"aim":[-1.0,-0.0,-0.0],"axis":[0.0,-1.0,0.0],"unlocated":false,"role":"accent"}]};
 window.DEMO_VISUALISER = "venue";
 
@@ -508,7 +543,7 @@ window.DEMO_VISUALISER = "venue";
   // routes and against the paths app.js uses, so a new change endpoint cannot be forgotten here.
   // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
   const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
-    "/api/effect-size", "/api/tempo"];
+    "/api/effect-size", "/api/tempo", "/api/look/new", "/api/save/preview", "/api/save"];
   // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
   // /api/me lists the matching feature. Service Lock refuses them like any other change.
   const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
@@ -527,6 +562,21 @@ window.DEMO_VISUALISER = "venue";
   ];
   const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS, off: [] };
   const GROUPS = CHURCH.groups;
+  // Save (D-048): the church's library cue lists, as church.json "cue_lists". A built demo for another
+  // church can carry its own in window.DEMO_CHURCH.cue_lists.
+  const CUE_LISTS = CHURCH.cue_lists || { stills: 51, movement: 52, songs: 53 };
+  const LIST_LABELS = { stills: "LC Stills", movement: "LC Movement", songs: "LC Songs" };
+  const SAVE_LIBS = [["stills", "Stills"], ["movement", "Movement"], ["songs", "Songs"]];
+  const SONG_BLOCK = 100, MAX_CUES_PER_SONG = 99;
+  // What the simulated console already holds, so the Save sheet has something to show.
+  const SEED_SAVED = {
+    stills: [[1, "Soft Blue", ""], [2, "Warm Amber", ""]],
+    movement: [[1, "Slow Sweep", ""]],
+    songs: [[100, "Verse 1", "Way Maker"], [101, "Chorus", ""], [102, "Bridge", ""], [200, "Intro", "Reckless Love"]],
+  };
+  // Names are checked like the engine's sanitize_label and the guard's word list (no lookbehind: old phones).
+  const NAME_OK = /^[A-Za-z0-9 \-'.,()&]{1,32}$/;
+  const NAME_BLOCKED = /(^|[^A-Za-z0-9])(Delete|Patch|Save|Load|Address|New|Clear_Show|Reset|Shutdown|Exit)([^A-Za-z0-9]|$)/i;
   const WARM_WHITE = "#ffe2b0";
   // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
   // page (tools/build_demo.py) replaces this with the real list.
@@ -670,6 +720,8 @@ window.DEMO_VISUALISER = "venue";
       wrong: 0, lockedOutUntil: 0, history: [],
       groups: {}, chan: {}, fx: { color: [], intensity: [], movement: [] }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
       lastColours: [WARM_WHITE],
+      look: false, previews: {}, tokenSeq: 0,
+      saved: Object.fromEntries(SAVE_LIBS.map(([k]) => [k, SEED_SAVED[k].map(([cue, label, scene]) => ({ cue, label, scene }))])),
     };
     const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
       .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
@@ -761,8 +813,73 @@ window.DEMO_VISUALISER = "venue";
       return { dir, groups: groups.filter((g) => lit(g).length) };
     }
 
+    // ---- New look and Save: the hub's rules on a made-up console (hub/looks.py, POST /api/save)
+    const cleanName = (v) => { const t = String(v == null ? "" : v).trim(); return NAME_OK.test(t) ? t : null; };
+    const maxCue = (cues) => cues.reduce((m, c) => Math.max(m, c.cue), 0);
+    const nextWhole = (cues) => Math.floor(maxCue(cues)) + 1;
+    function nextInSong(n) {
+      const start = n * SONG_BLOCK, block = st.saved.songs.filter((c) => c.cue >= start && c.cue < start + SONG_BLOCK);
+      const nxt = Math.floor(block.reduce((m, c) => Math.max(m, c.cue), start - 1)) + 1;
+      return nxt >= start + MAX_CUES_PER_SONG ? null : nxt;
+    }
+    const songsIn = () => st.saved.songs.filter((c) => c.scene && c.cue % SONG_BLOCK === 0 && c.cue > 0).map((c) => {
+      const n = c.cue / SONG_BLOCK;
+      return { name: c.scene, number: n, cues: st.saved.songs.filter((x) => x.cue >= c.cue && x.cue < c.cue + SONG_BLOCK).length, next: nextInSong(n) };
+    });
+    const newSongNumber = () => Math.floor(maxCue(st.saved.songs) / SONG_BLOCK) + 1;
+    const lookGroups = () => GROUPS.filter((g) => ["front", "other"].indexOf(g.role) < 0);
+
+    function saveInfo() {
+      const songs = songsIn();
+      return { enabled: true, songs, new_song: { number: newSongNumber(), cue: String(newSongNumber() * SONG_BLOCK) },
+        libraries: SAVE_LIBS.map(([key, name]) => ({ key, name, list: CUE_LISTS[key], ok: true, problem: "",
+          next: key === "songs" ? null : String(nextWhole(st.saved[key])) })),
+        look: { active: st.look, groups: st.look ? lookGroups().map((g) => g.label) : [] } };
+    }
+
+    function savePreview(body) {
+      if (!st.look) return refused("Start a new look first, then save it");
+      const key = body.library, label = cleanName(body.label);
+      if (label === null) return refused("label must be 1-32 characters, letters, digits, space and - ' . , ( ) & only");
+      let cue, scene = null, newSong = false, summary;
+      if (key === "songs") {
+        const name = cleanName(body.song);
+        if (name === null) return refused("label must be 1-32 characters, letters, digits, space and - ' . , ( ) & only");
+        const found = songsIn().find((x) => norm(x.name) === norm(name));
+        if (found) {
+          if (found.next === null) return refused(found.name + " already has " + MAX_CUES_PER_SONG + " cues");
+          cue = found.next; scene = found.name;
+        } else { cue = newSongNumber() * SONG_BLOCK; scene = name; newSong = true; }
+        summary = scene + ", cue " + CUE_LISTS.songs + "/" + cue;
+      } else {
+        cue = nextWhole(st.saved[key]);
+        summary = label + ", cue " + CUE_LISTS[key] + "/" + cue;
+      }
+      const hit = NAME_BLOCKED.exec(label + " " + (newSong ? scene : ""));
+      if (hit) return refused("The word '" + hit[2] + "' cannot be used in a name. Please pick another");
+      const token = "demo-" + (++st.tokenSeq);
+      st.previews = { [token]: { key, cue, label, scene: newSong ? scene : null } };
+      return ok({ allowed: true, reason: "", outcome: "preview", library: key, list: CUE_LISTS[key], cue: String(cue),
+        scene, new_song: newSong, new_list: false, label, summary, token });
+    }
+
+    function saveNow(body, op) {
+      const p = st.previews[body.token];
+      delete st.previews[body.token];                     // one use only
+      if (!p) return refused("That preview has expired. Preview the save again");
+      if (st.saved[p.key].some((c) => c.cue === p.cue)) return refused("Cue " + CUE_LISTS[p.key] + "/" + p.cue + " already exists. Nothing was overwritten");
+      st.saved[p.key].push({ cue: p.cue, label: p.label, scene: p.scene || "" });
+      const steps = ["record_only_cue", "label_cue"].concat(p.scene ? ["scene_cue"] : [], ["assert_cue"]);
+      for (const o of steps) log(o, { cue_list: CUE_LISTS[p.key], cue: p.cue }, true, "");
+      changed();
+      return confirmed("Saved as cue " + CUE_LISTS[p.key] + "/" + p.cue + ".", { steps_done: steps });
+    }
+
     function change(path, op, args, body) {
       if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
+      if (path === "/api/look/new") { st.look = true; log(op, args, true, ""); changed(); return confirmed("New look started."); }
+      if (path === "/api/save/preview") return savePreview(body);
+      if (path === "/api/save") return saveNow(body, op);
       if (path === "/api/colour-set") {
         if (!place(body.colours, GROUPS).some(([g]) => lit(g).length)) return refused("No lights in this church are set up to take color");
         const r = applyColours(body.colours.map((h) => h.toLowerCase()), body.colours.join(",").toLowerCase());
@@ -884,6 +1001,10 @@ window.DEMO_VISUALISER = "venue";
         && (b.colours === undefined || (Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 4 && b.colours.every(isHex))) },
       "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
       "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) && (b.all === undefined || b.all === true) },
+      "/api/look/new": { op: "home", valid: () => true },
+      "/api/save/preview": { op: "save_preview", valid: (b) => SAVE_LIBS.some(([k]) => k === b.library) && typeof b.label === "string"
+        && b.label.length <= 100 && (b.song === undefined || b.song === null || (typeof b.song === "string" && b.song.length <= 100)) },
+      "/api/save": { op: "record_only_cue", valid: (b) => typeof b.token === "string" && b.token.length <= 100 },
       "/api/clear-effects": { op: "clear_effects", valid: cat },
       "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
     };
@@ -922,7 +1043,7 @@ window.DEMO_VISUALISER = "venue";
       if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
       if (method === "GET" && url === "/api/me") {
         return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
-          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, features: Object.assign({}, FEATURES),
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, save_enabled: true, features: Object.assign({}, FEATURES),
           can: { change: true, unlock: true, history: true, schedule: false } });
       }
       if (method === "GET" && url === "/api/status") {
@@ -949,6 +1070,7 @@ window.DEMO_VISUALISER = "venue";
           takes_colour: g.takes_colour, moves: g.moves === true,
           lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on, default_on: !inRanges(ch, CHURCH.off) })) })) });
       }
+      if (method === "GET" && url === "/api/save/info") return ok(saveInfo());
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
       if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
       if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
@@ -1493,6 +1615,7 @@ const state = {
   me: null, status: null, sets: [], effects: [],
   tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
   features: {}, fxDir: {}, running: {}, lights: [], fxColours: null, fxGroups: {},
+  lookActive: false, save: { info: null, lib: "stills", token: null },
 };
 const feature = (name) => !!state.features[name];
 
@@ -1518,6 +1641,8 @@ function el(tag, props, ...kids) {
     if (k === "class") n.className = v;
     else if (k === "text") n.textContent = v;
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    // The hub's CSP (style-src 'self') blocks style attributes; setting the style property is allowed.
+    else if (k === "style") n.style.cssText = v;
     else n.setAttribute(k, v);
   }
   for (const c of kids) if (c != null) n.append(c);
@@ -1558,6 +1683,7 @@ function showResult(text, kind) {
 }
 
 function describe(r) {
+  if (r.allowed && r.outcome === "preview") return ["", "ok"];     // the Save sheet shows its own preview line
   if (!r.allowed) return ["Not applied: " + r.reason + ".", "bad"];
   if (r.outcome === "confirmed") return ["Applied.", "ok"];
   if (r.outcome === "unconfirmed") return ["Sent, but the console did not answer back. Check the console to be sure.", "warn"];
@@ -1572,7 +1698,7 @@ async function change(path, body, okText) {
     const r = await api("POST", path, body);
     let [text, kind] = describe(r);
     if (kind === "ok") text = okText || r.detail || text;
-    showResult(text, kind);
+    if (text) showResult(text, kind);
     refreshStatus();
     return r;
   } catch (e) {
@@ -1633,8 +1759,11 @@ async function enterApp() {
   $("notice-view").hidden = true;
   $("login-view").hidden = true; $("app-view").hidden = false;
   $("church-name").textContent = state.me.church;
+  $("pin-hint").textContent = state.me.lock_hint || "";
+  $("pin-hint").hidden = !state.me.lock_hint;
   document.title = state.me.church + " lighting";
   $("me-text").textContent = "Signed in as " + state.me.username + " (" + state.me.role + ").";
+  $("look-bar").hidden = !state.me.save_enabled;
   $("history-box").hidden = !state.me.can.history;
   $("schedule-box").hidden = !state.me.can.schedule;
   await refreshStatus();
@@ -2244,6 +2373,82 @@ async function loadSchedule() {
       : "No scheduled lock. Ask the S&S team to set one.";
   } catch (e) { /* leave as is */ }
 }
+
+// ---------- New look and Save (D-048). The hub decides where a look goes; this sheet only asks and shows.
+function renderLook() { $("look-note").textContent = state.lookActive ? "Building a new look." : ""; }
+
+$("look-new").addEventListener("click", async () => {
+  const r = await change("/api/look/new", {});
+  if (r && r.allowed && (r.outcome === "confirmed" || r.outcome === "unconfirmed")) { state.lookActive = true; renderLook(); }
+});
+
+function saveReset() {
+  state.save.token = null;
+  $("save-preview").textContent = ""; $("save-msg").textContent = "";
+  $("save-go").textContent = "Show where it goes";
+}
+const saveIsNewSong = () => $("save-song").value === "__new__";
+function renderSaveSheet() {
+  const info = state.save.info, box = $("save-lib"); box.replaceChildren();
+  for (const lib of info.libraries) {
+    const b = el("button", { type: "button", class: "seg-btn", "aria-pressed": String(state.save.lib === lib.key) },
+      el("span", { text: lib.name }),
+      el("small", { text: !lib.ok ? "not available" : lib.key === "songs" ? "by song" : "next: cue " + lib.next }));
+    b.disabled = !lib.ok;
+    b.addEventListener("click", () => { state.save.lib = lib.key; saveReset(); renderSaveSheet(); });
+    box.append(b);
+  }
+  const cur = info.libraries.find((l) => l.key === state.save.lib);
+  $("save-msg").textContent = cur && !cur.ok ? cur.problem : "";
+  const songs = state.save.lib === "songs", sel = $("save-song");
+  $("save-song-box").hidden = !songs;
+  if (songs) {
+    const keep = sel.value;
+    sel.replaceChildren();
+    for (const s of info.songs) sel.append(el("option", { value: s.name, text: s.name + (s.next === null ? " (full)" : ""), ...(s.next === null ? { disabled: "" } : {}) }));
+    sel.append(el("option", { value: "__new__", text: "New song" }));
+    if (keep && [...sel.options].some((o) => o.value === keep)) sel.value = keep;
+    else sel.value = info.songs.find((s) => s.next !== null) ? info.songs.find((s) => s.next !== null).name : "__new__";
+    $("save-song-new").hidden = !saveIsNewSong();
+  }
+}
+
+async function openSave() {
+  if (isLocked() || !canChange()) { showResult("Unlock the Service Lock to save.", "warn"); return; }
+  saveReset();
+  try { state.save.info = await api("GET", "/api/save/info"); } catch (e) { showResult(e.message, "bad"); return; }
+  state.lookActive = state.save.info.look.active; renderLook();
+  if (!state.lookActive) { showResult("Tap New look first, then build the look you want to save.", "warn"); return; }
+  if (!state.save.info.libraries.some((l) => l.key === state.save.lib && l.ok)) {
+    const first = state.save.info.libraries.find((l) => l.ok);
+    if (first) state.save.lib = first.key;
+  }
+  renderSaveSheet();
+  $("save-dialog").showModal(); $("save-label").focus();
+}
+$("look-save").addEventListener("click", openSave);
+$("save-cancel").addEventListener("click", () => $("save-dialog").close());
+["save-label", "save-song-new"].forEach((id) => $(id).addEventListener("input", saveReset));
+$("save-song").addEventListener("change", () => { saveReset(); $("save-song-new").hidden = !saveIsNewSong(); });
+
+$("save-go").addEventListener("click", async () => {
+  if (state.save.token) {                                   // second tap: confirm what the preview showed
+    const r = await change("/api/save", { token: state.save.token });
+    if (r && r.allowed && r.outcome === "confirmed") { $("save-dialog").close(); return; }
+    $("save-msg").textContent = r ? r.reason + "." : "Not saved.";
+    saveReset();
+    return;
+  }
+  const body = { library: state.save.lib, label: $("save-label").value };
+  if (state.save.lib === "songs") body.song = saveIsNewSong() ? $("save-song-new").value : $("save-song").value;
+  $("save-msg").textContent = "";
+  const r = await change("/api/save/preview", body);
+  if (r && r.allowed) {
+    state.save.token = r.token;
+    $("save-preview").textContent = (r.new_song ? "New song: " : "") + r.summary;
+    $("save-go").textContent = "Confirm save";
+  } else $("save-msg").textContent = r ? r.reason + "." : "Unlock the Service Lock to save.";
+});
 
 // ---------- help (D-030): open from any screen, address shown as text to select or copy
 document.querySelectorAll(".help-btn").forEach((b) => b.addEventListener("click", () => {

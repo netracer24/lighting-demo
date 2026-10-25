@@ -182,6 +182,11 @@ input.hue { background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0
 dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 18px; width: min(92vw, 380px); }
 dialog::backdrop { background: rgba(0,0,0,.7); }
 dialog .row .big { margin-top: 0; }
+.look-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px max(16px, env(safe-area-inset-left, 0px)); }
+.look-bar .small-btn { padding: 0 16px; }
+#save-dialog input, #save-dialog select { width: 100%; box-sizing: border-box; margin: 6px 0; }
+#save-dialog .seg { margin-top: 4px; }
+.save-preview { font-weight: 700; min-height: 1.4em; }
 .topline .help-btn { margin-left: auto; }
 .help-btn { flex: 0 0 auto; min-height: 44px; padding: 0 14px; }
 .help-btn.wide { width: 100%; margin-top: 18px; }
@@ -337,6 +342,13 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
 
   <div id="banner" class="banner" hidden></div>
 
+  <!-- New look and Save (D-048): shown only when the church has cue lists set up -->
+  <div id="look-bar" class="look-bar" hidden>
+    <button type="button" id="look-new" class="small-btn change">New look</button>
+    <button type="button" id="look-save" class="small-btn change">Save</button>
+    <span id="look-note" class="muted small"></span>
+  </div>
+
   <main id="content">
     <!-- Lights in the scene (D-035; shown only when the server offers it) -->
     <section id="tab-lights" class="tab" hidden>
@@ -460,12 +472,35 @@ body.demo .topbar { top: var(--ribbon-h, 30px); }
   </form>
 </dialog>
 
+<!-- Save this look -->
+<dialog id="save-dialog">
+  <form method="dialog" id="save-form">
+    <h2>Save this look</h2>
+    <p class="muted small">It is saved as a new cue in its own cue list. Nothing already saved is changed.</p>
+    <div id="save-lib" class="seg" role="group" aria-label="Where to save"></div>
+    <label for="save-label">Name for this look</label>
+    <input id="save-label" maxlength="32" autocomplete="off" spellcheck="false">
+    <div id="save-song-box" hidden>
+      <label for="save-song">Song</label>
+      <select id="save-song"></select>
+      <input id="save-song-new" maxlength="32" autocomplete="off" spellcheck="false" placeholder="Name of the new song" hidden>
+    </div>
+    <p id="save-preview" class="save-preview" role="status"></p>
+    <p id="save-msg" class="msg" role="alert"></p>
+    <div class="row">
+      <button type="button" id="save-cancel" class="big">Cancel</button>
+      <button type="button" id="save-go" class="big primary change">Show where it goes</button>
+    </div>
+  </form>
+</dialog>
+
 <!-- Unlock PIN -->
 <dialog id="pin-dialog">
   <form method="dialog" id="pin-form">
     <h2>Unlock for changes</h2>
     <p class="muted">Enter the Service Lock PIN.</p>
     <p class="muted demo-only" hidden>Demo PIN: <strong>1234</strong></p>
+    <p class="muted" id="pin-hint" hidden></p>
     <input id="pin" type="password" inputmode="numeric" autocomplete="off" aria-label="PIN">
     <p id="pin-msg" class="msg" role="alert"></p>
     <div class="row">
@@ -505,7 +540,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   // routes and against the paths app.js uses, so a new change endpoint cannot be forgotten here.
   // /api/apply-palette and /api/colour are kept like the hub keeps them, but the app no longer uses them.
   const CHANGE_ENDPOINTS = ["/api/colour-set", "/api/apply-palette", "/api/colour", "/api/apply-effect",
-    "/api/effect-size", "/api/tempo"];
+    "/api/effect-size", "/api/tempo", "/api/look/new", "/api/save/preview", "/api/save"];
   // Changes only the demo has (D-035). The hub has none of these routes; app.js uses them only when
   // /api/me lists the matching feature. Service Lock refuses them like any other change.
   const DEMO_ONLY_CHANGES = ["/api/clear-effects", "/api/lights"];
@@ -524,6 +559,21 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
   ];
   const CHURCH = (typeof window !== "undefined" && window.DEMO_CHURCH) || { name: "Demo Church", groups: DEFAULT_GROUPS, off: [] };
   const GROUPS = CHURCH.groups;
+  // Save (D-048): the church's library cue lists, as church.json "cue_lists". A built demo for another
+  // church can carry its own in window.DEMO_CHURCH.cue_lists.
+  const CUE_LISTS = CHURCH.cue_lists || { stills: 51, movement: 52, songs: 53 };
+  const LIST_LABELS = { stills: "LC Stills", movement: "LC Movement", songs: "LC Songs" };
+  const SAVE_LIBS = [["stills", "Stills"], ["movement", "Movement"], ["songs", "Songs"]];
+  const SONG_BLOCK = 100, MAX_CUES_PER_SONG = 99;
+  // What the simulated console already holds, so the Save sheet has something to show.
+  const SEED_SAVED = {
+    stills: [[1, "Soft Blue", ""], [2, "Warm Amber", ""]],
+    movement: [[1, "Slow Sweep", ""]],
+    songs: [[100, "Verse 1", "Way Maker"], [101, "Chorus", ""], [102, "Bridge", ""], [200, "Intro", "Reckless Love"]],
+  };
+  // Names are checked like the engine's sanitize_label and the guard's word list (no lookbehind: old phones).
+  const NAME_OK = /^[A-Za-z0-9 \-'.,()&]{1,32}$/;
+  const NAME_BLOCKED = /(^|[^A-Za-z0-9])(Delete|Patch|Save|Load|Address|New|Clear_Show|Reset|Shutdown|Exit)([^A-Za-z0-9]|$)/i;
   const WARM_WHITE = "#ffe2b0";
   // Used only when the page was not built with hub/colour_sets.json (a dev preview). The built demo
   // page (tools/build_demo.py) replaces this with the real list.
@@ -667,6 +717,8 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       wrong: 0, lockedOutUntil: 0, history: [],
       groups: {}, chan: {}, fx: { color: [], intensity: [], movement: [] }, fxBpm: {}, fxSize: {}, taps: {}, seed: 1,
       lastColours: [WARM_WHITE],
+      look: false, previews: {}, tokenSeq: 0,
+      saved: Object.fromEntries(SAVE_LIBS.map(([k]) => [k, SEED_SAVED[k].map(([cue, label, scene]) => ({ cue, label, scene }))])),
     };
     const colourSets = ((typeof window !== "undefined" && window.DEMO_COLOUR_SETS) || FALLBACK_COLOUR_SETS)
       .map((c) => ({ name: c.name, colours: c.colours.map((h) => h.toLowerCase()), mood: c.mood }));
@@ -758,8 +810,73 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       return { dir, groups: groups.filter((g) => lit(g).length) };
     }
 
+    // ---- New look and Save: the hub's rules on a made-up console (hub/looks.py, POST /api/save)
+    const cleanName = (v) => { const t = String(v == null ? "" : v).trim(); return NAME_OK.test(t) ? t : null; };
+    const maxCue = (cues) => cues.reduce((m, c) => Math.max(m, c.cue), 0);
+    const nextWhole = (cues) => Math.floor(maxCue(cues)) + 1;
+    function nextInSong(n) {
+      const start = n * SONG_BLOCK, block = st.saved.songs.filter((c) => c.cue >= start && c.cue < start + SONG_BLOCK);
+      const nxt = Math.floor(block.reduce((m, c) => Math.max(m, c.cue), start - 1)) + 1;
+      return nxt >= start + MAX_CUES_PER_SONG ? null : nxt;
+    }
+    const songsIn = () => st.saved.songs.filter((c) => c.scene && c.cue % SONG_BLOCK === 0 && c.cue > 0).map((c) => {
+      const n = c.cue / SONG_BLOCK;
+      return { name: c.scene, number: n, cues: st.saved.songs.filter((x) => x.cue >= c.cue && x.cue < c.cue + SONG_BLOCK).length, next: nextInSong(n) };
+    });
+    const newSongNumber = () => Math.floor(maxCue(st.saved.songs) / SONG_BLOCK) + 1;
+    const lookGroups = () => GROUPS.filter((g) => ["front", "other"].indexOf(g.role) < 0);
+
+    function saveInfo() {
+      const songs = songsIn();
+      return { enabled: true, songs, new_song: { number: newSongNumber(), cue: String(newSongNumber() * SONG_BLOCK) },
+        libraries: SAVE_LIBS.map(([key, name]) => ({ key, name, list: CUE_LISTS[key], ok: true, problem: "",
+          next: key === "songs" ? null : String(nextWhole(st.saved[key])) })),
+        look: { active: st.look, groups: st.look ? lookGroups().map((g) => g.label) : [] } };
+    }
+
+    function savePreview(body) {
+      if (!st.look) return refused("Start a new look first, then save it");
+      const key = body.library, label = cleanName(body.label);
+      if (label === null) return refused("label must be 1-32 characters, letters, digits, space and - ' . , ( ) & only");
+      let cue, scene = null, newSong = false, summary;
+      if (key === "songs") {
+        const name = cleanName(body.song);
+        if (name === null) return refused("label must be 1-32 characters, letters, digits, space and - ' . , ( ) & only");
+        const found = songsIn().find((x) => norm(x.name) === norm(name));
+        if (found) {
+          if (found.next === null) return refused(found.name + " already has " + MAX_CUES_PER_SONG + " cues");
+          cue = found.next; scene = found.name;
+        } else { cue = newSongNumber() * SONG_BLOCK; scene = name; newSong = true; }
+        summary = scene + ", cue " + CUE_LISTS.songs + "/" + cue;
+      } else {
+        cue = nextWhole(st.saved[key]);
+        summary = label + ", cue " + CUE_LISTS[key] + "/" + cue;
+      }
+      const hit = NAME_BLOCKED.exec(label + " " + (newSong ? scene : ""));
+      if (hit) return refused("The word '" + hit[2] + "' cannot be used in a name. Please pick another");
+      const token = "demo-" + (++st.tokenSeq);
+      st.previews = { [token]: { key, cue, label, scene: newSong ? scene : null } };
+      return ok({ allowed: true, reason: "", outcome: "preview", library: key, list: CUE_LISTS[key], cue: String(cue),
+        scene, new_song: newSong, new_list: false, label, summary, token });
+    }
+
+    function saveNow(body, op) {
+      const p = st.previews[body.token];
+      delete st.previews[body.token];                     // one use only
+      if (!p) return refused("That preview has expired. Preview the save again");
+      if (st.saved[p.key].some((c) => c.cue === p.cue)) return refused("Cue " + CUE_LISTS[p.key] + "/" + p.cue + " already exists. Nothing was overwritten");
+      st.saved[p.key].push({ cue: p.cue, label: p.label, scene: p.scene || "" });
+      const steps = ["record_only_cue", "label_cue"].concat(p.scene ? ["scene_cue"] : [], ["assert_cue"]);
+      for (const o of steps) log(o, { cue_list: CUE_LISTS[p.key], cue: p.cue }, true, "");
+      changed();
+      return confirmed("Saved as cue " + CUE_LISTS[p.key] + "/" + p.cue + ".", { steps_done: steps });
+    }
+
     function change(path, op, args, body) {
       if (st.locked) { log(op, args, false, "Service Lock is on"); return refuseLocked(path, body); }
+      if (path === "/api/look/new") { st.look = true; log(op, args, true, ""); changed(); return confirmed("New look started."); }
+      if (path === "/api/save/preview") return savePreview(body);
+      if (path === "/api/save") return saveNow(body, op);
       if (path === "/api/colour-set") {
         if (!place(body.colours, GROUPS).some(([g]) => lit(g).length)) return refused("No lights in this church are set up to take color");
         const r = applyColours(body.colours.map((h) => h.toLowerCase()), body.colours.join(",").toLowerCase());
@@ -881,6 +998,10 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
         && (b.colours === undefined || (Array.isArray(b.colours) && b.colours.length >= 2 && b.colours.length <= 4 && b.colours.every(isHex))) },
       "/api/effect-size": { op: "set_effect_size", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.size, 0, 200) },
       "/api/tempo": { op: "set_effect_bpm", valid: (b) => typeof b.effect_name === "string" && cat(b) && num(b.tempo, TEMPO_MIN, TEMPO_MAX) && (b.note === undefined || NOTES.some((n) => n.name === b.note)) && (b.all === undefined || b.all === true) },
+      "/api/look/new": { op: "home", valid: () => true },
+      "/api/save/preview": { op: "save_preview", valid: (b) => SAVE_LIBS.some(([k]) => k === b.library) && typeof b.label === "string"
+        && b.label.length <= 100 && (b.song === undefined || b.song === null || (typeof b.song === "string" && b.song.length <= 100)) },
+      "/api/save": { op: "record_only_cue", valid: (b) => typeof b.token === "string" && b.token.length <= 100 },
       "/api/clear-effects": { op: "clear_effects", valid: cat },
       "/api/lights": { op: "scene_lights", valid: (b) => Array.isArray(b.channels) && b.channels.length > 0 && b.channels.every((c) => num(c, 1, 99999)) && typeof b.on === "boolean" },
     };
@@ -919,7 +1040,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
       if (method === "POST" && url === "/api/logout") { st.signedIn = false; return ok({ ok: true }); }
       if (method === "GET" && url === "/api/me") {
         return ok({ username: "demo", role: "Programmer", church: CHURCH.name, notice_ack_needed: !st.noticeAck,
-          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, features: Object.assign({}, FEATURES),
+          notes: NOTES.map((n) => Object.assign({}, n)), default_note: DEFAULT_NOTE, save_enabled: true, features: Object.assign({}, FEATURES),
           can: { change: true, unlock: true, history: true, schedule: false } });
       }
       if (method === "GET" && url === "/api/status") {
@@ -946,6 +1067,7 @@ window.DEMO_NOTES = [{"name": "1/1", "label": "1/1", "spoken": "whole note, one 
           takes_colour: g.takes_colour, moves: g.moves === true,
           lights: acrossOrder(chanList(g)).map((ch) => ({ channel: ch, on: st.chan[ch].on, default_on: !inRanges(ch, CHURCH.off) })) })) });
       }
+      if (method === "GET" && url === "/api/save/info") return ok(saveInfo());
       if (method === "GET" && url === "/api/colour-sets") return ok({ sets: colourSets.map((c) => Object.assign({}, c)), suggested: true });
       if (method === "GET" && url === "/api/palettes") return ok({ palettes: PALETTES.map((p) => Object.assign({}, p)) });
       if (method === "GET" && url === "/api/effects") return ok({ effects: effects.map((e) => Object.assign({}, e)) });
@@ -1157,6 +1279,7 @@ const state = {
   me: null, status: null, sets: [], effects: [],
   tab: "colours", picked: [], taps: [], tempoEffect: "", note: "1/4",
   features: {}, fxDir: {}, running: {}, lights: [], fxColours: null, fxGroups: {},
+  lookActive: false, save: { info: null, lib: "stills", token: null },
 };
 const feature = (name) => !!state.features[name];
 
@@ -1182,6 +1305,8 @@ function el(tag, props, ...kids) {
     if (k === "class") n.className = v;
     else if (k === "text") n.textContent = v;
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    // The hub's CSP (style-src 'self') blocks style attributes; setting the style property is allowed.
+    else if (k === "style") n.style.cssText = v;
     else n.setAttribute(k, v);
   }
   for (const c of kids) if (c != null) n.append(c);
@@ -1222,6 +1347,7 @@ function showResult(text, kind) {
 }
 
 function describe(r) {
+  if (r.allowed && r.outcome === "preview") return ["", "ok"];     // the Save sheet shows its own preview line
   if (!r.allowed) return ["Not applied: " + r.reason + ".", "bad"];
   if (r.outcome === "confirmed") return ["Applied.", "ok"];
   if (r.outcome === "unconfirmed") return ["Sent, but the console did not answer back. Check the console to be sure.", "warn"];
@@ -1236,7 +1362,7 @@ async function change(path, body, okText) {
     const r = await api("POST", path, body);
     let [text, kind] = describe(r);
     if (kind === "ok") text = okText || r.detail || text;
-    showResult(text, kind);
+    if (text) showResult(text, kind);
     refreshStatus();
     return r;
   } catch (e) {
@@ -1297,8 +1423,11 @@ async function enterApp() {
   $("notice-view").hidden = true;
   $("login-view").hidden = true; $("app-view").hidden = false;
   $("church-name").textContent = state.me.church;
+  $("pin-hint").textContent = state.me.lock_hint || "";
+  $("pin-hint").hidden = !state.me.lock_hint;
   document.title = state.me.church + " lighting";
   $("me-text").textContent = "Signed in as " + state.me.username + " (" + state.me.role + ").";
+  $("look-bar").hidden = !state.me.save_enabled;
   $("history-box").hidden = !state.me.can.history;
   $("schedule-box").hidden = !state.me.can.schedule;
   await refreshStatus();
@@ -1908,6 +2037,82 @@ async function loadSchedule() {
       : "No scheduled lock. Ask the S&S team to set one.";
   } catch (e) { /* leave as is */ }
 }
+
+// ---------- New look and Save (D-048). The hub decides where a look goes; this sheet only asks and shows.
+function renderLook() { $("look-note").textContent = state.lookActive ? "Building a new look." : ""; }
+
+$("look-new").addEventListener("click", async () => {
+  const r = await change("/api/look/new", {});
+  if (r && r.allowed && (r.outcome === "confirmed" || r.outcome === "unconfirmed")) { state.lookActive = true; renderLook(); }
+});
+
+function saveReset() {
+  state.save.token = null;
+  $("save-preview").textContent = ""; $("save-msg").textContent = "";
+  $("save-go").textContent = "Show where it goes";
+}
+const saveIsNewSong = () => $("save-song").value === "__new__";
+function renderSaveSheet() {
+  const info = state.save.info, box = $("save-lib"); box.replaceChildren();
+  for (const lib of info.libraries) {
+    const b = el("button", { type: "button", class: "seg-btn", "aria-pressed": String(state.save.lib === lib.key) },
+      el("span", { text: lib.name }),
+      el("small", { text: !lib.ok ? "not available" : lib.key === "songs" ? "by song" : "next: cue " + lib.next }));
+    b.disabled = !lib.ok;
+    b.addEventListener("click", () => { state.save.lib = lib.key; saveReset(); renderSaveSheet(); });
+    box.append(b);
+  }
+  const cur = info.libraries.find((l) => l.key === state.save.lib);
+  $("save-msg").textContent = cur && !cur.ok ? cur.problem : "";
+  const songs = state.save.lib === "songs", sel = $("save-song");
+  $("save-song-box").hidden = !songs;
+  if (songs) {
+    const keep = sel.value;
+    sel.replaceChildren();
+    for (const s of info.songs) sel.append(el("option", { value: s.name, text: s.name + (s.next === null ? " (full)" : ""), ...(s.next === null ? { disabled: "" } : {}) }));
+    sel.append(el("option", { value: "__new__", text: "New song" }));
+    if (keep && [...sel.options].some((o) => o.value === keep)) sel.value = keep;
+    else sel.value = info.songs.find((s) => s.next !== null) ? info.songs.find((s) => s.next !== null).name : "__new__";
+    $("save-song-new").hidden = !saveIsNewSong();
+  }
+}
+
+async function openSave() {
+  if (isLocked() || !canChange()) { showResult("Unlock the Service Lock to save.", "warn"); return; }
+  saveReset();
+  try { state.save.info = await api("GET", "/api/save/info"); } catch (e) { showResult(e.message, "bad"); return; }
+  state.lookActive = state.save.info.look.active; renderLook();
+  if (!state.lookActive) { showResult("Tap New look first, then build the look you want to save.", "warn"); return; }
+  if (!state.save.info.libraries.some((l) => l.key === state.save.lib && l.ok)) {
+    const first = state.save.info.libraries.find((l) => l.ok);
+    if (first) state.save.lib = first.key;
+  }
+  renderSaveSheet();
+  $("save-dialog").showModal(); $("save-label").focus();
+}
+$("look-save").addEventListener("click", openSave);
+$("save-cancel").addEventListener("click", () => $("save-dialog").close());
+["save-label", "save-song-new"].forEach((id) => $(id).addEventListener("input", saveReset));
+$("save-song").addEventListener("change", () => { saveReset(); $("save-song-new").hidden = !saveIsNewSong(); });
+
+$("save-go").addEventListener("click", async () => {
+  if (state.save.token) {                                   // second tap: confirm what the preview showed
+    const r = await change("/api/save", { token: state.save.token });
+    if (r && r.allowed && r.outcome === "confirmed") { $("save-dialog").close(); return; }
+    $("save-msg").textContent = r ? r.reason + "." : "Not saved.";
+    saveReset();
+    return;
+  }
+  const body = { library: state.save.lib, label: $("save-label").value };
+  if (state.save.lib === "songs") body.song = saveIsNewSong() ? $("save-song-new").value : $("save-song").value;
+  $("save-msg").textContent = "";
+  const r = await change("/api/save/preview", body);
+  if (r && r.allowed) {
+    state.save.token = r.token;
+    $("save-preview").textContent = (r.new_song ? "New song: " : "") + r.summary;
+    $("save-go").textContent = "Confirm save";
+  } else $("save-msg").textContent = r ? r.reason + "." : "Unlock the Service Lock to save.";
+});
 
 // ---------- help (D-030): open from any screen, address shown as text to select or copy
 document.querySelectorAll(".help-btn").forEach((b) => b.addEventListener("click", () => {
